@@ -1,4 +1,4 @@
-package utils;
+package com.actiknow.motoraudit.utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actiknow.motoraudit.R;
+import com.actiknow.motoraudit.app.AppController;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 
@@ -31,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import app.AppController;
+
 
 /**
  * Created by Admin on 23-12-2015.

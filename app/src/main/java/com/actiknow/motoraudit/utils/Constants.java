@@ -1,4 +1,4 @@
-package utils;
+package com.actiknow.motoraudit.utils;
 
 
 public class Constants {

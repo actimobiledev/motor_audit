@@ -1,4 +1,4 @@
-package utils;
+package com.actiknow.motoraudit.utils;
 
 /**
  * Created by actiknow on 10/23/15.

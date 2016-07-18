@@ -1,28 +1,12 @@
-package helper;
+package com.actiknow.motoraudit.helper;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import com.actiknow.liveaudit.model.Atm;
-import com.actiknow.liveaudit.model.AuditorLocation;
-import com.actiknow.liveaudit.model.Question;
-import com.actiknow.liveaudit.model.Report;
-import com.actiknow.liveaudit.utils.AppConfigTags;
-import com.actiknow.liveaudit.utils.Utils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
+/*
 public class DatabaseHandler extends SQLiteOpenHelper {
+
     // Database Version
-    private static final int DATABASE_VERSION = 12;
+
+
+    private static final int DATABASE_VERSION = 1;
 
     // Database Name
     private static final String DATABASE_NAME = "liveAudit";
@@ -494,4 +478,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Date date = new Date ();
         return dateFormat.format (date);
     }
+
+
+
 }
+*/

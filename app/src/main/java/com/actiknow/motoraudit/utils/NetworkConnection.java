@@ -1,4 +1,4 @@
-package utils;
+package com.actiknow.motoraudit.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

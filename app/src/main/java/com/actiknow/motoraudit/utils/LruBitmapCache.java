@@ -1,4 +1,4 @@
-package utils;
+package com.actiknow.motoraudit.utils;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
