@@ -56,7 +56,7 @@ public class AllJobsAdapter extends BaseAdapter {
 		Utils.setTypefaceToAllViews (activity, holder.job_date);
 
 		final Job job = jobList.get (position);
-		holder.job_date.setText (job.getJob_id ());
+		holder.job_date.setText ("" + job.getJob_id ());
 		holder.job_serial_number.setText (job.getJob_serial_number ());
 
 		convertView.setOnClickListener (new View.OnClickListener () {
@@ -95,6 +95,10 @@ public class AllJobsAdapter extends BaseAdapter {
 				AlertDialog alert = builder.create ();
 				alert.show ();
 				*/
+
+				Utils.showToast (activity, job.getJob_serial_number ());
+
+
 			}
 		});
 		return convertView;
