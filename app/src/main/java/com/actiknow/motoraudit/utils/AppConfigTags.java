@@ -50,4 +50,11 @@ public class AppConfigTags {
     public static final String VOLLEY_ERROR = "VOLLEY ERROR";
     public static final String DATABASE_LOG = "DATABASE LOG";
 
+
+    public static final String WORKORDERS = "workorders";
+    public static final String WO_ID = "WO_NUM";
+    public static final String WO_SITE_NAME = "SITE_NAME";
+    public static final String WO_CONTRACT_NUM = "CONTRACT_NUM";
+
+
 }

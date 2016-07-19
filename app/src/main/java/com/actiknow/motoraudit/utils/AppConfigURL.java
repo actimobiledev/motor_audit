@@ -9,6 +9,9 @@ public class AppConfigURL {
 //    public static String URL_SUBMITREPORT = "https://atm-ncr-cammy92.c9users.io/live_audit/submitreport.php";
 
     // normal urls
+
+    public static String API_URL = "http://67.51.220.163/REST/ErpEmc_API.php";
+
     public static String URL_LOGIN = "http://www.hindustansupply.com/auditor_management/index.php/auditor/login";
     public static String URL_GETALLATMS = "http://www.hindustansupply.com/auditor_management/index.php/auditor/getallatms";
     public static String URL_GETALLQUESTIONS = "http://www.hindustansupply.com/auditor_management/index.php/auditor/getallquestions";

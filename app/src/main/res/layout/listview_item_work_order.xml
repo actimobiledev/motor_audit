@@ -12,18 +12,18 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
         <TextView
-            android:id="@+id/tvJobDate"
+            android:id="@+id/tvWorkOrderSerialNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12/03/2016"
+            android:text="74085"
             android:textSize="14sp"/>
         <TextView
-            android:id="@+id/tvJobSerialNumber"
+            android:id="@+id/tvWorkOrderSiteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="JB123123123"
+            android:text="HURRICANE - 101029"
             android:textSize="14sp"/>
 
     </RelativeLayout>

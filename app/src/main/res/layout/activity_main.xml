@@ -79,6 +79,9 @@
             android:background="@color/colorPrimary"
             android:choiceMode="singleChoice"
             android:divider="@color/color_divider"
-            android:dividerHeight="1dp"/>
+            android:dividerHeight="1dp"
+            android:smoothScrollbar="true"
+            android:scrollingCache="false"
+            android:animationCache="false"/>
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

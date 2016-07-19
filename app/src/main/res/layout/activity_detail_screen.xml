@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_border_blue">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/background_blue">
+
+            <TextView
+                android:id="@+id/tvWorkOrderDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="WO#25534 For TOWN OF BRECKENRIDGE "
+                android:textColor="@color/text_color_white"
+                android:layout_toLeftOf="@+id/linearLayout"
+                android:layout_toStartOf="@+id/linearLayout"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="2.0"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:id="@+id/linearLayout">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textColor="@color/text_color_white"
+                    android:background="@color/background_button_red"
+                    android:layout_gravity="center_vertical"
+                />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update"
+                    android:background="@color/background_button_green"
+                    android:textColor="@color/text_color_white"
+                    android:layout_gravity="center_vertical"
+                />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

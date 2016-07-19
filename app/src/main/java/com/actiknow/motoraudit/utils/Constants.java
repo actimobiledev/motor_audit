@@ -17,4 +17,8 @@ public class Constants {
     public static boolean show_log = true;
 
 
+    public static String api_username = "APItest";
+    public static String api_password = "1lk23j0asd8f01324la1ngnb13";
+
+
 }
