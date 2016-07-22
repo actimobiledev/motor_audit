@@ -31,7 +31,12 @@
     <color name="background_button_red">#e43845</color>
     <color name="background_button_green">#2dbe82</color>
 
-
     <color name="background_blue">#5b9ad0</color>
     <color name="background_orange">#ff7043</color>
+
+    <color name="color_pass">#29a096</color>
+    <color name="color_advice">#efc723</color>
+    <color name="color_fail">#df373b</color>
+    <color name="color_na">#303234</color>
+
 </resources>

@@ -28,7 +28,6 @@ public class AppConfigTags {
     public static final String ISSUES = "issues";
     public static final String AUDITOR_ID = "auditor_id";
     public static final String SWITCH_FLAG = "switch_flag";
-    public static final String COMMENT = "comment";
     public static final String IMAGE1 = "image1";
     public static final String IMAGE2 = "image2";
     public static final String RATING = "rating";
@@ -55,6 +54,22 @@ public class AppConfigTags {
     public static final String WO_ID = "WO_NUM";
     public static final String WO_SITE_NAME = "SITE_NAME";
     public static final String WO_CONTRACT_NUM = "CONTRACT_NUM";
+
+    public static final String MANUFACTURERS = "manufactures";
+    public static final String MANUFACTURER_ID = "manufacturer_id";
+    public static final String MANUFACTURER_NAME = "manufacturer_name";
+
+    public static final String SERVICE_CHECK = "service_check";
+    public static final String HEADING = "heading";
+    public static final String SUB_HEADING = "sub_heading";
+    public static final String IMAGE = "image";
+    public static final String COMMENT = "comment";
+    public static final String SELECTION_FLAG = "selection_flag";
+    public static final String SELECTION_TEXT = "selection_text";
+    public static final String COMMENT_REQUIRED = "comment_required";
+    public static final String GROUP_ID = "group_id";
+    public static final String GROUP_NAME = "group_name";
+    public static final String SERVICE_CHECK_ID = "id";
 
 
 }

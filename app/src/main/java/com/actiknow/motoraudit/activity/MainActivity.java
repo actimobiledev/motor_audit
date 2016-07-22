@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.adapter.AllWorkOrdersAdapter;
+import com.actiknow.motoraudit.model.Manufacturer;
+import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.model.WorkOrder;
 import com.actiknow.motoraudit.utils.AppConfigTags;
 import com.actiknow.motoraudit.utils.AppConfigURL;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         initData ();
         initListener ();
         getJobListFromServer ();
+        getManufacturerListFromServer ();
+        setServiceCheckList ();
         setUpNavigationDrawer ();
     }
 
@@ -222,6 +226,146 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void getManufacturerListFromServer () {
+        if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            int json_array_len = 0;
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                Constants.manufacturerList.clear ();
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.MANUFACTURERS);
+                                    json_array_len = jsonArray.length ();
+                                    for (int i = 0; i < json_array_len; i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject (i);
+                                        Manufacturer manufacturer = new Manufacturer ();
+                                        manufacturer.setManufacturer_id (jsonObject.getInt (AppConfigTags.MANUFACTURER_ID));
+                                        manufacturer.setManufacturer_name (jsonObject.getString (AppConfigTags.MANUFACTURER_NAME));
+                                        Constants.manufacturerList.add (manufacturer);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace ();
+                                }
+                            } else {
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                        }
+                    }) {
+                @Override
+                public byte[] getBody () throws com.android.volley.AuthFailureError {
+
+                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
+                            "\"API_function\":\"getManufacturers\",\n" +
+                            "\"API_parameters\":{}}";
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                    return str.getBytes ();
+                }
+
+                public String getBodyContentType () {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            Utils.sendRequest (strRequest);
+        } else {
+ //           Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+        }
+    }
+
+    private void setServiceCheckList () {
+        String service_check_json = Utils.getServiceCheckJSONFromAsset (this);
+        Utils.showLog (Log.INFO, "Service Check JSON", service_check_json, false);
+        try {
+            JSONObject jsonObj = new JSONObject (service_check_json);
+            JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SERVICE_CHECK);
+            for (int i = 0; i < jsonArray.length (); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject (i);
+                ServiceCheck serviceCheck = new ServiceCheck ();
+                serviceCheck.setHeading (jsonObject.getString (AppConfigTags.HEADING));
+                serviceCheck.setSub_heading (jsonObject.getString (AppConfigTags.SUB_HEADING));
+                serviceCheck.setImage_str (jsonObject.getString (AppConfigTags.IMAGE));
+                serviceCheck.setComment (jsonObject.getString (AppConfigTags.COMMENT));
+                serviceCheck.setSelection_text (jsonObject.getString (AppConfigTags.SELECTION_TEXT));
+                serviceCheck.setGroup_name (jsonObject.getString (AppConfigTags.GROUP_NAME));
+                serviceCheck.setGroup_id (jsonObject.getInt (AppConfigTags.GROUP_ID));
+                serviceCheck.setService_check_id (jsonObject.getInt (AppConfigTags.SERVICE_CHECK_ID));
+                serviceCheck.setSelection_flag (jsonObject.getInt (AppConfigTags.SELECTION_FLAG));
+                serviceCheck.setComment_required (jsonObject.getBoolean (AppConfigTags.COMMENT_REQUIRED));
+
+                Constants.serviceCheckList.add (serviceCheck);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace ();
+        }
+
+        /*
+        if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            int json_array_len = 0;
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                Constants.manufacturerList.clear ();
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.MANUFACTURERS);
+                                    json_array_len = jsonArray.length ();
+                                    for (int i = 0; i < json_array_len; i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject (i);
+                                        Manufacturer manufacturer = new Manufacturer ();
+                                        manufacturer.setManufacturer_id (jsonObject.getInt (AppConfigTags.MANUFACTURER_ID));
+                                        manufacturer.setManufacturer_name (jsonObject.getString (AppConfigTags.MANUFACTURER_NAME));
+                                        Constants.manufacturerList.add (manufacturer);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace ();
+                                }
+                            } else {
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                        }
+                    }) {
+                @Override
+                public byte[] getBody () throws com.android.volley.AuthFailureError {
+
+                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
+                            "\"API_function\":\"getManufacturers\",\n" +
+                            "\"API_parameters\":{}}";
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                    return str.getBytes ();
+                }
+
+                public String getBodyContentType () {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            Utils.sendRequest (strRequest);
+        } else {
+            //           Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+        }
+*/
+    }
 
     @Override
     public void onStart () {
@@ -262,6 +406,4 @@ public class MainActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end (client, viewAction);
         client.disconnect ();
     }
-
-
 }

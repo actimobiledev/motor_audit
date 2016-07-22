@@ -10,62 +10,904 @@
         android:layout_margin="10dp"
         android:background="@drawable/layout_border_blue">
 
+        <!-- WO Detail Information Layout Header -->
         <RelativeLayout
+            android:id="@+id/rlTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/background_blue">
-
             <TextView
                 android:id="@+id/tvWorkOrderDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/linearLayout"
+                android:layout_toStartOf="@+id/linearLayout"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 android:text="WO#25534 For TOWN OF BRECKENRIDGE "
-                android:textColor="@color/text_color_white"
-                android:layout_toLeftOf="@+id/linearLayout"
-                android:layout_toStartOf="@+id/linearLayout"/>
-
+                android:textColor="@color/text_color_white"/>
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:weightSum="2.0"
-                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/tvWorkOrderDescription"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/tvWorkOrderDescription"
                 android:gravity="center_vertical"
-                android:id="@+id/linearLayout">
-
-
+                android:weightSum="2.0">
                 <TextView
+                    android:id="@+id/tvCancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancel"
-                    android:paddingRight="5dp"
-                    android:drawableLeft="@drawable/ic_refresh"
-                    android:textColor="@color/text_color_white"
-                    android:background="@color/background_button_red"
                     android:layout_gravity="center_vertical"
+                    android:background="@color/background_button_red"
+                    android:drawableLeft="@drawable/ic_refresh"
                     android:gravity="center_vertical"
-                />
-
+                    android:paddingRight="5dp"
+                    android:text="CANCEL"
+                    android:textColor="@color/text_color_white"
+                    android:textStyle="bold"/>
                 <TextView
+                    android:id="@+id/tvUpdate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Update"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:background="@color/background_button_green"
                     android:drawableLeft="@drawable/ic_check"
                     android:gravity="center"
-                    android:layout_margin="5dp"
                     android:paddingRight="5dp"
-                    android:background="@color/background_button_green"
+                    android:text="UPDATE"
                     android:textColor="@color/text_color_white"
-                    android:layout_gravity="center_vertical"
-                />
+                    android:textStyle="bold"/>
             </LinearLayout>
-
-
         </RelativeLayout>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/rlTop"
+            android:paddingBottom="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp">
+
+                <!-- General Information Top Layout Body -->
+                <LinearLayout
+                    android:id="@+id/llGeneralInfoTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Time in"
+                        android:textStyle="bold"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+                        <EditText
+                            android:id="@+id/etTimeIn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:background="@drawable/layout_edittext"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:inputType="datetime"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:id="@+id/tvSet"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@color/background_blue"
+                            android:gravity="center"
+                            android:padding="7dp"
+                            android:text="SET"
+                            android:textColor="@color/text_color_white"/>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Onsite Contact"
+                        android:textStyle="bold"/>
+                    <EditText
+                        android:id="@+id/etOnSiteContact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/layout_edittext"
+                        android:inputType="text"
+                        android:padding="5dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Email"
+                        android:textStyle="bold"/>
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/layout_edittext"
+                        android:inputType="textEmailAddress"
+                        android:padding="5dp"/>
+                </LinearLayout>
+
+                <!-- Before Image Layout Complete -->
+                <RelativeLayout
+                    android:id="@+id/rlBeforeImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/llGeneralInfoTop"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="gone">
+                    <!-- Before Image Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_camera"
+                            android:gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="BEFORE IMAGE"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <!-- Before Image Layout Body -->
+                    <ImageView
+                        android:id="@+id/ivBeforeImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/relativeLayout"
+                        android:padding="25dp"
+                        android:src="@drawable/image_placeholder"/>
+                </RelativeLayout>
+
+                <!-- Generator Information Layout Complete -->
+                <RelativeLayout
+                    android:id="@+id/rlGeneratorInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlBeforeImage"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="gone">
+                    <!-- Generator Information Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_information"
+                            android:gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="GENERATOR INFORMATION"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <!-- Generator Information Layout Body -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl1"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Generator Model"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etGeneratorModel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Generator Make"
+                            android:textStyle="bold"/>
+                        <Spinner
+                            android:id="@+id/spGeneratorMake"
+                            style="@style/spinner_style"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="0dp"
+                            android:padding="0dp"
+                            android:spinnerMode="dialog"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Generator Serial"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etGeneratorSerial"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Engine Model"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etEngineModel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="KwRating"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etKwRating"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Engine Serial"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etEngineSerial"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="ATS Make"
+                            android:textStyle="bold"/>
+                        <Spinner
+                            android:id="@+id/spAtsMake"
+                            style="@style/spinner_style"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="0dp"
+                            android:padding="0dp"
+                            android:spinnerMode="dialog"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="ATS Model"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:id="@+id/etAtsModel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <!-- System Checks Layouts Complete-->
+                <RelativeLayout
+                    android:id="@+id/rlSystemChecks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlGeneratorInfo"
+                    android:visibility="gone">
+                    <!-- Fuel System/Governor Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlFuelSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Fuel System/Governor Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="FUEL SYSTEM/GOVERNOR"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Fuel System/Governor Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvFuelSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl2"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Pre-Start Checks Cooling System Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlPreStartChecksCoolingSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlFuelSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Pre-Start Checks Cooling System Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="PRE-START CHECKS COOLING SYSTEM"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Pre-Start Checks Cooling System Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvPreStartChecksCoolingSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl3"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Lubrication System Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlLubricationSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlPreStartChecksCoolingSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Lubrication System Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="LUBRICATION SYSTEM"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Lubrication System Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvLubricationSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl4"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Air System Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlAirSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlLubricationSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Air System Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="AIR SYSTEM"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Air System Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvAirSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl5"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Exhaust System Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlExhaustSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlAirSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Exhaust System Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="EXHAUST SYSTEM"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Exhaust System Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvExhaustSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl6"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Generator Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlGenerator"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlExhaustSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Generator Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="GENERATOR"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Generator Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvGenerator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl7"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Control Panel/Cabinets Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlControlPanelCabinets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlGenerator"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Control Panel/Cabinets Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="CONTROl PANEL/CABINETS"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Control Panel/Cabinets Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvControlPanelCabinets"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl8"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- ATS Main Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlATSMain"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlControlPanelCabinets"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- ATS Main Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl9"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="AUTOMATIC TRANSFER SWITCH (ATS) MAIN"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- ATS Main Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvATSMain"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl9"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Starting System Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlStartingSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlATSMain"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Starting System Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl10"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="STARTING SYSTEM"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Starting System Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvStartingSystem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl10"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Generator Enclosure Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlGeneratorEnclosure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlStartingSystem"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Generator Enclosure Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl11"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="GENERATOR ENCLOSURE"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Generator Enclosure Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvGeneratorEnclosure"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl11"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Startup And Running Check Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlStartupAndRunningCheck"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlGeneratorEnclosure"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_blue"
+                        android:visibility="visible">
+                        <!-- Startup And Running Check Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl12"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_blue">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="STARTUP AND RUNNING CHECK"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Startup And Running Check Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvStartupAndRunningCheck"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl12"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                    <!-- Scheduled Maintenance Layout Complete -->
+                    <RelativeLayout
+                        android:id="@+id/rlScheduledMaintenance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rlStartupAndRunningCheck"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/layout_border_orange"
+                        android:visibility="visible">
+                        <!-- Scheduled Maintenance Layout Header -->
+                        <RelativeLayout
+                            android:id="@+id/rl13"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/background_orange">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:padding="10dp"
+                                android:text="SCHEDULED MAINTENANCE"
+                                android:textColor="@color/text_color_white"/>
+                        </RelativeLayout>
+                        <!-- Scheduled Maintenance Layout body -->
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
+                            android:id="@+id/lvScheduledMaintenance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rl13"
+                            android:cacheColorHint="#00000000"
+                            android:fadingEdge="none"
+                            android:focusable="false"
+                            android:scrollbars="none">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <!-- Generator Condition Layout Complete-->
+                <RelativeLayout
+                    android:id="@+id/rlGeneratorCondition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlSystemChecks"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+
+                    <!-- Generator Condition Header Layout-->
+                    <RelativeLayout
+                        android:id="@+id/rl14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="GENERATOR CONDITION"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+
+                    <!-- Generator Condition Body Layout-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl14"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Good:"
+                            android:textColor="@color/color_pass"/>
+
+                        <TableLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tlGood"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fair:"
+                            android:textColor="@color/color_advice"/>
+
+                        <TableLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tlFair"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginLeft="5dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Poor:"
+                            android:textColor="@color/color_fail"/>
+
+                        <TableLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tlPoor"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginLeft="5dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rate Generator Overall Condition"
+                            android:textColor="@color/text_color_black"
+                            android:layout_marginTop="5dp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="(*Based on parts available,overall condition)"
+                            android:layout_marginTop="5dp"/>
+
+
+                        <RadioGroup
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="10dp"
+                            android:id="@+id/rgOverAllCondition">
+
+                            <RadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Good"
+                                android:textColor="@color/color_pass"
+                                android:id="@+id/rbGood"/>
+
+                            <RadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Fair"
+                                android:textColor="@color/color_advice"
+                                android:id="@+id/rbFair"
+                                android:layout_marginLeft="5dp"/>
+
+                            <RadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Poor"
+                                android:textColor="@color/color_fail"
+                                android:id="@+id/rbPoor"
+                                android:layout_marginLeft="5dp"/>
+                        </RadioGroup>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Please describe your rating of the generator."
+                            android:layout_marginTop="15dp"
+                            android:textColor="@color/text_color_black"
+                            android:textStyle="bold"/>
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:padding="5dp"
+                            android:id="@+id/etGeneratorConditionComment"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlGeneratorCondition"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:id="@+id/rl15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="COMMENTS"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl15"
+                        android:background="@drawable/layout_edittext"
+                        android:layout_margin="10dp"
+                        android:id="@+id/etComment"/>
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+        </ScrollView>
     </RelativeLayout>
-
-
 </RelativeLayout>

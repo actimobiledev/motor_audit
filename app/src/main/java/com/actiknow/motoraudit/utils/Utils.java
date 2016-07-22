@@ -16,7 +16,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -206,4 +210,66 @@ public class Utils {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
+
+
+    /**
+     * Hide keyboard on touch of UI
+     */
+    public static void hideKeyboard (final Activity activity, View view) {
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount (); i++) {
+                View innerView = ((ViewGroup) view).getChildAt (i);
+                hideKeyboard (activity, innerView);
+            }
+        }
+        if (! (view instanceof EditText)) {
+            view.setOnTouchListener (new View.OnTouchListener () {
+                @Override
+                public boolean onTouch (View v, MotionEvent event) {
+                    hideSoftKeyboard (activity, v);
+                    return false;
+                }
+
+            });
+        }
+
+    }
+
+    public static void hideSoftKeyboard (Activity activity, View view) {
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService (Context.INPUT_METHOD_SERVICE);
+            if (inputManager != null) {
+                if (android.os.Build.VERSION.SDK_INT < 11) {
+                    inputManager.hideSoftInputFromWindow (view.getWindowToken (),
+                            0);
+                } else {
+                    if (activity.getCurrentFocus () != null) {
+                        inputManager.hideSoftInputFromWindow (activity.getCurrentFocus ().getWindowToken (),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    view.clearFocus ();
+                }
+                view.clearFocus ();
+            }
+        }
+    }
+
+    public static String getServiceCheckJSONFromAsset (Activity activity) {
+        String json = null;
+        try {
+            InputStream is = activity.getAssets ().open ("service_check.json");
+            int size = is.available ();
+            byte[] buffer = new byte[size];
+            is.read (buffer);
+            is.close ();
+            json = new String (buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace ();
+            return null;
+        }
+        return json;
+    }
+
+
+
 }
