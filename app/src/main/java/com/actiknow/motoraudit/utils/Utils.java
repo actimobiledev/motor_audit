@@ -270,6 +270,21 @@ public class Utils {
         return json;
     }
 
+    public static String getGeneratorConditionJSONFromAsset (Activity activity) {
+        String json = null;
+        try {
+            InputStream is = activity.getAssets ().open ("generator_condition.json");
+            int size = is.available ();
+            byte[] buffer = new byte[size];
+            is.read (buffer);
+            is.close ();
+            json = new String (buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace ();
+            return null;
+        }
+        return json;
+    }
 
 
 }

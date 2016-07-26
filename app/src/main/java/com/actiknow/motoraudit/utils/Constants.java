@@ -1,8 +1,9 @@
 package com.actiknow.motoraudit.utils;
 
 
-import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.model.Manufacturer;
+import com.actiknow.motoraudit.model.ServiceCheck;
+import com.actiknow.motoraudit.model.WorkOrderDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,6 @@ public class Constants {
     public static List<ServiceCheck> serviceCheckList = new ArrayList<ServiceCheck> ();
 
 
-
+    public static WorkOrderDetail workOrderDetail = new WorkOrderDetail ();
 
 }

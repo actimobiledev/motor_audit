@@ -59,26 +59,29 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+            android:layout_marginLeft="10dp">
 
                 <LinearLayout
+                    android:id="@+id/llYesNo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:id="@+id/llYesNo"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:weightSum="3.0"
+                android:layout_marginLeft="10dp">
 
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:text="Yes"
                             android:textColor="@color/color_pass"/>
 
@@ -86,7 +89,7 @@
                             android:id="@+id/rbYes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
 
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -95,12 +98,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:text="No"
                             android:textColor="@color/color_fail"/>
 
@@ -108,7 +112,7 @@
                             android:id="@+id/rbNo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textColor="@color/mb_green"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -118,11 +122,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:text="N\\A"
                             android:textColor="@color/color_na"/>
 
@@ -130,7 +136,7 @@
                             android:id="@+id/rbNA2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textColor="@color/mb_green"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -139,21 +145,25 @@
 
 
                 <LinearLayout
+                    android:id="@+id/llPassAdviceFail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="4.0"
+                android:layout_marginLeft="10dp">
 
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:text="Pass"
                             android:textColor="@color/color_pass"/>
 
@@ -161,7 +171,7 @@
                             android:id="@+id/rbPass"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textColor="@color/color_pass"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -170,20 +180,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="No"
+                            android:layout_gravity="center"
+                            android:text="Advise"
                             android:textColor="@color/color_advice"/>
 
                         <RadioButton
                             android:id="@+id/rbAdvise"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textSize="12sp"/>
                     </LinearLayout>
 
@@ -192,11 +203,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:text="Fail"
                             android:textColor="@color/color_fail"/>
 
@@ -204,7 +217,7 @@
                             android:id="@+id/rbFail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textSize="12sp"/>
                     </LinearLayout>
 
@@ -212,19 +225,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1.0"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="N\\A"
+                            android:layout_gravity="center"
                             android:textColor="@color/color_na"/>
 
                         <RadioButton
                             android:id="@+id/rbNA"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:textSize="12sp"/>
                     </LinearLayout>
 

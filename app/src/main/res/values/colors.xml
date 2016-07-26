@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#858585</color>
 
     <color name="accent">#cccccc</color>
     <color name="primary_text">#fff</color>
@@ -30,13 +30,17 @@
 
     <color name="background_button_red">#e43845</color>
     <color name="background_button_green">#2dbe82</color>
+    <color name="background_button_red_pressed">#b91f2b</color>
+    <color name="background_button_green_pressed">#229666</color>
 
     <color name="background_blue">#5b9ad0</color>
+    <color name="background_blue_pressed">#155b97</color>
     <color name="background_orange">#ff7043</color>
 
     <color name="color_pass">#29a096</color>
     <color name="color_advice">#efc723</color>
     <color name="color_fail">#df373b</color>
     <color name="color_na">#303234</color>
+
 
 </resources>

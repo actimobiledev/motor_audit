@@ -71,5 +71,9 @@ public class AppConfigTags {
     public static final String GROUP_NAME = "group_name";
     public static final String SERVICE_CHECK_ID = "id";
 
+    public static final String GOOD = "good";
+    public static final String FAIR = "fair";
+    public static final String POOR = "poor";
+    public static final String TEXT = "text";
 
 }

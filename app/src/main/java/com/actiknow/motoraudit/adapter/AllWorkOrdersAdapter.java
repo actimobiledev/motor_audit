@@ -74,6 +74,7 @@ public class AllWorkOrdersAdapter extends BaseAdapter {
 				Intent intent = new Intent (activity, DetailActivity.class);
                 intent.putExtra ("wo_id", workOrder.getWo_id ());
                 intent.putExtra ("wo_contract_num", workOrder.getWo_contract_num ());
+				intent.putExtra ("wo_site_name", workOrder.getWo_site_name ());
                 activity.startActivity (intent);
 //                Utils.showToast (activity, workOrder.getWo_site_name ());
 			}

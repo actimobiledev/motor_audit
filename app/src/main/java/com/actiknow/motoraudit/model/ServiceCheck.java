@@ -21,7 +21,10 @@ public class ServiceCheck {
     // 11=> Start-up and Running Checks
     // 12=> Scheduled Maintenance
 
-    private int service_check_id, selection_flag; // selection flag : 0=> N/A, 1=>FAIL, 2=>ADVISE, 3=>PASS
+    private int service_check_id, selection_flag;
+    // selection flag for PAF-NA : 0=> N/A, 1=>FAIL, 2=>ADVISE, 3=>PASS
+    // selection flag for YN-NA : 0=> N/A, 1=>NO, 2=>YES
+
     private String heading, sub_heading, image_str, comment, selection_text, group_name;
 
     public ServiceCheck () {

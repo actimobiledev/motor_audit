@@ -1,0 +1,35 @@
+{
+  "good": [
+    {
+      "text": "Condition of the generator meet the performance expectations responding to its age."
+    },
+    {
+      "text": "Critical components (engine, radiator, alternator) are not at risk obsolescence in the next 5 years."
+    },
+    {
+      "text": "Technical expect minimal or minor, but no major repair in the next 5 years (as long as the equipment is maintain accordingly to manufacturer recommendations)."
+    }
+  ],
+  "fair": [
+    {
+      "text": "Condition of the generator meets the performance expectations corresponding to its age."
+    },
+    {
+      "text": "Critical components (engine, alternator, or radiator) may be at risk of obsolescence in the next 5 years."
+    },
+    {
+      "text": "Technician expects an increase in repairs within the next 5 years (despite the equipment is maintained according to manufacturer recommendations)."
+    }
+  ],
+  "poor": [
+    {
+      "text": "Condition of the generator does not meets the performance expectations corresponding to its age."
+    },
+    {
+      "text": "Critical components (engine, alternator, or radiator) are difficult to source, have long lead-time, are expensive to buy, or have became obsolete."
+    },
+    {
+      "text": "Repairs needed exceed 25% of the cost to repair with a like-for-like generator (despite the equipment is being maintained according to manufacturer recommendations)."
+    }
+  ]
+}

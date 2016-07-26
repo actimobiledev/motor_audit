@@ -67,8 +67,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/rlTop"
-            android:paddingBottom="10dp">
+            android:layout_below="@+id/rlTop">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -81,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,7 +151,7 @@
                     android:layout_below="@+id/llGeneralInfoTop"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/layout_border_blue"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <!-- Before Image Layout Header -->
                     <RelativeLayout
                         android:id="@+id/relativeLayout"
@@ -186,7 +185,7 @@
                     android:layout_below="@+id/rlBeforeImage"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/layout_border_blue"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <!-- Generator Information Layout Header -->
                     <RelativeLayout
                         android:id="@+id/rl1"
@@ -317,7 +316,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlGeneratorInfo"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <!-- Fuel System/Governor Layout Complete -->
                     <RelativeLayout
                         android:id="@+id/rlFuelSystem"
@@ -745,9 +744,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlSystemChecks"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/layout_border_blue"
                     android:visibility="visible">
-
                     <!-- Generator Condition Header Layout-->
                     <RelativeLayout
                         android:id="@+id/rl14"
@@ -763,7 +762,6 @@
                             android:text="GENERATOR CONDITION"
                             android:textColor="@color/text_color_white"/>
                     </RelativeLayout>
-
                     <!-- Generator Condition Body Layout-->
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -775,14 +773,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
                             android:text="Good:"
                             android:textColor="@color/color_pass"/>
 
                         <TableLayout
+                            android:id="@+id/tlGood"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tlGood"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"/>
 
@@ -793,11 +790,11 @@
                             android:textColor="@color/color_advice"/>
 
                         <TableLayout
+                            android:id="@+id/tlFair"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tlFair"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginLeft="5dp"/>
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -806,74 +803,76 @@
                             android:textColor="@color/color_fail"/>
 
                         <TableLayout
+                            android:id="@+id/tlPoor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tlPoor"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginLeft="5dp"/>
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
                             android:text="Rate Generator Overall Condition"
                             android:textColor="@color/text_color_black"
-                            android:layout_marginTop="5dp"
                             android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="(*Based on parts available,overall condition)"
-                            android:layout_marginTop="5dp"/>
+                            android:layout_marginTop="5dp"
+                            android:text="(*Based on parts available,overall condition)"/>
 
 
                         <RadioGroup
+                            android:id="@+id/rgOverAllCondition"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal"
                             android:layout_marginTop="10dp"
-                            android:id="@+id/rgOverAllCondition">
+                            android:orientation="horizontal">
 
                             <RadioButton
+                                android:id="@+id/rbGood"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:checked="true"
                                 android:text="Good"
-                                android:textColor="@color/color_pass"
-                                android:id="@+id/rbGood"/>
+                                android:textColor="@color/color_pass"/>
 
                             <RadioButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Fair"
-                                android:textColor="@color/color_advice"
                                 android:id="@+id/rbFair"
-                                android:layout_marginLeft="5dp"/>
-
-                            <RadioButton
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Poor"
-                                android:textColor="@color/color_fail"
+                                android:layout_marginLeft="5dp"
+                                android:text="Fair"
+                                android:textColor="@color/color_advice"/>
+
+                            <RadioButton
                                 android:id="@+id/rbPoor"
-                                android:layout_marginLeft="5dp"/>
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="Poor"
+                                android:textColor="@color/color_fail"/>
                         </RadioGroup>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Please describe your rating of the generator."
                             android:layout_marginTop="15dp"
+                            android:text="Please describe your rating of the generator."
                             android:textColor="@color/text_color_black"
                             android:textStyle="bold"/>
                         <EditText
+                            android:id="@+id/etGeneratorConditionComment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
-                            android:padding="5dp"
-                            android:id="@+id/etGeneratorConditionComment"/>
+                            android:padding="5dp"/>
 
                     </LinearLayout>
                 </RelativeLayout>
 
+                <!-- Comments Layout Complete-->
                 <RelativeLayout
                     android:id="@+id/rlComment"
                     android:layout_width="match_parent"
@@ -882,7 +881,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/layout_border_blue"
                     android:visibility="visible">
-
+                    <!-- Comments Layout Header-->
                     <RelativeLayout
                         android:id="@+id/rl15"
                         android:layout_width="match_parent"
@@ -897,16 +896,164 @@
                             android:text="COMMENTS"
                             android:textColor="@color/text_color_white"/>
                     </RelativeLayout>
+                    <!-- Comments Layout Body-->
                     <EditText
+                        android:id="@+id/etComment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl15"
-                        android:background="@drawable/layout_edittext"
                         android:layout_margin="10dp"
-                        android:id="@+id/etComment"/>
+                        android:background="@drawable/layout_edittext"/>
                 </RelativeLayout>
 
+                <!-- After Image Layout Header -->
+                <RelativeLayout
+                    android:id="@+id/rlAfterImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlComment"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+                    <!-- After Image Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl16"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_camera"
+                            android:gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="AFTER IMAGE"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <!-- After Image Layout Body -->
+                    <ImageView
+                        android:id="@+id/ivAfterImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/rl16"
+                        android:padding="25dp"
+                        android:src="@drawable/image_placeholder"/>
+                </RelativeLayout>
 
+                <!-- Tech Signature Layout Complete -->
+                <RelativeLayout
+                    android:id="@+id/rlTechSignature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlAfterImage"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+                    <!-- Tech Signature Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl17"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_camera"
+                            android:gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="TECH SIGNATURE"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <!-- Tech Signature Layout Body -->
+                    <ImageView
+                        android:id="@+id/ivTechSignature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/rl17"
+                        android:padding="25dp"
+                        android:src="@drawable/image_placeholder"/>
+                </RelativeLayout>
+
+                <!-- Customer Signature Layout Complete -->
+                <RelativeLayout
+                    android:id="@+id/rlCustomerSignature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlTechSignature"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+                    <!-- Customer Signature Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl18"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_camera"
+                            android:gravity="center_vertical"
+                            android:padding="5dp"
+                            android:text="CUSTOMER SIGNATURE"
+                            android:textColor="@color/text_color_white"/>
+                    </RelativeLayout>
+                    <!-- Customer Signature Layout Body -->
+                    <ImageView
+                        android:id="@+id/ivCustomerSignature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/rl18"
+                        android:padding="25dp"
+                        android:src="@drawable/image_placeholder"/>
+                </RelativeLayout>
+
+                <!-- WO Detail Footer Complete -->
+                <LinearLayout
+                    android:id="@+id/llTimeOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlCustomerSignature"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:paddingBottom="10dp"
+                    android:visibility="visible">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Time Out"
+                        android:textStyle="bold"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+                        <EditText
+                            android:id="@+id/etTimeOut"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:background="@drawable/layout_edittext"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:inputType="datetime"
+                            android:padding="5dp"/>
+                        <TextView
+                            android:id="@+id/tvTimeOutSet"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@color/background_blue"
+                            android:gravity="center"
+                            android:padding="7dp"
+                            android:text="SET"
+                            android:textColor="@color/text_color_white"/>
+                    </LinearLayout>
+                </LinearLayout>
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>

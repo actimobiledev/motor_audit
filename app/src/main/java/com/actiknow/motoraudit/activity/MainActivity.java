@@ -307,6 +307,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace ();
+            Utils.showLog (Log.ERROR, "JSON Exception", e.getMessage (), true);
         }
 
         /*
