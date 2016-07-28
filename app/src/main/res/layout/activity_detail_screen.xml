@@ -173,7 +173,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
                         android:layout_below="@+id/relativeLayout"
-                        android:padding="25dp"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:layout_centerInParent="true"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>
 
@@ -316,7 +318,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rlGeneratorInfo"
-                    android:visibility="visible">
+                    android:visibility="gone">
                     <!-- Fuel System/Governor Layout Complete -->
                     <RelativeLayout
                         android:id="@+id/rlFuelSystem"
@@ -936,7 +938,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
                         android:layout_below="@+id/rl16"
-                        android:padding="25dp"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:layout_centerInParent="true"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>
 
@@ -970,7 +974,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
                         android:layout_below="@+id/rl17"
-                        android:padding="25dp"
+                        android:padding="10dp"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>
 
@@ -1004,7 +1008,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
                         android:layout_below="@+id/rl18"
-                        android:padding="25dp"
+                        android:padding="10dp"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>
 

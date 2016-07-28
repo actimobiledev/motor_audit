@@ -2,12 +2,17 @@ package com.actiknow.motoraudit.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.adapter.ManufacturerAdapter;
@@ -50,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,6 +64,23 @@ import java.util.Calendar;
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
+
+    public static final int BEFORE_IMAGE_PICKER = 1;
+    public static final int AFTER_IMAGE_PICKER = 2;
+    public static final int LIST_ITEM_PICKER = 3;
+
+    public static final int PICK_FROM_CAMERA_BEFORE_IMAGE_1 = 111;
+    public static final int PICK_FROM_GALLERY_BEFORE_IMAGE_1 = 121;
+    public static final int PICK_FROM_CAMERA_AFTER_IMAGE_1 = 211;
+    public static final int PICK_FROM_GALLERY_AFTER_IMAGE_1 = 221;
+    public static final int PICK_FROM_CAMERA_LIST_ITEM_1 = 311;
+    public static final int PICK_FROM_GALLERY_LIST_ITEM_1 = 321;
+    public static final int PICK_FROM_CAMERA_BEFORE_IMAGE_2 = 112;
+    public static final int PICK_FROM_GALLERY_BEFORE_IMAGE_2 = 122;
+    public static final int PICK_FROM_CAMERA_AFTER_IMAGE_2 = 212;
+    public static final int PICK_FROM_GALLERY_AFTER_IMAGE_2 = 222;
+    public static final int PICK_FROM_CAMERA_LIST_ITEM_2 = 312;
+    public static final int PICK_FROM_GALLERY_LIST_ITEM_2 = 322;
 
     int wo_id, wo_contract_num;
     String wo_site_name;
@@ -529,6 +553,21 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick (View view) {showSignatureDialog (2);
             }
         });
+
+        ivBeforeImage.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view) {
+                selectImage (BEFORE_IMAGE_PICKER);
+            }
+        });
+
+        ivAfterImage.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view) {
+                selectImage (AFTER_IMAGE_PICKER);
+            }
+        });
+
     }
 
     private void initData () {
@@ -762,19 +801,6 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    public void onActivityResult (int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        super.onActivityResult (requestCode, resultCode, data);
-        try {
-
-            Bitmap bp = (Bitmap) data.getExtras ().get ("data");
-            String image = Utils.bitmapToBase64 (bp);
-
-
-        } catch (Exception e) {
-        }
-    }
-
     private class LoadServiceChecks extends AsyncTask<String, Void, String> {
 
         Activity activity;
@@ -906,5 +932,182 @@ public class DetailActivity extends AppCompatActivity {
             // might want to change "executed" for the returned string passed
             // into onPostExecute() but that is upto you
         }
+    }
+
+    private void selectImage (final int flag) {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder (this);
+        builder.setItems (options, new DialogInterface.OnClickListener () {
+            @Override
+            public void onClick (DialogInterface dialog, int item) {
+                Intent intent = new Intent (MediaStore.ACTION_IMAGE_CAPTURE);
+                File f = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
+                if (options[item].equals ("Take Photo")) {
+                    switch (flag){
+                        case BEFORE_IMAGE_PICKER :
+                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
+                            startActivityForResult (intent, PICK_FROM_CAMERA_BEFORE_IMAGE_1);
+                            break;
+                        case AFTER_IMAGE_PICKER :
+                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
+                            startActivityForResult (intent, PICK_FROM_CAMERA_AFTER_IMAGE_1);
+                            break;
+                        case LIST_ITEM_PICKER :
+                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
+                            startActivityForResult (intent, PICK_FROM_CAMERA_LIST_ITEM_1);
+                            break;
+                    }
+                } else if (options[item].equals ("Choose from Gallery")) {
+                    switch (flag) {
+                        case BEFORE_IMAGE_PICKER:
+                            Intent i = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult (i, PICK_FROM_GALLERY_BEFORE_IMAGE_1);
+                            break;
+                        case AFTER_IMAGE_PICKER:
+                            Intent i2 = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult (i2, PICK_FROM_GALLERY_AFTER_IMAGE_1);
+                            break;
+                        case LIST_ITEM_PICKER:
+                            Intent i3 = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult (i3, PICK_FROM_GALLERY_LIST_ITEM_1);
+                            break;
+                    }
+
+                    // Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    ///startActivityForResult(intent, 1);
+
+//                    Intent intent = new Intent ();
+//                    intent.setType ("image/*");
+//                    intent.setAction (Intent.ACTION_GET_CONTENT);
+//                    intent.putExtra ("aspectX", 4);
+//                    intent.putExtra ("aspectY", 3);
+                    //indicate output X and Y
+//                    intent.putExtra ("outputX", 256);
+//                    intent.putExtra ("outputY", 256);
+
+//                    try {
+
+//                        intent.putExtra ("return-data", true);
+//                        startActivityForResult (intent, PICK_FROM_GALLERY);
+//
+//                    } catch (ActivityNotFoundException e) {
+//                        // Do nothing for now
+//                    }
+
+
+                } else if (options[item].equals ("Cancel")) {
+                    dialog.dismiss ();
+                }
+            }
+        });
+        builder.show ();
+    }
+
+    @Override
+    public void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult (requestCode, resultCode, data);
+        try{
+            if (resultCode == RESULT_OK){
+                switch (requestCode) {
+                    case PICK_FROM_CAMERA_BEFORE_IMAGE_1:
+                        File file = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
+                        try {
+                            cropCapturedImage (Uri.fromFile (file), PICK_FROM_CAMERA_BEFORE_IMAGE_1);
+                        } catch (ActivityNotFoundException aNFE) {
+                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+                        }
+                        break;
+                    case PICK_FROM_CAMERA_BEFORE_IMAGE_2:
+                        Bundle extras = data.getExtras ();
+                        Bitmap thePic = extras.getParcelable ("data");
+                        Constants.workOrderDetail.setBefore_image_str (Utils.bitmapToBase64 (thePic));
+                        ivBeforeImage.setImageBitmap (thePic);
+                        break;
+                    case PICK_FROM_CAMERA_AFTER_IMAGE_1:
+                        File file2 = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
+                        try {
+                            cropCapturedImage (Uri.fromFile (file2), PICK_FROM_CAMERA_AFTER_IMAGE_1);
+                        } catch (ActivityNotFoundException aNFE) {
+                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+                        }
+                        break;
+                    case PICK_FROM_CAMERA_AFTER_IMAGE_2:
+                        Bundle extras2 = data.getExtras ();
+                        Bitmap thePic2 = extras2.getParcelable ("data");
+                        Constants.workOrderDetail.setAfter_image_str (Utils.bitmapToBase64 (thePic2));
+                        ivAfterImage.setImageBitmap (thePic2);
+                        break;
+
+
+                    case PICK_FROM_GALLERY_BEFORE_IMAGE_1:
+                        Uri selectedImage = data.getData ();
+                        try {
+                            cropCapturedImage (selectedImage, PICK_FROM_GALLERY_BEFORE_IMAGE_1);
+                        } catch (ActivityNotFoundException aNFE) {
+                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+                        }
+                        break;
+                    case PICK_FROM_GALLERY_BEFORE_IMAGE_2:
+                        Bundle extras3 = data.getExtras ();
+                        Bitmap thePic3 = extras3.getParcelable ("data");
+                        Constants.workOrderDetail.setBefore_image_str (Utils.bitmapToBase64 (thePic3));
+                        ivBeforeImage.setImageBitmap (thePic3);
+                        break;
+                    case PICK_FROM_GALLERY_AFTER_IMAGE_1:
+                        Uri selectedImage2 = data.getData ();
+                        try {
+                            cropCapturedImage (selectedImage2, PICK_FROM_GALLERY_AFTER_IMAGE_1);
+                        } catch (ActivityNotFoundException aNFE) {
+                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+                        }
+                        break;
+                    case PICK_FROM_GALLERY_AFTER_IMAGE_2:
+                        Bundle extras4 = data.getExtras ();
+                        Bitmap thePic4 = extras4.getParcelable ("data");
+                        Constants.workOrderDetail.setAfter_image_str (Utils.bitmapToBase64 (thePic4));
+                        ivAfterImage.setImageBitmap (thePic4);
+                        break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace ();
+        }
+    }
+
+    public void cropCapturedImage (Uri picUri, int flag) {
+      try{
+          Intent cropIntent = new Intent ("com.android.camera.action.CROP");
+          cropIntent.setDataAndType (picUri, "image/*");
+          cropIntent.putExtra ("crop", "true");
+          cropIntent.putExtra ("aspectX", 4);
+          cropIntent.putExtra ("aspectY", 3);
+          cropIntent.putExtra ("outputX", 512);
+          cropIntent.putExtra ("outputY", 512);
+          cropIntent.putExtra ("return-data", true);
+          switch (flag) {
+              case PICK_FROM_CAMERA_BEFORE_IMAGE_1:
+                  startActivityForResult (cropIntent, PICK_FROM_CAMERA_BEFORE_IMAGE_2);
+                  break;
+              case PICK_FROM_CAMERA_AFTER_IMAGE_1:
+                  startActivityForResult (cropIntent, PICK_FROM_CAMERA_AFTER_IMAGE_2);
+                  break;
+              case PICK_FROM_CAMERA_LIST_ITEM_1:
+                  startActivityForResult (cropIntent, PICK_FROM_CAMERA_LIST_ITEM_2);
+                  break;
+
+              case PICK_FROM_GALLERY_BEFORE_IMAGE_1:
+                  startActivityForResult (cropIntent, PICK_FROM_GALLERY_BEFORE_IMAGE_2);
+                  break;
+              case PICK_FROM_GALLERY_AFTER_IMAGE_1:
+                  startActivityForResult (cropIntent, PICK_FROM_GALLERY_AFTER_IMAGE_2);
+                  break;
+              case PICK_FROM_GALLERY_LIST_ITEM_1:
+                  startActivityForResult (cropIntent, PICK_FROM_GALLERY_LIST_ITEM_2);
+                  break;
+          }
+      } catch (Exception e){
+          Toast.makeText (DetailActivity.this, "Your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+      }
     }
 }
