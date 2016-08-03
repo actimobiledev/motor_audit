@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +22,16 @@ import android.widget.TextView;
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.utils.Constants;
+import com.actiknow.motoraudit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceCheckAdapter extends BaseAdapter {
+    int group_id, start_position;
     private Activity activity;
     private LayoutInflater inflater;
-
     private List<ServiceCheck> serviceCheckList;
-    int group_id, start_position;
-
     private ArrayList<Boolean> isCommentSatisfied;
 
     private Typeface typeface;
@@ -56,7 +56,19 @@ public class ServiceCheckAdapter extends BaseAdapter {
 //        }
 //        return count;
         return serviceCheckList.size ();
+//        return 1;
     }
+
+    @Override
+    public int getItemViewType (int position) {
+        return this.group_id;
+    }
+
+    @Override
+    public int getViewTypeCount () {
+        return 13;
+    }
+
 
     @Override
     public Object getItem (int i) {
@@ -74,23 +86,215 @@ public class ServiceCheckAdapter extends BaseAdapter {
         if (inflater == null)
             inflater = (LayoutInflater) activity.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            convertView = inflater.inflate (R.layout.listview_item_service_check, null);
             holder = new ViewHolder ();
 
-            holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
-            holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
-            holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
-            holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
-            holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
-            holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
-            holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
-            holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
-            holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
-            holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+            switch (this.group_id) {
+                case 1:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
 
-            holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
-            holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
-            holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 2:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 3:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 4:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 5:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 6:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 7:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 8:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 9:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 10:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 11:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+                case 12:
+                    convertView = inflater.inflate (R.layout.listview_item_service_check, null);
+                    holder.tvHeading = (TextView) convertView.findViewById (R.id.tvHeading);
+                    holder.ivImage = (ImageView) convertView.findViewById (R.id.ivImage);
+                    holder.ivImageSelected = (ImageView) convertView.findViewById (R.id.ivImageSelected);
+                    holder.rbPass = (RadioButton) convertView.findViewById (R.id.rbPass);
+                    holder.rbAdvise = (RadioButton) convertView.findViewById (R.id.rbAdvise);
+                    holder.rbFail = (RadioButton) convertView.findViewById (R.id.rbFail);
+                    holder.rbNA = (RadioButton) convertView.findViewById (R.id.rbNA);
+                    holder.rbYes = (RadioButton) convertView.findViewById (R.id.rbYes);
+                    holder.rbNo = (RadioButton) convertView.findViewById (R.id.rbNo);
+                    holder.rbNA2 = (RadioButton) convertView.findViewById (R.id.rbNA2);
+
+                    holder.llPassAdviceFail = (LinearLayout) convertView.findViewById (R.id.llPassAdviceFail);
+                    holder.llYesNo = (LinearLayout) convertView.findViewById (R.id.llYesNo);
+                    holder.etComment = (EditText) convertView.findViewById (R.id.etComments);
+                    break;
+            }
+
 
             convertView.setTag (holder);
         } else
@@ -99,9 +303,12 @@ public class ServiceCheckAdapter extends BaseAdapter {
 
         final ServiceCheck serviceCheck = serviceCheckList.get (position);
 
-        final ServiceCheck serviceCheckTemp = Constants.serviceCheckList.get (position + start_position);
+//        final ServiceCheck serviceCheckTemp = Constants.serviceCheckList.get (position + start_position);
 
         holder.tvHeading.setText (serviceCheck.getHeading ());
+
+        Utils.showLog (Log.DEBUG, "Service Check ID", "" + serviceCheck.getService_check_id (), true);
+        Utils.showLog (Log.DEBUG, "Service Check Heading", "" + serviceCheck.getHeading (), true);
 
         Spanned text;
         if (serviceCheck.getSub_heading ().length ()>0)
@@ -262,10 +469,23 @@ public class ServiceCheckAdapter extends BaseAdapter {
         holder.etComment.addTextChangedListener (new TextWatcher () {
             @Override
             public void onTextChanged (CharSequence s, int start, int before, int count) {
-                if (holder.etComment.getText ().toString ().length ()!=0)
-                    serviceCheckTemp.setComment (String.valueOf (s));
-                else
-                    serviceCheckTemp.setComment ("");
+                if (s.length () != 0) {
+//                    serviceCheckTemp.setComment (String.valueOf (s));
+                    for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
+                        ServiceCheck serviceCheckTemp = Constants.serviceCheckList.get (i);
+                        if (serviceCheckTemp.getService_check_id () == serviceCheck.getService_check_id ()) {
+                            serviceCheckTemp.setComment (String.valueOf (s));
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
+                        ServiceCheck serviceCheckTemp = Constants.serviceCheckList.get (i);
+                        if (serviceCheckTemp.getService_check_id () == serviceCheck.getService_check_id ()) {
+                            serviceCheckTemp.setComment ("");
+                        }
+                    }
+                }
+//                    serviceCheckTemp.setComment ("");
             }
 
             @Override
@@ -312,17 +532,38 @@ public class ServiceCheckAdapter extends BaseAdapter {
         if (serviceCheck.isComment_required () && holder.etComment.getText ().toString ().length ()==0)
             holder.etComment.setError ("Comment is required");
 
+
+        holder.ivImage.setOnClickListener (new View.OnClickListener () {
+            private void die () {
+            }
+
+            @Override
+            public void onClick (View view) {
+            }
+        });
+
         convertView.setOnClickListener (new View.OnClickListener () {
             private void die () {
             }
 
             @Override
             public void onClick (View arg0) {
+
             }
         });
         return convertView;
     }
 
+    public boolean isCommentSatisfied () {
+        boolean isAnyEmpty = true;
+        for (int i = 0; i < isCommentSatisfied.size (); i++) {
+            if (! isCommentSatisfied.get (i)) {
+                isAnyEmpty = false;
+                break;
+            }
+        }
+        return isAnyEmpty;
+    }
 
     static class ViewHolder {
         TextView tvHeading;
@@ -339,16 +580,5 @@ public class ServiceCheckAdapter extends BaseAdapter {
 
         LinearLayout llYesNo;
         LinearLayout llPassAdviceFail;
-    }
-
-    public boolean isCommentSatisfied () {
-        boolean isAnyEmpty = true;
-        for (int i = 0; i < isCommentSatisfied.size (); i++) {
-            if (! isCommentSatisfied.get (i)) {
-                isAnyEmpty = false;
-                break;
-            }
-        }
-        return isAnyEmpty;
     }
 }

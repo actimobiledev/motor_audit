@@ -342,25 +342,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Fuel System/Governor Layout body -->
-
-                        <LinearLayout
-                            android:id="@+id/llFuelSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/rl2"
-                            android:orientation="vertical">
-
-
-                        </LinearLayout>
-
-
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvFuelSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl2"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl2">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Pre-Start Checks Cooling System Layout Complete -->
                     <RelativeLayout
@@ -386,21 +373,13 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Pre-Start Checks Cooling System Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llPreStartChecksCoolingSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl3"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvPreStartChecksCoolingSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
                             android:layout_below="@+id/rl3"
-                            android:visibility="gone">
-                        </ListView>
+                        >
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Lubrication System Layout Complete -->
                     <RelativeLayout
@@ -426,21 +405,13 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Lubrication System Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llLubricationSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl4"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvLubricationSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
                             android:layout_below="@+id/rl4"
-                            android:visibility="gone">
-                        </ListView>
+                        >
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Air System Layout Complete -->
                     <RelativeLayout
@@ -466,22 +437,13 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Air System Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llAirSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl5"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvAirSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
                             android:layout_below="@+id/rl5"
-                            android:visibility="gone">
-                        </ListView>
+                        >
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Exhaust System Layout Complete -->
                     <RelativeLayout
@@ -507,21 +469,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Exhaust System Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llExhaustSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl6"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvExhaustSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl6"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl6">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Generator Layout Complete -->
                     <RelativeLayout
@@ -547,21 +500,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Generator Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llGenerator"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl7"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvGenerator"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl7"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl7">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Control Panel/Cabinets Layout Complete -->
                     <RelativeLayout
@@ -587,21 +531,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Control Panel/Cabinets Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llControlPanelCabinets"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl8"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvControlPanelCabinets"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl8"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl8">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- ATS Main Layout Complete -->
                     <RelativeLayout
@@ -627,21 +562,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- ATS Main Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llATSMain"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl9"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvATSMain"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl9"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl9">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Starting System Layout Complete -->
                     <RelativeLayout
@@ -667,21 +593,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Starting System Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llStartingSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl10"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvStartingSystem"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl10"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl10">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Generator Enclosure Layout Complete -->
                     <RelativeLayout
@@ -707,21 +624,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Generator Enclosure Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llGeneratorEnclosure"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl11"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvGeneratorEnclosure"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl11"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl11">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Startup And Running Check Layout Complete -->
                     <RelativeLayout
@@ -747,21 +655,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Startup And Running Check Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llStartupAndRunningCheck"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl12"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvStartupAndRunningCheck"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl12"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl12">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                     <!-- Scheduled Maintenance Layout Complete -->
                     <RelativeLayout
@@ -787,21 +686,12 @@
                                 android:textColor="@color/text_color_white"/>
                         </RelativeLayout>
                         <!-- Scheduled Maintenance Layout body -->
-                        <LinearLayout
-                            android:id="@+id/llScheduledMaintenance"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_below="@+id/rl13"
-                            android:orientation="vertical">
-
-                        </LinearLayout>
-                        <ListView
+                        <com.actiknow.motoraudit.utils.ExpandableHeightListView
                             android:id="@+id/lvScheduledMaintenance"
                             android:layout_width="match_parent"
                             android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl13"
-                            android:visibility="gone">
-                        </ListView>
+                            android:layout_below="@+id/rl13">
+                        </com.actiknow.motoraudit.utils.ExpandableHeightListView>
                     </RelativeLayout>
                 </RelativeLayout>
 
@@ -935,6 +825,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
                             android:padding="5dp"/>
+
                     </LinearLayout>
                 </RelativeLayout>
 
@@ -953,6 +844,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/background_blue">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -1122,6 +1014,10 @@
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
+
+
         </ScrollView>
+
+
     </RelativeLayout>
 </RelativeLayout>

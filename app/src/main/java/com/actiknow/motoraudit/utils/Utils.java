@@ -211,10 +211,6 @@ public class Utils {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-
-    /**
-     * Hide keyboard on touch of UI
-     */
     public static void hideKeyboard (final Activity activity, View view) {
         if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount (); i++) {

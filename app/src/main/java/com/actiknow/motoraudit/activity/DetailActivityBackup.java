@@ -14,10 +14,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,15 +21,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +40,7 @@ import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.utils.AppConfigTags;
 import com.actiknow.motoraudit.utils.AppConfigURL;
 import com.actiknow.motoraudit.utils.Constants;
+import com.actiknow.motoraudit.utils.ExpandableHeightListView;
 import com.actiknow.motoraudit.utils.NetworkConnection;
 import com.actiknow.motoraudit.utils.Utils;
 import com.android.volley.Request;
@@ -67,7 +63,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivityBackup extends AppCompatActivity {
 
     public static final int BEFORE_IMAGE_PICKER = 1;
     public static final int AFTER_IMAGE_PICKER = 2;
@@ -120,41 +116,29 @@ public class DetailActivity extends AppCompatActivity {
     Spinner spGeneratorMake;
     Spinner spAtsMake;
     RelativeLayout rlFuelSystem;
-    ListView lvFuelSystem;
-    LinearLayout llFuelSystem;
+    ExpandableHeightListView lvFuelSystem;
     RelativeLayout rlPreStartChecksCoolingSystem;
-    ListView lvPreStartChecksCoolingSystem;
-    LinearLayout llPreStartChecksCoolingSystem;
+    ExpandableHeightListView lvPreStartChecksCoolingSystem;
     RelativeLayout rlLubricationSystem;
-    ListView lvLubricationSystem;
-    LinearLayout llLubricationSystem;
+    ExpandableHeightListView lvLubricationSystem;
     RelativeLayout rlAirSystem;
-    ListView lvAirSystem;
-    LinearLayout llAirSystem;
+    ExpandableHeightListView lvAirSystem;
     RelativeLayout rlExhaustSystem;
-    ListView lvExhaustSystem;
-    LinearLayout llExhaustSystem;
+    ExpandableHeightListView lvExhaustSystem;
     RelativeLayout rlGenerator;
-    ListView lvGenerator;
-    LinearLayout llGenerator;
+    ExpandableHeightListView lvGenerator;
     RelativeLayout rlControlPanelCabinets;
-    ListView lvControlPanelCabinets;
-    LinearLayout llControlPanelCabinets;
+    ExpandableHeightListView lvControlPanelCabinets;
     RelativeLayout rlATSMain;
-    ListView lvATSMain;
-    LinearLayout llATSMain;
+    ExpandableHeightListView lvATSMain;
     RelativeLayout rlStartingSystem;
-    ListView lvStartingSystem;
-    LinearLayout llStartingSystem;
+    ExpandableHeightListView lvStartingSystem;
     RelativeLayout rlGeneratorEnclosure;
-    ListView lvGeneratorEnclosure;
-    LinearLayout llGeneratorEnclosure;
+    ExpandableHeightListView lvGeneratorEnclosure;
     RelativeLayout rlStartupAndRunningCheck;
-    ListView lvStartupAndRunningCheck;
-    LinearLayout llStartupAndRunningCheck;
+    ExpandableHeightListView lvStartupAndRunningCheck;
     RelativeLayout rlScheduledMaintenance;
-    ListView lvScheduledMaintenance;
-    LinearLayout llScheduledMaintenance;
+    ExpandableHeightListView lvScheduledMaintenance;
     RelativeLayout rlCollapse1;
     RelativeLayout rlCollapse2;
     RelativeLayout rlCollapse3;
@@ -168,9 +152,9 @@ public class DetailActivity extends AppCompatActivity {
     RelativeLayout rlCollapse11;
     RelativeLayout rlCollapse12;
     RelativeLayout rlGeneratorCondition;
-    LinearLayout tlGood;
-    LinearLayout tlFair;
-    LinearLayout tlPoor;
+    TableLayout tlGood;
+    TableLayout tlFair;
+    TableLayout tlPoor;
     RadioGroup rgOverAllCondition;
     RadioButton rbGood;
     RadioButton rbFair;
@@ -222,10 +206,7 @@ public class DetailActivity extends AppCompatActivity {
         Utils.hideSoftKeyboard (this);
 
 
-        new LoadServiceChecksInLinearLayout (this).execute ();
-
-
-//        new LoadServiceChecks (this).execute ();
+        new LoadServiceChecks (this).execute ();
     }
 
     private void initView () {
@@ -251,41 +232,29 @@ public class DetailActivity extends AppCompatActivity {
         spAtsMake = (Spinner) findViewById (R.id.spAtsMake);
 
         rlFuelSystem = (RelativeLayout) findViewById (R.id.rlFuelSystem);
-        lvFuelSystem = (ListView) findViewById (R.id.lvFuelSystem);
-        llFuelSystem = (LinearLayout) findViewById (R.id.llFuelSystem);
+        lvFuelSystem = (ExpandableHeightListView) findViewById (R.id.lvFuelSystem);
         rlPreStartChecksCoolingSystem = (RelativeLayout) findViewById (R.id.rlPreStartChecksCoolingSystem);
-        lvPreStartChecksCoolingSystem = (ListView) findViewById (R.id.lvPreStartChecksCoolingSystem);
-        llPreStartChecksCoolingSystem = (LinearLayout) findViewById (R.id.llPreStartChecksCoolingSystem);
+        lvPreStartChecksCoolingSystem = (ExpandableHeightListView) findViewById (R.id.lvPreStartChecksCoolingSystem);
         rlLubricationSystem = (RelativeLayout) findViewById (R.id.rlLubricationSystem);
-        lvLubricationSystem = (ListView) findViewById (R.id.lvLubricationSystem);
-        llLubricationSystem = (LinearLayout) findViewById (R.id.llLubricationSystem);
+        lvLubricationSystem = (ExpandableHeightListView) findViewById (R.id.lvLubricationSystem);
         rlAirSystem = (RelativeLayout) findViewById (R.id.rlAirSystem);
-        lvAirSystem = (ListView) findViewById (R.id.lvAirSystem);
-        llAirSystem = (LinearLayout) findViewById (R.id.llAirSystem);
+        lvAirSystem = (ExpandableHeightListView) findViewById (R.id.lvAirSystem);
         rlExhaustSystem = (RelativeLayout) findViewById (R.id.rlExhaustSystem);
-        lvExhaustSystem = (ListView) findViewById (R.id.lvExhaustSystem);
-        llExhaustSystem = (LinearLayout) findViewById (R.id.llExhaustSystem);
+        lvExhaustSystem = (ExpandableHeightListView) findViewById (R.id.lvExhaustSystem);
         rlGenerator = (RelativeLayout) findViewById (R.id.rlGenerator);
-        lvGenerator = (ListView) findViewById (R.id.lvGenerator);
-        llGenerator = (LinearLayout) findViewById (R.id.llGenerator);
+        lvGenerator = (ExpandableHeightListView) findViewById (R.id.lvGenerator);
         rlControlPanelCabinets = (RelativeLayout) findViewById (R.id.rlControlPanelCabinets);
-        lvControlPanelCabinets = (ListView) findViewById (R.id.lvControlPanelCabinets);
-        llControlPanelCabinets = (LinearLayout) findViewById (R.id.llControlPanelCabinets);
+        lvControlPanelCabinets = (ExpandableHeightListView) findViewById (R.id.lvControlPanelCabinets);
         rlATSMain = (RelativeLayout) findViewById (R.id.rlATSMain);
-        lvATSMain = (ListView) findViewById (R.id.lvATSMain);
-        llATSMain = (LinearLayout) findViewById (R.id.llATSMain);
+        lvATSMain = (ExpandableHeightListView) findViewById (R.id.lvATSMain);
         rlStartingSystem = (RelativeLayout) findViewById (R.id.rlStartingSystem);
-        lvStartingSystem = (ListView) findViewById (R.id.lvStartingSystem);
-        llStartingSystem = (LinearLayout) findViewById (R.id.llStartingSystem);
+        lvStartingSystem = (ExpandableHeightListView) findViewById (R.id.lvStartingSystem);
         rlGeneratorEnclosure = (RelativeLayout) findViewById (R.id.rlGeneratorEnclosure);
-        lvGeneratorEnclosure = (ListView) findViewById (R.id.lvGeneratorEnclosure);
-        llGeneratorEnclosure = (LinearLayout) findViewById (R.id.llGeneratorEnclosure);
+        lvGeneratorEnclosure = (ExpandableHeightListView) findViewById (R.id.lvGeneratorEnclosure);
         rlStartupAndRunningCheck = (RelativeLayout) findViewById (R.id.rlStartupAndRunningCheck);
-        lvStartupAndRunningCheck = (ListView) findViewById (R.id.lvStartupAndRunningCheck);
-        llStartupAndRunningCheck = (LinearLayout) findViewById (R.id.llStartupAndRunningCheck);
+        lvStartupAndRunningCheck = (ExpandableHeightListView) findViewById (R.id.lvStartupAndRunningCheck);
         rlScheduledMaintenance = (RelativeLayout) findViewById (R.id.rlScheduledMaintenance);
-        lvScheduledMaintenance = (ListView) findViewById (R.id.lvScheduledMaintenance);
-        llScheduledMaintenance = (LinearLayout) findViewById (R.id.llScheduledMaintenance);
+        lvScheduledMaintenance = (ExpandableHeightListView) findViewById (R.id.lvScheduledMaintenance);
 
 
         rlCollapse1 = (RelativeLayout) findViewById (R.id.rl2);
@@ -302,9 +271,9 @@ public class DetailActivity extends AppCompatActivity {
         rlCollapse12 = (RelativeLayout) findViewById (R.id.rl13);
 
         rlGeneratorCondition = (RelativeLayout) findViewById (R.id.rlGeneratorCondition);
-        tlGood = (LinearLayout) findViewById (R.id.tlGood);
-        tlFair = (LinearLayout) findViewById (R.id.tlFair);
-        tlPoor = (LinearLayout) findViewById (R.id.tlPoor);
+        tlGood = (TableLayout) findViewById (R.id.tlGood);
+        tlFair = (TableLayout) findViewById (R.id.tlFair);
+        tlPoor = (TableLayout) findViewById (R.id.tlPoor);
         rgOverAllCondition = (RadioGroup) findViewById (R.id.rgOverAllCondition);
         rbFair = (RadioButton) findViewById (R.id.rbFair);
         rbGood = (RadioButton) findViewById (R.id.rbGood);
@@ -404,67 +373,67 @@ public class DetailActivity extends AppCompatActivity {
                 if (event.getAction () == MotionEvent.ACTION_DOWN) {
 
 
-//                    if (validate ()){
-                    JSONArray jsonArray = new JSONArray ();
-                    try {
-                        for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
-                            final ServiceCheck serviceCheck;
-                            serviceCheck = Constants.serviceCheckList.get (i);
-                            JSONObject jsonObject = new JSONObject ();
+                    if (validate ()) {
+                        JSONArray jsonArray = new JSONArray ();
+                        try {
+                            for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
+                                final ServiceCheck serviceCheck;
+                                serviceCheck = Constants.serviceCheckList.get (i);
+                                JSONObject jsonObject = new JSONObject ();
 //                            jsonObject.put (AppConfigTags.GROUP_NAME, serviceCheck.getGroup_name ());
-                            jsonObject.put (AppConfigTags.SERVICE_CHECK_ID, String.valueOf (serviceCheck.getService_check_id ()));
+                                jsonObject.put (AppConfigTags.SERVICE_CHECK_ID, String.valueOf (serviceCheck.getService_check_id ()));
 //                            jsonObject.put (AppConfigTags.SELECTION_FLAG, String.valueOf (serviceCheck.getSelection_flag ()));
-                            jsonObject.put (AppConfigTags.SELECTION_TEXT, serviceCheck.getSelection_text ());
-                            jsonObject.put (AppConfigTags.HEADING, serviceCheck.getHeading ());
+                                jsonObject.put (AppConfigTags.SELECTION_TEXT, serviceCheck.getSelection_text ());
+                                jsonObject.put (AppConfigTags.HEADING, serviceCheck.getHeading ());
 //                            jsonObject.put (AppConfigTags.SUB_HEADING, serviceCheck.getSub_heading ());
-                            jsonObject.put (AppConfigTags.IMAGE, serviceCheck.getImage_str ());
-                            jsonObject.put (AppConfigTags.COMMENT, serviceCheck.getComment ());
-                            jsonArray.put (jsonObject);
+                                jsonObject.put (AppConfigTags.IMAGE, serviceCheck.getImage_str ());
+                                jsonObject.put (AppConfigTags.COMMENT, serviceCheck.getComment ());
+                                jsonArray.put (jsonObject);
+                            }
+                        } catch (JSONException e) {
+                            Utils.showLog (Log.ERROR, "JSON EXCEPTION", e.getMessage (), true);
                         }
-                    } catch (JSONException e) {
-                        Utils.showLog (Log.ERROR, "JSON EXCEPTION", e.getMessage (), true);
-                    }
 
-                    Constants.workOrderDetail.setService_check_json (String.valueOf (jsonArray));
-                    Constants.workOrderDetail.setTime_in (etTimeIn.getText ().toString ());
-                    Constants.workOrderDetail.setTime_out (etTimeOut.getText ().toString ());
-                    Constants.workOrderDetail.setOnsite_contact (etOnSiteContact.getText ().toString ());
-                    Constants.workOrderDetail.setEmail (etEmail.getText ().toString ());
-                    Constants.workOrderDetail.setGenerator_serial (etGeneratorSerial.getText ().toString ());
-                    Constants.workOrderDetail.setGenerator_model (etGeneratorModel.getText ().toString ());
-                    Constants.workOrderDetail.setEngine_model (etEngineModel.getText ().toString ());
-                    Constants.workOrderDetail.setKw_rating (etKwRating.getText ().toString ());
-                    Constants.workOrderDetail.setEngine_serial (etEngineSerial.getText ().toString ());
-                    Constants.workOrderDetail.setAts_model (etAtsModel.getText ().toString ());
-                    Constants.workOrderDetail.setGenerator_condition_comment (etGeneratorConditionComment.getText ().toString ());
-                    Constants.workOrderDetail.setComments (etComment.getText ().toString ());
+                        Constants.workOrderDetail.setService_check_json (String.valueOf (jsonArray));
+                        Constants.workOrderDetail.setTime_in (etTimeIn.getText ().toString ());
+                        Constants.workOrderDetail.setTime_out (etTimeOut.getText ().toString ());
+                        Constants.workOrderDetail.setOnsite_contact (etOnSiteContact.getText ().toString ());
+                        Constants.workOrderDetail.setEmail (etEmail.getText ().toString ());
+                        Constants.workOrderDetail.setGenerator_serial (etGeneratorSerial.getText ().toString ());
+                        Constants.workOrderDetail.setGenerator_model (etGeneratorModel.getText ().toString ());
+                        Constants.workOrderDetail.setEngine_model (etEngineModel.getText ().toString ());
+                        Constants.workOrderDetail.setKw_rating (etKwRating.getText ().toString ());
+                        Constants.workOrderDetail.setEngine_serial (etEngineSerial.getText ().toString ());
+                        Constants.workOrderDetail.setAts_model (etAtsModel.getText ().toString ());
+                        Constants.workOrderDetail.setGenerator_condition_comment (etGeneratorConditionComment.getText ().toString ());
+                        Constants.workOrderDetail.setComments (etComment.getText ().toString ());
 
 
-                    Utils.showLog (Log.INFO, "WORK ORDER TIME IN", Constants.workOrderDetail.getTime_in (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ONSITE CONTACT", Constants.workOrderDetail.getOnsite_contact (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER EMAIL", Constants.workOrderDetail.getEmail (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER TIME IN", Constants.workOrderDetail.getTime_in (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ONSITE CONTACT", Constants.workOrderDetail.getOnsite_contact (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER EMAIL", Constants.workOrderDetail.getEmail (), true);
 //                    Utils.showLog (Log.INFO, "WORK ORDER BEFORE IMAGE", Constants.workOrderDetail.getBefore_image_str (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR SERIAL", Constants.workOrderDetail.getGenerator_serial (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MAKE ID", "" + Constants.workOrderDetail.getGenerator_make_id (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MAKE NAME", Constants.workOrderDetail.getGenerator_make_name (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MODEL", Constants.workOrderDetail.getGenerator_model (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ENGINE MODEL", Constants.workOrderDetail.getEngine_model (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER KW RATING", Constants.workOrderDetail.getKw_rating (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ENGINE SERIAL", Constants.workOrderDetail.getEngine_serial (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ATS MAKE ID", "" + Constants.workOrderDetail.getAts_make_id (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ATS MAKE NAME", Constants.workOrderDetail.getAts_make_name (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER ATS MODEL", Constants.workOrderDetail.getAts_model (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER SERVICE CHECK JSON", "" + Constants.workOrderDetail.getService_check_json (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION FLAG", "" + Constants.workOrderDetail.getGenerator_condition_flag (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION TEXT", Constants.workOrderDetail.getGenerator_condition_text (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION COMMENT", Constants.workOrderDetail.getGenerator_condition_comment (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER COMMENTS", Constants.workOrderDetail.getComments (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR SERIAL", Constants.workOrderDetail.getGenerator_serial (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MAKE ID", "" + Constants.workOrderDetail.getGenerator_make_id (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MAKE NAME", Constants.workOrderDetail.getGenerator_make_name (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR MODEL", Constants.workOrderDetail.getGenerator_model (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ENGINE MODEL", Constants.workOrderDetail.getEngine_model (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER KW RATING", Constants.workOrderDetail.getKw_rating (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ENGINE SERIAL", Constants.workOrderDetail.getEngine_serial (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ATS MAKE ID", "" + Constants.workOrderDetail.getAts_make_id (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ATS MAKE NAME", Constants.workOrderDetail.getAts_make_name (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER ATS MODEL", Constants.workOrderDetail.getAts_model (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER SERVICE CHECK JSON", "" + Constants.workOrderDetail.getService_check_json (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION FLAG", "" + Constants.workOrderDetail.getGenerator_condition_flag (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION TEXT", Constants.workOrderDetail.getGenerator_condition_text (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER GENERATOR CONDITION COMMENT", Constants.workOrderDetail.getGenerator_condition_comment (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER COMMENTS", Constants.workOrderDetail.getComments (), true);
 //                    Utils.showLog (Log.INFO, "WORK ORDER AFTER IMAGE", Constants.workOrderDetail.getAfter_image_str (), true);
 //                    Utils.showLog (Log.INFO, "WORK ORDER TECH SIGNATURE", Constants.workOrderDetail.getTech_image_str (), true);
 //                    Utils.showLog (Log.INFO, "WORK ORDER CUSTOMER SIGNATURE", Constants.workOrderDetail.getCustomer_signature (), true);
-                    Utils.showLog (Log.INFO, "WORK ORDER TIME OUT", Constants.workOrderDetail.getTime_out (), true);
+                        Utils.showLog (Log.INFO, "WORK ORDER TIME OUT", Constants.workOrderDetail.getTime_out (), true);
 
-                    //                  }
+                    }
 
 
 
@@ -527,7 +496,6 @@ public class DetailActivity extends AppCompatActivity {
                         Toast.makeText (getApplicationContext (), "StartupAndRunningCheck Empty", Toast.LENGTH_SHORT).show ();
                     }
 */
-
 
 
                     tvUpdate.setBackgroundResource (R.color.background_button_green_pressed);
@@ -605,7 +573,7 @@ public class DetailActivity extends AppCompatActivity {
 
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
 
-        Utils.hideKeyboard (DetailActivity.this, etAtsModel);
+        Utils.hideKeyboard (DetailActivityBackup.this, etAtsModel);
 
 
 /*
@@ -646,7 +614,7 @@ public class DetailActivity extends AppCompatActivity {
 
         for (int i = 0; i < listGoodCondition.size (); i++) {
             String GoodConditionText = listGoodCondition.get (i);
-            TableRow row = (TableRow) LayoutInflater.from (DetailActivity.this).inflate (R.layout.table_row_condition, null);
+            TableRow row = (TableRow) LayoutInflater.from (DetailActivityBackup.this).inflate (R.layout.table_row_condition, null);
             tlGood.setGravity (Gravity.CENTER_VERTICAL);
             tvConditionDetails = (TextView) row.findViewById (R.id.tvConditionDetails);
             tvConditionDetails.setText ("" + GoodConditionText);
@@ -654,7 +622,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         for (int i = 0; i < listFairCondition.size (); i++) {
             String FairConditionText = listFairCondition.get (i);
-            TableRow row = (TableRow) LayoutInflater.from (DetailActivity.this).inflate (R.layout.table_row_condition, null);
+            TableRow row = (TableRow) LayoutInflater.from (DetailActivityBackup.this).inflate (R.layout.table_row_condition, null);
             tlFair.setGravity (Gravity.CENTER_VERTICAL);
             tvConditionDetails = (TextView) row.findViewById (R.id.tvConditionDetails);
             tvConditionDetails.setText ("" + FairConditionText);
@@ -662,7 +630,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         for (int i = 0; i < listPoorCondition.size (); i++) {
             String PoorConditionText = listPoorCondition.get (i);
-            TableRow row = (TableRow) LayoutInflater.from (DetailActivity.this).inflate (R.layout.table_row_condition, null);
+            TableRow row = (TableRow) LayoutInflater.from (DetailActivityBackup.this).inflate (R.layout.table_row_condition, null);
             tlPoor.setGravity (Gravity.CENTER_VERTICAL);
             tvConditionDetails = (TextView) row.findViewById (R.id.tvConditionDetails);
             tvConditionDetails.setText ("" + PoorConditionText);
@@ -724,7 +692,7 @@ public class DetailActivity extends AppCompatActivity {
             Utils.sendRequest (strRequest);
 
         } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            Utils.showOkDialog (DetailActivityBackup.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
     }
 
@@ -774,7 +742,7 @@ public class DetailActivity extends AppCompatActivity {
         Button btSignSave;
         final SignatureView signatureView;
 
-        dialogSign = new Dialog (DetailActivity.this);
+        dialogSign = new Dialog (DetailActivityBackup.this);
         dialogSign.setContentView (R.layout.dialog_signature);
         dialogSign.setCancelable (false);
         btSignCanel = (Button) dialogSign.findViewById (R.id.btSignCancel);
@@ -782,7 +750,7 @@ public class DetailActivity extends AppCompatActivity {
         btSignSave = (Button) dialogSign.findViewById (R.id.btSignSave);
         signatureView = (SignatureView) dialogSign.findViewById (R.id.signSignatureView);
 
-        Utils.setTypefaceToAllViews (DetailActivity.this, btSignCanel);
+        Utils.setTypefaceToAllViews (DetailActivityBackup.this, btSignCanel);
 //        dialogSign.requestWindowFeature (Window.FEATURE_NO_TITLE);
         dialogSign.getWindow ().setBackgroundDrawable (new ColorDrawable (android.graphics.Color.TRANSPARENT));
         dialogSign.show ();
@@ -845,15 +813,15 @@ public class DetailActivity extends AppCompatActivity {
                 } else if (options[item].equals ("Choose from Gallery")) {
                     switch (flag) {
                         case BEFORE_IMAGE_PICKER:
-                            Intent i = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            Intent i = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult (i, PICK_FROM_GALLERY_BEFORE_IMAGE_1);
                             break;
                         case AFTER_IMAGE_PICKER:
-                            Intent i2 = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            Intent i2 = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult (i2, PICK_FROM_GALLERY_AFTER_IMAGE_1);
                             break;
                         case LIST_ITEM_PICKER:
-                            Intent i3 = new Intent (Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            Intent i3 = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult (i3, PICK_FROM_GALLERY_LIST_ITEM_1);
                             break;
                     }
@@ -991,61 +959,61 @@ public class DetailActivity extends AppCompatActivity {
                     break;
             }
         } catch (Exception e) {
-            Toast.makeText (DetailActivity.this, "Your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (DetailActivityBackup.this, "Your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
         }
     }
 
     public boolean validate () {
         if (etTimeIn.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please set the time in");
+            Utils.showToast (DetailActivityBackup.this, "Please set the time in");
             return false;
         } else if (etOnSiteContact.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter onsite contact");
+            Utils.showToast (DetailActivityBackup.this, "Please enter onsite contact");
             return false;
         } else if (etEmail.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the email");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the email");
             return false;
         } else if (Constants.workOrderDetail.getBefore_image_str ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please set the before image");
+            Utils.showToast (DetailActivityBackup.this, "Please set the before image");
             return false;
         } else if (etGeneratorModel.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the generator model");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the generator model");
             return false;
         } else if (Constants.workOrderDetail.getGenerator_make_id () == 0) {
-            Utils.showToast (DetailActivity.this, "Please select a generator make");
+            Utils.showToast (DetailActivityBackup.this, "Please select a generator make");
             return false;
         } else if (etGeneratorSerial.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the generator serial");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the generator serial");
             return false;
         } else if (etEngineModel.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the engine model");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the engine model");
             return false;
         } else if (etKwRating.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the Kw Rating");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the Kw Rating");
             return false;
         } else if (etEngineSerial.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the engine serial");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the engine serial");
             return false;
         } else if (Constants.workOrderDetail.getAts_make_id () == 0) {
-            Utils.showToast (DetailActivity.this, "Please select a ATS make");
+            Utils.showToast (DetailActivityBackup.this, "Please select a ATS make");
             return false;
         } else if (etGeneratorConditionComment.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter the generator rating");
+            Utils.showToast (DetailActivityBackup.this, "Please enter the generator rating");
             return false;
         } else if (etComment.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please enter a comment");
+            Utils.showToast (DetailActivityBackup.this, "Please enter a comment");
             return false;
         } else if (Constants.workOrderDetail.getAfter_image_str ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please select an after image");
+            Utils.showToast (DetailActivityBackup.this, "Please select an after image");
             return false;
         } else if (Constants.workOrderDetail.getTech_image_str ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please select tech signature");
+            Utils.showToast (DetailActivityBackup.this, "Please select tech signature");
             return false;
         } else if (Constants.workOrderDetail.getCustomer_signature ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please select customer signature");
+            Utils.showToast (DetailActivityBackup.this, "Please select customer signature");
             return false;
         } else if (etTimeOut.getText ().toString ().length () == 0) {
-            Utils.showToast (DetailActivity.this, "Please set time out");
+            Utils.showToast (DetailActivityBackup.this, "Please set time out");
             return false;
         } else {
             return true;
@@ -1140,6 +1108,18 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute (String result) {
+            lvFuelSystem.setExpanded (true);
+            lvPreStartChecksCoolingSystem.setExpanded (true);
+            lvLubricationSystem.setExpanded (true);
+            lvAirSystem.setExpanded (true);
+            lvExhaustSystem.setExpanded (true);
+            lvGenerator.setExpanded (true);
+            lvControlPanelCabinets.setExpanded (true);
+            lvATSMain.setExpanded (true);
+            lvStartingSystem.setExpanded (true);
+            lvGeneratorEnclosure.setExpanded (true);
+            lvStartupAndRunningCheck.setExpanded (true);
+            lvScheduledMaintenance.setExpanded (true);
 
             lvFuelSystem.setAdapter (FuelSystemGovernorAdapter);
             lvPreStartChecksCoolingSystem.setAdapter (PreStartChecksCoolingSystemAdapter);
@@ -1172,307 +1152,6 @@ public class DetailActivity extends AppCompatActivity {
             // txt.setText(result);
             // might want to change "executed" for the returned string passed
             // into onPostExecute() but that is upto you
-        }
-    }
-
-    private class LoadServiceChecksInLinearLayout extends AsyncTask<String, Void, String> {
-
-        Activity activity;
-
-        LoadServiceChecksInLinearLayout (Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        protected void onPreExecute () {
-            for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
-                final ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
-
-                //         Utils.showLog (Log.DEBUG, "Layout", "" + i, true);
-
-                View child = getLayoutInflater ().inflate (R.layout.listview_item_service_check, null);
-
-                TextView tvHeading = (TextView) child.findViewById (R.id.tvHeading);
-                ImageView ivImage = (ImageView) child.findViewById (R.id.ivImage);
-                ImageView ivImageSelected = (ImageView) child.findViewById (R.id.ivImageSelected);
-                LinearLayout llPassAdviceFail = (LinearLayout) child.findViewById (R.id.llPassAdviceFail);
-                LinearLayout llYesNo = (LinearLayout) child.findViewById (R.id.llYesNo);
-                final EditText etComment = (EditText) child.findViewById (R.id.etComments);
-
-                final RadioButton rbPass = (RadioButton) child.findViewById (R.id.rbPass);
-                final RadioButton rbAdvise = (RadioButton) child.findViewById (R.id.rbAdvise);
-                final RadioButton rbFail = (RadioButton) child.findViewById (R.id.rbFail);
-                final RadioButton rbNA = (RadioButton) child.findViewById (R.id.rbNA);
-                final RadioButton rbYes = (RadioButton) child.findViewById (R.id.rbYes);
-                final RadioButton rbNo = (RadioButton) child.findViewById (R.id.rbNo);
-                final RadioButton rbNA2 = (RadioButton) child.findViewById (R.id.rbNA2);
-
-                Spanned text;
-                if (serviceCheck.getSub_heading ().length () > 0)
-                    text = Html.fromHtml ("<b>" + serviceCheck.getHeading () + "</b> - " + serviceCheck.getSub_heading ());
-                else
-                    text = Html.fromHtml ("<b>" + serviceCheck.getHeading () + "</b>");
-
-                ivImage.setOnClickListener (new View.OnClickListener () {
-                    @Override
-                    public void onClick (View view) {
-                        Utils.showLog (Log.DEBUG, "servicecheck_id", "" + serviceCheck.getService_check_id (), true);
-                    }
-                });
-
-
-                tvHeading.setText (text);
-
-                rbPass.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbNA.setChecked (false);
-                            rbFail.setChecked (false);
-                            rbAdvise.setChecked (false);
-                            rbPass.setChecked (true);
-                            serviceCheck.setSelection_text ("Pass");
-                            serviceCheck.setSelection_flag (3);
-//                            if (serviceCheck.isComment_required ())
-//                                serviceCheck.setComment_required (true);
-//                            else
-//                                serviceCheck.setComment_required (false);
-
-                            serviceCheck.setComment_required (false);
-                            etComment.setError (null);
-                        }
-                    }
-                });
-                rbAdvise.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbNA.setChecked (false);
-                            rbFail.setChecked (false);
-                            rbAdvise.setChecked (true);
-                            rbPass.setChecked (false);
-                            serviceCheck.setSelection_text ("Advise");
-                            serviceCheck.setSelection_flag (2);
-                            serviceCheck.setComment_required (true);
-                            etComment.setError ("Comment is required");
-                        }
-                    }
-                });
-                rbFail.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbNA.setChecked (false);
-                            rbFail.setChecked (true);
-                            rbAdvise.setChecked (false);
-                            rbPass.setChecked (false);
-                            serviceCheck.setSelection_text ("Fail");
-                            serviceCheck.setSelection_flag (1);
-                            serviceCheck.setComment_required (true);
-                            etComment.setError ("Comment is required");
-                        }
-                    }
-                });
-                rbNA.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbNA.setChecked (true);
-                            rbFail.setChecked (false);
-                            rbAdvise.setChecked (false);
-                            rbPass.setChecked (false);
-                            serviceCheck.setSelection_text ("N/A");
-                            serviceCheck.setSelection_flag (0);
-//                            if(serviceCheck.isComment_required ())
-//                                serviceCheck.setComment_required (true);
-//                            else
-//                                serviceCheck.setComment_required (false);
-
-                            serviceCheck.setComment_required (false);
-                            etComment.setError (null);
-                        }
-                    }
-                });
-
-
-                rbYes.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbYes.setChecked (true);
-                            rbNo.setChecked (false);
-                            rbNA2.setChecked (false);
-                            serviceCheck.setSelection_text ("Yes");
-                            serviceCheck.setSelection_flag (2);
-                        }
-                    }
-                });
-                rbNo.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbYes.setChecked (false);
-                            rbNo.setChecked (true);
-                            rbNA2.setChecked (false);
-                            serviceCheck.setSelection_text ("No");
-                            serviceCheck.setSelection_flag (1);
-                        }
-                    }
-                });
-                rbNA2.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                    @Override
-                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                        if (b) {
-                            rbYes.setChecked (false);
-                            rbNo.setChecked (false);
-                            rbNA2.setChecked (true);
-                            serviceCheck.setSelection_text ("N/A");
-                            serviceCheck.setSelection_flag (0);
-                        }
-                    }
-                });
-
-
-                switch (serviceCheck.getGroup_id ()) {
-                    case 12:
-                        switch (serviceCheck.getSelection_flag ()) {
-                            case 0:
-                                rbNA2.setChecked (true);
-                                rbNo.setChecked (false);
-                                rbYes.setChecked (false);
-                                break;
-                            case 1:
-                                rbNA2.setChecked (false);
-                                rbNo.setChecked (true);
-                                rbYes.setChecked (false);
-                                break;
-                            case 2:
-                                rbNA2.setChecked (false);
-                                rbNo.setChecked (false);
-                                rbYes.setChecked (true);
-                                break;
-                        }
-                        llYesNo.setVisibility (View.VISIBLE);
-                        llPassAdviceFail.setVisibility (View.GONE);
-                        break;
-                    default:
-                        switch (serviceCheck.getSelection_flag ()) {
-                            case 0:
-                                rbNA.setChecked (true);
-                                rbFail.setChecked (false);
-                                rbAdvise.setChecked (false);
-                                rbPass.setChecked (false);
-                                break;
-                            case 1:
-                                rbNA.setChecked (false);
-                                rbFail.setChecked (true);
-                                rbAdvise.setChecked (false);
-                                rbPass.setChecked (false);
-                                break;
-                            case 2:
-                                rbNA.setChecked (false);
-                                rbFail.setChecked (false);
-                                rbAdvise.setChecked (true);
-                                rbPass.setChecked (false);
-                                break;
-                            case 3:
-                                rbNA.setChecked (false);
-                                rbFail.setChecked (false);
-                                rbAdvise.setChecked (false);
-                                rbPass.setChecked (true);
-                                break;
-                        }
-                        llYesNo.setVisibility (View.GONE);
-                        llPassAdviceFail.setVisibility (View.VISIBLE);
-                        break;
-                }
-
-
-                switch (serviceCheck.getGroup_id ()) {
-                    case 1:
-                        llFuelSystem.addView (child);
-                        break;
-                    case 2:
-                        llPreStartChecksCoolingSystem.addView (child);
-                        break;
-                    case 3:
-                        llLubricationSystem.addView (child);
-                        break;
-                    case 4:
-                        llAirSystem.addView (child);
-                        break;
-                    case 5:
-                        llExhaustSystem.addView (child);
-                        break;
-                    case 6:
-                        llGenerator.addView (child);
-                        break;
-                    case 7:
-                        llControlPanelCabinets.addView (child);
-                        break;
-                    case 8:
-                        llATSMain.addView (child);
-                        break;
-                    case 9:
-                        llStartingSystem.addView (child);
-                        break;
-                    case 10:
-                        llGeneratorEnclosure.addView (child);
-                        break;
-                    case 11:
-                        llStartupAndRunningCheck.addView (child);
-                        break;
-                    case 12:
-                        llScheduledMaintenance.addView (child);
-                        break;
-                }
-
-
-                etComment.addTextChangedListener (new TextWatcher () {
-                    @Override
-                    public void onTextChanged (CharSequence s, int start, int before, int count) {
-                        if (s.length () != 0) {
-                            serviceCheck.setComment (String.valueOf (s));
-                        } else if (serviceCheck.isComment_required ()) {
-                            etComment.setError ("Comment is required");
-                        } else {
-                            serviceCheck.setComment ("");
-                        }
-//                    serviceCheckTemp.setComment ("");
-                    }
-
-                    @Override
-                    public void beforeTextChanged (CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void afterTextChanged (Editable s) {
-                    }
-                });
-
-
-//        if(serviceCheck.isComment_required ())
-//            holder.etComment.setHint ("Comment is required");
-
-                if (serviceCheck.isComment_required () && etComment.getText ().toString ().length () == 0)
-                    etComment.setError ("Comment is required");
-
-
-            }
-
-
-        }
-
-        @Override
-        protected String doInBackground (String... params) {
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute (String result) {
-
-
-            Utils.hideSoftKeyboard (activity);
         }
     }
 
