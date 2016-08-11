@@ -6,15 +6,16 @@ import com.actiknow.motoraudit.utils.Utils;
 
 public class WorkOrder {
     private int wo_id, wo_contract_num;
-    private String wo_site_name;
+    private String wo_site_name, wo_customer_name;
 
     public WorkOrder () {
     }
 
-    public WorkOrder (int wo_id, int wo_contract_num, String wo_site_name) {
+    public WorkOrder (int wo_id, int wo_contract_num, String wo_site_name, String wo_customer_name) {
         this.wo_id = wo_id;
         this.wo_contract_num = wo_contract_num;
         this.wo_site_name = wo_site_name;
+        this.wo_customer_name = wo_customer_name;
     }
 
     public int getWo_id () {
@@ -42,5 +43,14 @@ public class WorkOrder {
     public void setWo_site_name (String wo_site_name) {
         this.wo_site_name = wo_site_name;
         Utils.showLog (Log.DEBUG, "wo_site_name", wo_site_name, false);
+    }
+
+    public String getWo_customer_name () {
+        return wo_customer_name;
+    }
+
+    public void setWo_customer_name (String wo_customer_name) {
+        this.wo_customer_name = wo_customer_name;
+        Utils.showLog (Log.DEBUG, "wo_customer_name", wo_customer_name, false);
     }
 }

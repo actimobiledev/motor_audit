@@ -24,7 +24,7 @@
                 android:layout_toStartOf="@+id/linearLayout"
                 android:gravity="center_vertical"
                 android:padding="5dp"
-                android:text="WO#25534 For TOWN OF BRECKENRIDGE "
+                android:text="WO#75534 for DOG VALLEY asdasd"
                 android:textColor="@color/text_color_white"/>
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -34,8 +34,10 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@+id/tvWorkOrderDescription"
+                android:layout_marginRight="5dp"
                 android:gravity="center_vertical"
-                android:weightSum="2.0">
+                android:weightSum="2.0"
+            >
                 <TextView
                     android:id="@+id/tvCancel"
                     android:layout_width="wrap_content"
@@ -53,12 +55,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp"
+                    android:layout_marginLeft="5dp"
                     android:background="@color/background_button_green"
                     android:drawableLeft="@drawable/ic_check"
                     android:gravity="center"
                     android:paddingRight="5dp"
-                    android:text="UPDATE"
+                    android:text="SAVE"
                     android:textColor="@color/text_color_white"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -159,6 +161,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/background_blue">
                         <TextView
+                            android:id="@+id/tvBeforeImage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableLeft="@drawable/ic_camera"
@@ -166,17 +169,38 @@
                             android:padding="5dp"
                             android:text="BEFORE IMAGE"
                             android:textColor="@color/text_color_white"/>
+
+                        <TextView
+                            android:id="@+id/tvAddBeforeImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/background_button_green"
+                            android:drawableLeft="@drawable/ic_add"
+                            android:gravity="center"
+                            android:paddingRight="5dp"
+                            android:text="ADD"
+                            android:textColor="@color/text_color_white"
+                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- Before Image Layout Body -->
-                    <ImageView
-                        android:id="@+id/ivBeforeImage"
+                    <HorizontalScrollView
                         android:layout_width="wrap_content"
-                        android:layout_height="150dp"
+                        android:layout_height="wrap_content"
                         android:layout_below="@+id/relativeLayout"
-                        android:layout_centerInParent="true"
-                        android:padding="10dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/image_placeholder"/>
+                        android:fillViewport="false"
+                        android:scrollbars="none">
+                        <LinearLayout
+                            android:id="@+id/llBeforeImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                        </LinearLayout>
+                    </HorizontalScrollView>
                 </RelativeLayout>
 
                 <!-- Generator Information Layout Complete -->
@@ -220,6 +244,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
+                            android:enabled="false"
+                            android:focusable="false"
                             android:padding="5dp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -234,7 +260,17 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="0dp"
                             android:padding="0dp"
-                            android:spinnerMode="dialog"/>
+                            android:spinnerMode="dialog"
+                            android:visibility="gone"/>
+                        <EditText
+                            android:id="@+id/etGeneratorMake"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/layout_edittext"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:padding="5dp"/>
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -246,18 +282,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
-                            android:padding="5dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Engine Model"
-                            android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etEngineModel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
+                            android:enabled="false"
+                            android:focusable="false"
                             android:padding="5dp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -271,53 +297,121 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
                             android:padding="5dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Engine Serial"
-                            android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etEngineSerial"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:padding="5dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="ATS Make"
-                            android:textStyle="bold"/>
-                        <Spinner
-                            android:id="@+id/spAtsMake"
-                            style="@style/spinner_style"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="0dp"
-                            android:padding="0dp"
-                            android:spinnerMode="dialog"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="ATS Model"
-                            android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etAtsModel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:padding="5dp"/>
                     </LinearLayout>
                 </RelativeLayout>
+
+                <!-- Engine Serial Layout Complete -->
+                <RelativeLayout
+                    android:id="@+id/rlEngineSerial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlGeneratorInfo"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+                    <!-- Engine Serial Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl31"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="ENGINE SERIAL"
+                            android:textColor="@color/text_color_white"/>
+
+                        <TextView
+                            android:id="@+id/tvAddEngineSerial"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/background_button_green"
+                            android:drawableLeft="@drawable/ic_add"
+                            android:gravity="center"
+                            android:paddingRight="5dp"
+                            android:text="ADD"
+                            android:textColor="@color/text_color_white"
+                            android:textStyle="bold"/>
+                    </RelativeLayout>
+                    <!-- Engine Serial Layout Body -->
+                    <LinearLayout
+                        android:id="@+id/llEngineSerial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl31"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <!-- ATS Serial Layout Header -->
+                <RelativeLayout
+                    android:id="@+id/rlAtsSerial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlEngineSerial"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/layout_border_blue"
+                    android:visibility="visible">
+                    <!-- ATS Serial Layout Header -->
+                    <RelativeLayout
+                        android:id="@+id/rl32"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_blue">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="ATS SERIAL"
+                            android:textColor="@color/text_color_white"/>
+
+                        <TextView
+                            android:id="@+id/tvAddAtsSerial"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/background_button_green"
+                            android:drawableLeft="@drawable/ic_add"
+                            android:gravity="center"
+                            android:paddingRight="5dp"
+                            android:text="ADD"
+                            android:textColor="@color/text_color_white"
+                            android:textStyle="bold"/>
+                    </RelativeLayout>
+                    <!-- ATS Serial Layout Body -->
+                    <LinearLayout
+                        android:id="@+id/llAtsSerial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl32"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
 
                 <!-- System Checks Layouts Complete-->
                 <RelativeLayout
                     android:id="@+id/rlSystemChecks"
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
-                    android:layout_below="@+id/rlGeneratorInfo"
+                    android:layout_below="@+id/rlAtsSerial"
                     android:visibility="visible">
                     <!-- Fuel System/Governor Layout Complete -->
                     <RelativeLayout
@@ -354,13 +448,7 @@
                         </LinearLayout>
 
 
-                        <ListView
-                            android:id="@+id/lvFuelSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl2"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Pre-Start Checks Cooling System Layout Complete -->
                     <RelativeLayout
@@ -394,13 +482,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvPreStartChecksCoolingSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl3"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Lubrication System Layout Complete -->
                     <RelativeLayout
@@ -434,13 +516,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvLubricationSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl4"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Air System Layout Complete -->
                     <RelativeLayout
@@ -475,13 +551,7 @@
 
                         </LinearLayout>
 
-                        <ListView
-                            android:id="@+id/lvAirSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl5"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Exhaust System Layout Complete -->
                     <RelativeLayout
@@ -515,13 +585,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvExhaustSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl6"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Generator Layout Complete -->
                     <RelativeLayout
@@ -555,13 +619,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvGenerator"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl7"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Control Panel/Cabinets Layout Complete -->
                     <RelativeLayout
@@ -595,13 +653,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvControlPanelCabinets"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl8"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- ATS Main Layout Complete -->
                     <RelativeLayout
@@ -635,13 +687,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvATSMain"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl9"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Starting System Layout Complete -->
                     <RelativeLayout
@@ -675,13 +721,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvStartingSystem"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl10"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Generator Enclosure Layout Complete -->
                     <RelativeLayout
@@ -715,13 +755,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvGeneratorEnclosure"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl11"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Startup And Running Check Layout Complete -->
                     <RelativeLayout
@@ -755,13 +789,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvStartupAndRunningCheck"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl12"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                     <!-- Scheduled Maintenance Layout Complete -->
                     <RelativeLayout
@@ -795,13 +823,7 @@
                             android:orientation="vertical">
 
                         </LinearLayout>
-                        <ListView
-                            android:id="@+id/lvScheduledMaintenance"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:layout_below="@+id/rl13"
-                            android:visibility="gone">
-                        </ListView>
+
                     </RelativeLayout>
                 </RelativeLayout>
 
@@ -968,7 +990,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl15"
                         android:layout_margin="10dp"
-                        android:background="@drawable/layout_edittext"/>
+                        android:background="@drawable/layout_edittext"
+                        android:padding="5dp"/>
                 </RelativeLayout>
 
                 <!-- After Image Layout Header -->
@@ -994,17 +1017,40 @@
                             android:padding="5dp"
                             android:text="AFTER IMAGE"
                             android:textColor="@color/text_color_white"/>
+
+                        <TextView
+                            android:id="@+id/tvAddAfterImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/background_button_green"
+                            android:drawableLeft="@drawable/ic_add"
+                            android:gravity="center"
+                            android:paddingRight="5dp"
+                            android:text="ADD"
+                            android:textColor="@color/text_color_white"
+                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- After Image Layout Body -->
-                    <ImageView
-                        android:id="@+id/ivAfterImage"
+
+                    <HorizontalScrollView
                         android:layout_width="wrap_content"
-                        android:layout_height="150dp"
+                        android:layout_height="wrap_content"
                         android:layout_below="@+id/rl16"
-                        android:layout_centerInParent="true"
-                        android:padding="10dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/image_placeholder"/>
+                        android:fillViewport="false"
+                        android:scrollbars="none">
+                        <LinearLayout
+                            android:id="@+id/llAfterImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
                 </RelativeLayout>
 
                 <!-- Tech Signature Layout Complete -->
@@ -1066,11 +1112,32 @@
                             android:textColor="@color/text_color_white"/>
                     </RelativeLayout>
                     <!-- Customer Signature Layout Body -->
+                    <TextView
+                        android:id="@+id/tvSignatureName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rl18"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Name"
+                        android:textStyle="bold"
+                    />
+
+                    <EditText
+                        android:id="@+id/etCustomerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvSignatureName"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/layout_edittext"
+                        android:padding="5dp"/>
+
                     <ImageView
                         android:id="@+id/ivCustomerSignature"
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
-                        android:layout_below="@+id/rl18"
+                        android:layout_below="@+id/etCustomerName"
                         android:padding="10dp"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>

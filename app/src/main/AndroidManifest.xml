@@ -29,6 +29,10 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize">
         </activity>
+        <activity
+            android:name=".activity.ServiceFormsListActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

@@ -54,6 +54,7 @@ public class AppConfigTags {
     public static final String WO_ID = "WO_NUM";
     public static final String WO_SITE_NAME = "SITE_NAME";
     public static final String WO_CONTRACT_NUM = "CONTRACT_NUM";
+    public static final String WO_CUSTOMER_NAME = "CUSTOMER_NAME";
 
     public static final String MANUFACTURERS = "manufacturers";
     public static final String MANUFACTURER_ID = "manufacturer_id";

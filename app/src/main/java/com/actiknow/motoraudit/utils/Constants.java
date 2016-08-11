@@ -14,10 +14,13 @@ public class Constants {
     public static String api_username = "APItest";
     public static String api_password = "1lk23j0asd8f01324la1ngnb13";
 
+    public static int employee_id = 126;
+
     public static List<Manufacturer> manufacturerList = new ArrayList<Manufacturer> ();
+
     public static List<ServiceCheck> serviceCheckList = new ArrayList<ServiceCheck> ();
 
-
     public static WorkOrderDetail workOrderDetail = new WorkOrderDetail ();
+
 
 }

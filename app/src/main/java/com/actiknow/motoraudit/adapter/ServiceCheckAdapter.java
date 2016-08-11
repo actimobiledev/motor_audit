@@ -411,6 +411,15 @@ public class ServiceCheckAdapter extends BaseAdapter {
         });
 
 
+        switch (serviceCheck.getGroup_type ()) {
+            case 0:
+
+                break;
+            case 1:
+
+                break;
+        }
+
         switch (group_id){
             case 12 :
                 switch (serviceCheck.getSelection_flag ()) {

@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.actiknow.motoraudit.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ServiceCheck {
-    boolean comment_required;
+    boolean comment_required, pass_required;
     private int group_id;
     // 0=> Default,
     // 1=> Fuel System/Governor
@@ -21,35 +24,52 @@ public class ServiceCheck {
     // 11=> Start-up and Running Checks
     // 12=> Scheduled Maintenance
 
-    private int service_check_id, selection_flag;
+    private int service_check_id, selection_flag, group_type;
     // selection flag for PAF-NA : 0=> N/A, 1=>FAIL, 2=>ADVISE, 3=>PASS
     // selection flag for YN-NA : 0=> N/A, 1=>NO, 2=>YES
+    // group type : PAF-NA => 0, YN-NA =>1
 
-    private String heading, sub_heading, image_str, comment, selection_text, group_name;
+
+    private String heading, sub_heading, comment, selection_text, group_name;
+
+    private List<ImageDetail> smCheckImageList = new ArrayList<ImageDetail> ();
+
 
     public ServiceCheck () {
     }
 
-    public ServiceCheck (boolean comment_required,int service_check_id, int group_id,
-                         int selection_flag, String heading, String sub_heading,
-                         String image_str, String comment, String selection_text, String group_name) {
+    public ServiceCheck (boolean comment_required, boolean pass_required, int group_id, int service_check_id,
+                         int selection_flag, int group_type, String heading, String sub_heading, String comment,
+                         String selection_text, String group_name, List<ImageDetail> smCheckImageList) {
         this.comment_required = comment_required;
-        this.service_check_id = service_check_id;
+        this.pass_required = pass_required;
         this.group_id = group_id;
+        this.service_check_id = service_check_id;
         this.selection_flag = selection_flag;
+        this.group_type = group_type;
         this.heading = heading;
         this.sub_heading = sub_heading;
-        this.image_str = image_str;
         this.comment = comment;
         this.selection_text = selection_text;
         this.group_name = group_name;
+        this.smCheckImageList = smCheckImageList;
     }
+
 
     public boolean isComment_required() {return comment_required;}
 
     public void setComment_required(boolean comment_required) {
         this.comment_required = comment_required;
         Utils.showLog (Log.INFO, "comment_required", "" + comment_required, false);
+    }
+
+    public boolean isPass_required () {
+        return pass_required;
+    }
+
+    public void setPass_required (boolean pass_required) {
+        this.pass_required = pass_required;
+        Utils.showLog (Log.INFO, "pass_required", "" + pass_required, false);
     }
 
     public int getService_check_id () {
@@ -79,6 +99,15 @@ public class ServiceCheck {
         Utils.showLog (Log.DEBUG, "selection_flag", "" + selection_flag, false);
     }
 
+    public int getGroup_type () {
+        return group_type;
+    }
+
+    public void setGroup_type (int group_type) {
+        this.group_type = group_type;
+        Utils.showLog (Log.DEBUG, "group_type", "" + group_type, false);
+    }
+
     public String getHeading () {
         return heading;
     }
@@ -95,15 +124,6 @@ public class ServiceCheck {
     public void setSub_heading (String sub_heading) {
         this.sub_heading = sub_heading;
         Utils.showLog (Log.DEBUG, "sub_heading", sub_heading, false);
-    }
-
-    public String getImage_str () {
-        return image_str;
-    }
-
-    public void setImage_str (String image_str) {
-        this.image_str = image_str;
-        Utils.showLog (Log.DEBUG, "image_str", image_str, false);
     }
 
     public String getComment () {
@@ -132,4 +152,17 @@ public class ServiceCheck {
         this.group_name = group_name;
         Utils.showLog (Log.DEBUG, "group_name", group_name, false);
     }
+
+    public List<ImageDetail> getSmCheckImageList () {
+        return smCheckImageList;
+    }
+
+    public void setSmCheckImageList (List<ImageDetail> smCheckImageList) {
+        this.smCheckImageList = smCheckImageList;
+    }
+
+    public void setSmCheckImageInList (ImageDetail smCheckImage) {
+        this.smCheckImageList.add (smCheckImage);
+    }
+
 }

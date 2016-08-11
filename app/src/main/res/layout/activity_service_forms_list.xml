@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Fuel System/Governor Layout Complete -->
+    <RelativeLayout
+        android:id="@+id/rlFuelSystem"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_border_blue"
+        android:visibility="visible">
+
+
+        <!-- WO Engine Information Layout Header -->
+        <RelativeLayout
+            android:id="@+id/rl1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_blue"
+            android:padding="5dp">
+            <TextView
+                android:id="@+id/tvWorkOrderDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/linearLayout"
+                android:gravity="center_vertical"
+                android:padding="5dp" android:text="Service and Maintanence Forms"
+                android:textColor="@color/text_color_white"/>
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tvWorkOrderDescription"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/tvWorkOrderDescription"
+                android:gravity="center_vertical"
+                android:weightSum="2.0">
+                <TextView
+                    android:id="@+id/tvAddSerial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/background_button_green"
+                    android:drawableLeft="@drawable/ic_add"
+                    android:gravity="center"
+                    android:paddingRight="5dp"
+                    android:text="ADD SERIAL"
+                    android:textColor="@color/text_color_white"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <!-- WO Engine Information Layout body -->
+        <ListView
+            android:id="@+id/lvGeneratorSerial"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/rl1">
+        </ListView>
+
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"/>
+
+        <TextView
+            android:id="@+id/tvNoSerialFound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="No generator serial found"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone"/>
+
+
+    </RelativeLayout>
+</RelativeLayout>

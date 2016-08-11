@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.app.AppController;
+import com.actiknow.motoraudit.model.Manufacturer;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 
@@ -282,5 +285,21 @@ public class Utils {
         return json;
     }
 
+    public static String getManufacturerName (int manufacture_id) {
+        for (int i = 0; i < Constants.manufacturerList.size (); i++) {
+            Manufacturer manufacturer = Constants.manufacturerList.get (i);
+            if (manufacturer.getManufacturer_id () == manufacture_id) {
+                return manufacturer.getManufacturer_name ();
+            }
+        }
+        return null;
+    }
+
+
+    public static void shakeView (Activity activity, View view) {
+        Animation shake;
+        shake = AnimationUtils.loadAnimation (activity, R.anim.shake);
+        view.setAnimation (shake);
+    }
 
 }

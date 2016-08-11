@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     private List<WorkOrder> workOrderList = new ArrayList<> ();
 
-    int[] jobIds = {1, 2, 3, 4, 5};
-    String[] jobSerialNumber = {"SO#11111", "SO#22222", "SO#33333", "SO#44444", "SO#55555"};
-
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -65,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         initView ();
         initData ();
         initListener ();
-        getJobListFromServer ();
+        getWorkOrderListFromServer ();
         getManufacturerListFromServer ();
         setServiceCheckList ();
         setUpNavigationDrawer ();
@@ -149,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 */
     }
 
-    private void getJobListFromServer () {
+    private void getWorkOrderListFromServer () {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
             StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
@@ -171,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                                         workOrder.setWo_id (jsonObject.getInt (AppConfigTags.WO_ID));
                                         workOrder.setWo_site_name (jsonObject.getString (AppConfigTags.WO_SITE_NAME));
                                         workOrder.setWo_contract_num (jsonObject.getInt (AppConfigTags.WO_CONTRACT_NUM));
+                                        workOrder.setWo_customer_name (jsonObject.getString (AppConfigTags.WO_CUSTOMER_NAME));
                                         workOrderList.add (workOrder);
                                     }
                                 } catch (JSONException e) {
@@ -283,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setServiceCheckList () {
+    private void setServiceCheckListOld () {
         String service_check_json = Utils.getServiceCheckJSONFromAsset (this);
         Utils.showLog (Log.INFO, "Service Check JSON", service_check_json, false);
         try {
@@ -294,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 ServiceCheck serviceCheck = new ServiceCheck ();
                 serviceCheck.setHeading (jsonObject.getString (AppConfigTags.HEADING));
                 serviceCheck.setSub_heading (jsonObject.getString (AppConfigTags.SUB_HEADING));
-                serviceCheck.setImage_str (jsonObject.getString (AppConfigTags.IMAGE));
+//                serviceCheck.setImage_str (jsonObject.getString (AppConfigTags.IMAGE));
                 serviceCheck.setComment (jsonObject.getString (AppConfigTags.COMMENT));
                 serviceCheck.setSelection_text (jsonObject.getString (AppConfigTags.SELECTION_TEXT));
                 serviceCheck.setGroup_name (jsonObject.getString (AppConfigTags.GROUP_NAME));
@@ -366,6 +364,106 @@ public class MainActivity extends AppCompatActivity {
             //           Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
 */
+    }
+
+    private void setServiceCheckList () {
+        if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    JSONArray jsonArray = jsonObj.getJSONArray ("checks");
+                                    for (int i = 0; i < jsonArray.length (); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject (i);
+                                        ServiceCheck serviceCheck = new ServiceCheck ();
+
+                                        serviceCheck.setHeading (jsonObject.getString ("Name"));
+                                        serviceCheck.setSub_heading (jsonObject.getString ("Name_description"));
+                                        serviceCheck.setComment ("");
+                                        serviceCheck.setSelection_text ("N/A");
+//                                        serviceCheck.setGroup_name (jsonObject.getString (AppConfigTags.GROUP_NAME));
+//                                        serviceCheck.setGroup_id (jsonObject.getInt (AppConfigTags.GROUP_ID));
+                                        serviceCheck.setService_check_id (jsonObject.getInt ("id"));
+                                        serviceCheck.setSelection_flag (0);
+                                        serviceCheck.setComment_required (false);
+                                        switch (jsonObject.getInt ("pass_required")) {
+                                            case 0:
+                                                serviceCheck.setPass_required (false);
+                                                break;
+                                            case 1:
+                                                serviceCheck.setPass_required (true);
+                                                break;
+                                        }
+                                        Constants.serviceCheckList.add (serviceCheck);
+                                    }
+
+                                    JSONArray jsonArray2 = jsonObj.getJSONArray ("checking");
+                                    for (int i = 0; i < jsonArray2.length (); i++) {
+                                        JSONObject jsonObject2 = jsonArray2.getJSONObject (i);
+
+                                        for (int j = 0; j < Constants.serviceCheckList.size (); j++) {
+                                            ServiceCheck serviceCheck = Constants.serviceCheckList.get (j);
+                                            if (serviceCheck.getService_check_id () == jsonObject2.getInt ("check_id")) {
+                                                serviceCheck.setGroup_id (jsonObject2.getInt ("group_id"));
+                                            }
+                                        }
+                                    }
+
+                                    JSONArray jsonArray3 = jsonObj.getJSONArray ("checkgroups");
+                                    for (int i = 0; i < jsonArray3.length (); i++) {
+                                        JSONObject jsonObject3 = jsonArray3.getJSONObject (i);
+
+                                        for (int j = 0; j < Constants.serviceCheckList.size (); j++) {
+                                            ServiceCheck serviceCheck = Constants.serviceCheckList.get (j);
+                                            if (serviceCheck.getGroup_id () == jsonObject3.getInt ("group_id")) {
+                                                serviceCheck.setGroup_name (jsonObject3.getString ("group_name"));
+                                                switch (jsonObject3.getString ("check_type")) {
+                                                    case "PAF-NA":
+                                                        serviceCheck.setGroup_type (0);
+                                                        break;
+                                                    case "YN-NA":
+                                                        serviceCheck.setGroup_type (1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace ();
+                                }
+                            } else {
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                        }
+                    }) {
+                @Override
+                public byte[] getBody () throws com.android.volley.AuthFailureError {
+                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
+                            "\"API_function\":\"getChecksInfo\",\n" +
+                            "\"API_parameters\":{}}";
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                    return str.getBytes ();
+                }
+
+                public String getBodyContentType () {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            Utils.sendRequest (strRequest);
+        } else {
+            Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@
     {
       "group_name":"Fuel System/Governor",
       "group_id": 1,
+      "group_type": "PAF-NA",
       "id": 1,
       "heading": "Engine Base Tank/Day Tank",
       "sub_heading": "Check for leaks and water contamination.",
