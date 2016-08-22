@@ -1,5 +1,6 @@
 package com.actiknow.motoraudit.activity;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -8,6 +9,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -16,7 +19,9 @@ import android.widget.TextView;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.adapter.AllWorkOrdersAdapter;
+import com.actiknow.motoraudit.helper.DatabaseHandler;
 import com.actiknow.motoraudit.model.Manufacturer;
+import com.actiknow.motoraudit.model.Serial;
 import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.model.WorkOrder;
 import com.actiknow.motoraudit.utils.AppConfigTags;
@@ -43,16 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tvNoInternetConnection;
     ProgressBar progressBar;
-    ListView listViewAllAtm;
+    ListView lvAllWorkOrder;
     GoogleApiClient client;
-    private AllWorkOrdersAdapter adapter;
+    DatabaseHandler db;
 
     // Action Bar components
-
+    ProgressDialog progressDialog;
+    private AllWorkOrdersAdapter adapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private RelativeLayout mDrawerPanel;
-
     private List<WorkOrder> workOrderList = new ArrayList<> ();
 
     @Override
@@ -62,14 +67,15 @@ public class MainActivity extends AppCompatActivity {
         initView ();
         initData ();
         initListener ();
-        getWorkOrderListFromServer ();
-        getManufacturerListFromServer ();
-        setServiceCheckList ();
+        getWorkOrderListFromServer (false);
+        getManufacturerListFromServer (false);
+        setServiceCheckList (false);
         setUpNavigationDrawer ();
+        db.closeDB ();
     }
 
     private void initView () {
-        listViewAllAtm = (ListView) findViewById (R.id.lvJobsList);
+        lvAllWorkOrder = (ListView) findViewById (R.id.lvJobsList);
         tvNoInternetConnection = (TextView) findViewById (R.id.tvNoIternetConnection);
         progressBar = (ProgressBar) findViewById (R.id.progressbar);
     }
@@ -78,9 +84,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData () {
+        db = new DatabaseHandler (getApplicationContext ());
         Utils.setTypefaceToAllViews (this, tvNoInternetConnection);
         adapter = new AllWorkOrdersAdapter (this, workOrderList);
-        listViewAllAtm.setAdapter (adapter);
+        lvAllWorkOrder.setAdapter (adapter);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
     }
 
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 */
     }
 
-    private void getWorkOrderListFromServer () {
+    private void getWorkOrderListFromServer (final boolean sync) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
             StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
@@ -159,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
                             if (response != null) {
                                 is_data_received = 1;
                                 try {
+                                    if (sync) {
+                                        db.deleteAllWorkorders ();
+                                        db.deleteAllContractSerials ();
+                                    } else {
+                                    }
                                     JSONObject jsonObj = new JSONObject (response);
                                     JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.WORKORDERS);
                                     json_array_len = jsonArray.length ();
@@ -169,28 +181,63 @@ public class MainActivity extends AppCompatActivity {
                                         workOrder.setWo_site_name (jsonObject.getString (AppConfigTags.WO_SITE_NAME));
                                         workOrder.setWo_contract_num (jsonObject.getInt (AppConfigTags.WO_CONTRACT_NUM));
                                         workOrder.setWo_customer_name (jsonObject.getString (AppConfigTags.WO_CUSTOMER_NAME));
-                                        workOrderList.add (workOrder);
+                                        if (sync) {
+                                            db.createWorkorder (workOrder);
+                                            JSONArray jsonArrayContractSerial = jsonObject.getJSONArray ("CONTRACT_SERIALS");
+                                            for (int j = 0; j < jsonArrayContractSerial.length (); j++) {
+                                                JSONObject c = jsonArrayContractSerial.getJSONObject (j);
+                                                Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
+                                                        c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
+                                                        Utils.getManufacturerName (c.getInt ("manufacturer_id")));
+//                                                Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
+//                                                        c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
+//                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
+//                                                        c.getString ("manufacturer_name"));
+                                                db.createContractSerial (contractSerial);
+                                            }
+                                        } else {
+                                            workOrderList.add (workOrder);
+                                        }
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace ();
                                 }
+
+                                if (sync) {
+                                    progressDialog.dismiss ();
+                                    Utils.showOkDialog (MainActivity.this, "All Data have been successfully synced from the server", false);
+                                } else {
+                                    getWorkOrderListFromLocalDatabase ();
+                                }
+
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                if (sync) {
+                                    progressDialog.dismiss ();
+                                    Utils.showOkDialog (MainActivity.this, "An error occurred while syncing", false);
+                                } else {
+                                    getWorkOrderListFromLocalDatabase ();
+                                }
                             }
-                            adapter.notifyDataSetChanged ();
-                            if (is_data_received != 0 && json_array_len != 0) {
-                                progressBar.setVisibility (View.GONE);
-                                listViewAllAtm.setVisibility (View.VISIBLE);
-                                tvNoInternetConnection.setVisibility (View.GONE);
-                            } else if (is_data_received != 0 && json_array_len == 0) {
-                                tvNoInternetConnection.setVisibility (View.VISIBLE);
-                                progressBar.setVisibility (View.GONE);
-                                listViewAllAtm.setVisibility (View.GONE);
-                            }
-                            if (is_data_received == 0) {
-                                progressBar.setVisibility (View.GONE);
-                                listViewAllAtm.setVisibility (View.GONE);
-                                tvNoInternetConnection.setVisibility (View.VISIBLE);
+                            if (sync) {
+                                progressDialog.dismiss ();
+                            } else {
+                                adapter.notifyDataSetChanged ();
+                                if (is_data_received != 0 && json_array_len != 0) {
+                                    progressBar.setVisibility (View.GONE);
+                                    lvAllWorkOrder.setVisibility (View.VISIBLE);
+                                    tvNoInternetConnection.setVisibility (View.GONE);
+                                } else if (is_data_received != 0 && json_array_len == 0) {
+                                    tvNoInternetConnection.setVisibility (View.VISIBLE);
+                                    progressBar.setVisibility (View.GONE);
+                                    lvAllWorkOrder.setVisibility (View.GONE);
+                                }
+                                if (is_data_received == 0) {
+                                    progressBar.setVisibility (View.GONE);
+                                    lvAllWorkOrder.setVisibility (View.GONE);
+                                    tvNoInternetConnection.setVisibility (View.VISIBLE);
+                                }
                             }
                         }
                     },
@@ -199,7 +246,12 @@ public class MainActivity extends AppCompatActivity {
                         public void onErrorResponse (VolleyError error) {
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
                             progressBar.setVisibility (View.GONE);
-                            listViewAllAtm.setVisibility (View.VISIBLE);
+                            lvAllWorkOrder.setVisibility (View.VISIBLE);
+                            if (sync) {
+                                progressDialog.dismiss ();
+                            } else {
+                                getWorkOrderListFromLocalDatabase ();
+                            }
                         }
                     }) {
                 @Override
@@ -212,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
                     return str.getBytes ();
                 }
+
                 public String getBodyContentType () {
                     return "application/json; charset=utf-8";
                 }
@@ -219,12 +272,18 @@ public class MainActivity extends AppCompatActivity {
             Utils.sendRequest (strRequest);
         } else {
             progressBar.setVisibility (View.GONE);
-            listViewAllAtm.setVisibility (View.VISIBLE);
-            Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            lvAllWorkOrder.setVisibility (View.VISIBLE);
+            if (sync) {
+                progressDialog.dismiss ();
+                Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, Data can't be synced", false);
+            } else {
+                Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+                getWorkOrderListFromLocalDatabase ();
+            }
         }
     }
 
-    private void getManufacturerListFromServer () {
+    private void getManufacturerListFromServer (final boolean sync) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
             StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
@@ -234,7 +293,11 @@ public class MainActivity extends AppCompatActivity {
                             int json_array_len = 0;
                             Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
-                                Constants.manufacturerList.clear ();
+                                if (sync) {
+                                    db.deleteAllManufacturer ();
+                                } else {
+                                    Constants.manufacturerList.clear ();
+                                }
                                 try {
                                     JSONObject jsonObj = new JSONObject (response);
                                     JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.MANUFACTURERS);
@@ -244,13 +307,21 @@ public class MainActivity extends AppCompatActivity {
                                         Manufacturer manufacturer = new Manufacturer ();
                                         manufacturer.setManufacturer_id (jsonObject.getInt (AppConfigTags.MANUFACTURER_ID));
                                         manufacturer.setManufacturer_name (jsonObject.getString (AppConfigTags.MANUFACTURER_NAME));
-                                        Constants.manufacturerList.add (manufacturer);
+                                        if (sync) {
+                                            db.createManufacturer (manufacturer);
+                                        } else {
+                                            Constants.manufacturerList.add (manufacturer);
+                                        }
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace ();
                                 }
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                if (sync) {
+                                } else {
+                                    getManufacturerListFromLocalDatabase ();
+                                }
                             }
                         }
                     },
@@ -258,6 +329,10 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse (VolleyError error) {
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            if (sync) {
+                            } else {
+                                getManufacturerListFromLocalDatabase ();
+                            }
                         }
                     }) {
                 @Override
@@ -277,7 +352,11 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
- //           Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            if (sync) {
+            } else {
+                getManufacturerListFromLocalDatabase ();
+            }
+            //           Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
     }
 
@@ -366,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
 */
     }
 
-    private void setServiceCheckList () {
+    private void setServiceCheckList (final boolean sync) {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
             StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
@@ -376,6 +455,11 @@ public class MainActivity extends AppCompatActivity {
                             Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
                                 try {
+                                    if (sync) {
+                                        db.deleteAllServiceChecks ();
+                                    } else {
+                                        Constants.serviceCheckList.clear ();
+                                    }
                                     JSONObject jsonObj = new JSONObject (response);
                                     JSONArray jsonArray = jsonObj.getJSONArray ("checks");
                                     for (int i = 0; i < jsonArray.length (); i++) {
@@ -399,7 +483,12 @@ public class MainActivity extends AppCompatActivity {
                                                 serviceCheck.setPass_required (true);
                                                 break;
                                         }
-                                        Constants.serviceCheckList.add (serviceCheck);
+
+                                        if (sync) {
+                                            db.createServiceCheck (serviceCheck);
+                                        } else {
+                                            Constants.serviceCheckList.add (serviceCheck);
+                                        }
                                     }
 
                                     JSONArray jsonArray2 = jsonObj.getJSONArray ("checking");
@@ -432,11 +521,17 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
+
+
                                 } catch (JSONException e) {
                                     e.printStackTrace ();
                                 }
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                if (sync) {
+                                } else {
+                                    getServiceCheckListFromLocalDatabase ();
+                                }
                             }
                         }
                     },
@@ -444,6 +539,10 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse (VolleyError error) {
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            if (sync) {
+                            } else {
+                                getServiceCheckListFromLocalDatabase ();
+                            }
                         }
                     }) {
                 @Override
@@ -462,9 +561,39 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
-            Utils.showOkDialog (MainActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            if (sync) {
+            } else {
+                getServiceCheckListFromLocalDatabase ();
+            }
         }
     }
+
+
+    private void getManufacturerListFromLocalDatabase () {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the manufacturers from local database", true);
+        Constants.manufacturerList.clear ();
+        List<Manufacturer> allManufacturers = db.getAllManufacturers ();
+        for (Manufacturer manufacturer : allManufacturers)
+            Constants.manufacturerList.add (manufacturer);
+    }
+
+    private void getServiceCheckListFromLocalDatabase () {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the service checks from local database", true);
+        Constants.serviceCheckList.clear ();
+        List<ServiceCheck> allServiceChecks = db.getAllServiceChecks ();
+        for (ServiceCheck serviceCheck : allServiceChecks)
+            Constants.serviceCheckList.add (serviceCheck);
+    }
+
+    private void getWorkOrderListFromLocalDatabase () {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the workorder from local database", true);
+        workOrderList.clear ();
+        List<WorkOrder> allWorkOrders = db.getAllWorkorders ();
+        for (WorkOrder workOrder : allWorkOrders)
+            workOrderList.add (workOrder);
+        adapter.notifyDataSetChanged ();
+    }
+
 
     @Override
     public void onStart () {
@@ -505,4 +634,30 @@ public class MainActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end (client, viewAction);
         client.disconnect ();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu) {
+        getMenuInflater ().inflate (R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item) {
+        switch (item.getItemId ()) {
+            case R.id.action_sync:
+                sync ();
+                return true;
+        }
+        Utils.hideSoftKeyboard (MainActivity.this);
+        return super.onOptionsItemSelected (item);
+    }
+
+    private void sync () {
+        progressDialog = new ProgressDialog (this);
+        Utils.showProgressDialog (progressDialog, null);
+        getWorkOrderListFromServer (true);
+        getManufacturerListFromServer (true);
+        setServiceCheckList (true);
+    }
+
 }

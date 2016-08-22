@@ -15,7 +15,8 @@
         android:gravity="center"
         android:padding="5dp"
         android:text="PLEASE SIGN HERE"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_medium"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -32,6 +33,7 @@
             android:background="@color/colorPrimary"
             android:text="CANCEL"
             android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_medium"
             tools:ignore="ButtonStyle"/>
 
         <Button
@@ -42,6 +44,7 @@
             android:background="@color/colorPrimary"
             android:text="CLEAR"
             android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_medium"
             tools:ignore="ButtonStyle"/>
 
         <Button
@@ -52,6 +55,7 @@
             android:background="@color/colorPrimary"
             android:text="SAVE"
             android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_medium"
             tools:ignore="ButtonStyle"/>
 
     </LinearLayout>

@@ -58,6 +58,7 @@
             android:layout_centerVertical="true"
             android:text="Sorry no service available"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/text_size_medium"
             android:visibility="gone"/>
 
 
@@ -76,12 +77,12 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:animationCache="false"
             android:background="@color/colorPrimary"
             android:choiceMode="singleChoice"
             android:divider="@color/color_divider"
             android:dividerHeight="1dp"
-            android:smoothScrollbar="true"
             android:scrollingCache="false"
-            android:animationCache="false"/>
+            android:smoothScrollbar="true"/>
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

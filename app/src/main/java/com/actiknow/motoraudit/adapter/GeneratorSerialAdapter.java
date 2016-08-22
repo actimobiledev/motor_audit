@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,20 @@ import android.widget.TextView;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.activity.DetailActivity;
+import com.actiknow.motoraudit.activity.ViewFormActivity;
 import com.actiknow.motoraudit.model.Serial;
+import com.actiknow.motoraudit.utils.AppConfigTags;
+import com.actiknow.motoraudit.utils.AppConfigURL;
 import com.actiknow.motoraudit.utils.Constants;
+import com.actiknow.motoraudit.utils.NetworkConnection;
+import com.actiknow.motoraudit.utils.Utils;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -74,19 +87,80 @@ public class GeneratorSerialAdapter extends BaseAdapter {
 
             @Override
             public void onClick (View arg0) {
-                Intent intent = new Intent (activity, DetailActivity.class);
+
+
                 Constants.workOrderDetail.setGenerator_model (generatorSerial.getModel_number ());
                 Constants.workOrderDetail.setGenerator_serial (generatorSerial.getSerial_number ());
                 Constants.workOrderDetail.setGenerator_make_id (generatorSerial.getManufacturer_id ());
                 Constants.workOrderDetail.setGenerator_make_name (generatorSerial.getManufacturer_name ());
-                Constants.workOrderDetail.setGenerator_serial_id (String.valueOf (generatorSerial.getSerial_id ()));
-//                intent.putExtra ("wo_id", workOrder.getWo_id ());
-//                intent.putExtra ("wo_contract_num", workOrder.getWo_contract_num ());
-//                intent.putExtra ("wo_site_name", workOrder.getWo_site_name ());
-                activity.startActivity (intent);
+                Constants.workOrderDetail.setGenerator_serial_id (generatorSerial.getSerial_id ());
+                getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ());
             }
         });
         return convertView;
+    }
+
+    private void getWorkOrderDetailFromServer (final int wo_id, final int generator_serial_id) {
+        if (NetworkConnection.isNetworkAvailable (activity)) {
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            Intent intent = null;
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    switch (jsonObj.getInt ("error_code")) {
+                                        case 0:
+                                            intent = new Intent (activity, ViewFormActivity.class);
+                                            break;
+                                        default:
+                                            intent = new Intent (activity, DetailActivity.class);
+                                            break;
+                                    }
+
+                                } catch (JSONException e) {
+                                    intent = new Intent (activity, DetailActivity.class);
+                                    e.printStackTrace ();
+                                }
+                            } else {
+                                intent = new Intent (activity, DetailActivity.class);
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+
+                            activity.startActivity (intent);
+
+
+                        }
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                        }
+                    }) {
+                @Override
+                public byte[] getBody () throws com.android.volley.AuthFailureError {
+
+                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
+//                            "\"API_function\":\"getWorkorderForms\",\n" +
+//                            "\"API_parameters\":{\"WO_NUM\" : \"" + wo_id + "\"}}";
+                            "\"API_function\":\"getServiceForm\",\n" +
+                            "\"API_parameters\":{\"WO_NUM\" : " + wo_id + ", \"GEN_SERIALID\" : " + generator_serial_id + "}}";
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                    return str.getBytes ();
+                }
+
+                public String getBodyContentType () {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            Utils.sendRequest (strRequest);
+        } else {
+        }
     }
 
     static class ViewHolder {
@@ -95,4 +169,5 @@ public class GeneratorSerialAdapter extends BaseAdapter {
         TextView tvGeneratorManufacturer;
         CheckBox cbSelected;
     }
+
 }

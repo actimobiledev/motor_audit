@@ -2,6 +2,7 @@ package com.actiknow.motoraudit.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.adapter.GeneratorSerialAdapter;
 import com.actiknow.motoraudit.adapter.ManufacturerAdapter;
+import com.actiknow.motoraudit.helper.DatabaseHandler;
 import com.actiknow.motoraudit.model.Serial;
 import com.actiknow.motoraudit.utils.AppConfigTags;
 import com.actiknow.motoraudit.utils.AppConfigURL;
@@ -49,10 +51,13 @@ public class ServiceFormsListActivity extends AppCompatActivity {
     TextView tvNoSerialFound;
     TextView tvAddSerial;
 
+    Dialog dialogEnterManually;
+
     Dialog dialogAddNewSerial;
     ProgressDialog pDialog;
     ListView lvGeneratorSerial;
     ManufacturerAdapter manufacturerAdapter;
+    DatabaseHandler db;
     private List<Serial> generatorSerialList = new ArrayList<> ();
     private GeneratorSerialAdapter adapter;
 
@@ -82,7 +87,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                     tvAddSerial.setBackgroundResource (R.color.background_button_green_pressed);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvAddSerial.setBackgroundResource (R.color.background_button_green);
-                    showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number ());
+                    showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), false);
                 }
                 return true;
             }
@@ -90,7 +95,8 @@ public class ServiceFormsListActivity extends AppCompatActivity {
     }
 
     private void initData () {
-//        Intent intent = getIntent ();
+        db = new DatabaseHandler (getApplicationContext ());
+        //        Intent intent = getIntent ();
 //        wo_id = intent.getIntExtra ("wo_id", 0);
         //    Utils.setTypefaceToAllViews (this, tvNoInternetConnection);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
@@ -101,21 +107,25 @@ public class ServiceFormsListActivity extends AppCompatActivity {
         lvGeneratorSerial.setAdapter (adapter);
     }
 
-    private void showSaveSerialDialog (final int serial_id, final int contract_num) {
+    private void showSaveSerialDialog (final int serial_id, final int contract_num, final boolean offline) {
         TextView tvSerialHeading;
+        TextView tvSerialId;
+        final EditText etSerialId;
         final EditText etSerial;
         final EditText etModel;
         final Spinner spManufacturer;
         TextView tvAddSerial;
         TextView tvCancelSerial;
 
-        final Serial generatorSerial = new Serial (false, serial_id, 0, "", "", "", "");
+        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, "", "", "", "");
 
         dialogAddNewSerial = new Dialog (ServiceFormsListActivity.this);
         dialogAddNewSerial.setContentView (R.layout.dialog_add_generator_serial);
         dialogAddNewSerial.setCancelable (false);
 
         tvSerialHeading = (TextView) dialogAddNewSerial.findViewById (R.id.tvSerialHeading);
+        tvSerialId = (TextView) dialogAddNewSerial.findViewById (R.id.tvSerialId);
+        etSerialId = (EditText) dialogAddNewSerial.findViewById (R.id.etSerialId);
         etSerial = (EditText) dialogAddNewSerial.findViewById (R.id.etSerial);
         etModel = (EditText) dialogAddNewSerial.findViewById (R.id.etModel);
         spManufacturer = (Spinner) dialogAddNewSerial.findViewById (R.id.spManufacturer);
@@ -125,13 +135,31 @@ public class ServiceFormsListActivity extends AppCompatActivity {
         dialogAddNewSerial.getWindow ().setBackgroundDrawable (new ColorDrawable (android.graphics.Color.TRANSPARENT));
         dialogAddNewSerial.show ();
 
+
+        if (offline) {
+            tvSerialHeading.setText ("ENTER THE SERIAL DETAILS");
+            tvSerialId.setVisibility (View.VISIBLE);
+            etSerialId.setVisibility (View.VISIBLE);
+            tvAddSerial.setText ("CONTINUE");
+        } else {
+            tvSerialHeading.setText ("ADD NEW SERIAL");
+            tvSerialId.setVisibility (View.GONE);
+            etSerialId.setVisibility (View.GONE);
+            tvAddSerial.setText ("ADD");
+        }
+
+
         manufacturerAdapter = new ManufacturerAdapter (ServiceFormsListActivity.this, R.layout.spinner_item, Constants.manufacturerList);
         spManufacturer.setAdapter (manufacturerAdapter);
 
         tvCancelSerial.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View v) {
-                dialogAddNewSerial.dismiss ();
+                if (offline) {
+                    Utils.showOkDialog (ServiceFormsListActivity.this, "Sorry Generator Serial ID is required to create a new form", true);
+                } else {
+                    dialogAddNewSerial.dismiss ();
+                }
             }
         });
         tvAddSerial.setOnClickListener (new View.OnClickListener () {
@@ -146,22 +174,41 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                 } else if (generatorSerial.getManufacturer_id () == 0) {
                     Utils.showToast (ServiceFormsListActivity.this, "Please select Manufacturer");
                 } else {
-                    generatorSerial.setModel_number (etModel.getText ().toString ());
-                    generatorSerial.setSerial_number (etSerial.getText ().toString ());
-                    generatorSerial.setSerial_id (serial_id);
+                    if (offline) {
+                        if (etSerialId.getText ().toString ().length () == 0) {
+                            Utils.showToast (ServiceFormsListActivity.this, "Please enter Serial ID");
+                        } else {
+                            generatorSerial.setModel_number (etModel.getText ().toString ());
+                            generatorSerial.setSerial_number (etSerial.getText ().toString ());
+                            generatorSerial.setSerial_id (Integer.parseInt (etSerialId.getText ().toString ()));
+                            Constants.workOrderDetail.setGenerator_model (generatorSerial.getModel_number ());
+                            Constants.workOrderDetail.setGenerator_serial (generatorSerial.getSerial_number ());
+                            Constants.workOrderDetail.setGenerator_make_id (generatorSerial.getManufacturer_id ());
+                            Constants.workOrderDetail.setGenerator_make_name (generatorSerial.getManufacturer_name ());
+                            Constants.workOrderDetail.setGenerator_serial_id (generatorSerial.getSerial_id ());
 
-                    Utils.showLog (Log.INFO, "MANUFACTURER ID", "" + generatorSerial.getManufacturer_id (), true);
-                    Utils.showLog (Log.INFO, "MANUFACTURER NAME", generatorSerial.getManufacturer_name (), true);
-                    Utils.showLog (Log.INFO, "MODEL NUMBER", generatorSerial.getModel_number (), true);
-                    Utils.showLog (Log.INFO, "SERIAL NUMBER", generatorSerial.getSerial_number (), true);
-                    Utils.showLog (Log.INFO, "SERIAL ID", "" + generatorSerial.getSerial_id (), true);
-                    Utils.showLog (Log.INFO, "CONTRACT NUMBER", "" + contract_num, true);
+                            Intent intent = new Intent (ServiceFormsListActivity.this, DetailActivity.class);
+                            startActivity (intent);
 
-                    dialogAddNewSerial.dismiss ();
-                    pDialog = new ProgressDialog (ServiceFormsListActivity.this);
-                    Utils.showProgressDialog (pDialog, null);
-                    saveSerial (contract_num, generatorSerial.getSerial_number (),
-                            generatorSerial.getModel_number (), generatorSerial.getManufacturer_id ());
+                        }
+                    } else {
+                        generatorSerial.setModel_number (etModel.getText ().toString ());
+                        generatorSerial.setSerial_number (etSerial.getText ().toString ());
+                        generatorSerial.setSerial_id (serial_id);
+
+                        Utils.showLog (Log.INFO, "MANUFACTURER ID", "" + generatorSerial.getManufacturer_id (), true);
+                        Utils.showLog (Log.INFO, "MANUFACTURER NAME", generatorSerial.getManufacturer_name (), true);
+                        Utils.showLog (Log.INFO, "MODEL NUMBER", generatorSerial.getModel_number (), true);
+                        Utils.showLog (Log.INFO, "SERIAL NUMBER", generatorSerial.getSerial_number (), true);
+                        Utils.showLog (Log.INFO, "SERIAL ID", "" + generatorSerial.getSerial_id (), true);
+                        Utils.showLog (Log.INFO, "CONTRACT NUMBER", "" + contract_num, true);
+
+                        dialogAddNewSerial.dismiss ();
+                        pDialog = new ProgressDialog (ServiceFormsListActivity.this);
+                        Utils.showProgressDialog (pDialog, null);
+                        saveSerial (contract_num, generatorSerial.getSerial_number (),
+                                generatorSerial.getModel_number (), generatorSerial.getManufacturer_id ());
+                    }
                 }
             }
         });
@@ -297,7 +344,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                                             is_data_received = 1;
                                             Serial generatorSerial = new
                                                     Serial (false, c.getInt ("serviceSerials_id"),
-                                                    c.getInt ("manufacturer_id"), c.getString ("serial"),
+                                                    c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
                                                     c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                             generatorSerialList.add (generatorSerial);
                                         }
@@ -349,8 +396,34 @@ public class ServiceFormsListActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
-            Utils.showOkDialog (ServiceFormsListActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+//            showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), true);
+
+            progressBar.setVisibility (View.GONE);
+            getContractSerialsFromLocalDatabase (wo_id);
+
+
+            //        Utils.showOkDialog (ServiceFormsListActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
+    }
+
+    private void getContractSerialsFromLocalDatabase (int wo_id) {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the contract serials from local database for wo id = " + wo_id, true);
+        generatorSerialList.clear ();
+
+
+        List<Serial> allContractSerials = db.getAllContractSerials (wo_id);
+
+        if (allContractSerials.size () > 0) {
+            tvNoSerialFound.setVisibility (View.GONE);
+            lvGeneratorSerial.setVisibility (View.VISIBLE);
+        } else {
+            tvNoSerialFound.setVisibility (View.VISIBLE);
+            lvGeneratorSerial.setVisibility (View.GONE);
+        }
+
+        for (Serial contractSerial : allContractSerials)
+            generatorSerialList.add (contractSerial);
+        adapter.notifyDataSetChanged ();
     }
 
 }

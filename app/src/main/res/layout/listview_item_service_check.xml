@@ -22,7 +22,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="Engine Base Tank/Day Tank"
                 android:textColor="@color/text_color_black"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="normal"/>
 
         </LinearLayout>
@@ -75,7 +75,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -84,7 +84,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Yes"
-                            android:textColor="@color/color_pass"/>
+                            android:textColor="@color/color_pass"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbYes"
@@ -97,8 +98,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -107,7 +108,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="No"
-                            android:textColor="@color/color_fail"/>
+                            android:textColor="@color/color_fail"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbNo"
@@ -122,7 +124,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -131,7 +133,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="N/A"
-                            android:textColor="@color/color_na"/>
+                            android:textColor="@color/color_na"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbNA2"
@@ -157,7 +160,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -166,7 +169,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Pass"
-                            android:textColor="@color/color_pass"/>
+                            android:textColor="@color/color_pass"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbPass"
@@ -180,8 +184,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -190,7 +194,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Advise"
-                            android:textColor="@color/color_advice"/>
+                            android:textColor="@color/color_advice"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbAdvise"
@@ -204,8 +209,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -214,7 +219,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Fail"
-                            android:textColor="@color/color_fail"/>
+                            android:textColor="@color/color_fail"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbFail"
@@ -227,7 +233,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="15dp"
                         android:layout_weight="1.0"
                         android:orientation="vertical">
 
@@ -236,7 +242,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="N/A"
-                            android:textColor="@color/color_na"/>
+                            android:textColor="@color/color_na"
+                            android:textSize="@dimen/text_size_medium"/>
 
                         <RadioButton
                             android:id="@+id/rbNA"
@@ -263,7 +270,8 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/layout_edittext"
-            android:padding="5dp"/>
+            android:padding="5dp"
+            android:textSize="@dimen/text_size_medium"/>
 
     </LinearLayout>
 </RelativeLayout>

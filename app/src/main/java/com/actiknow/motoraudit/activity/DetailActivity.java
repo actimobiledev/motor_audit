@@ -58,6 +58,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.kyanogen.signatureview.SignatureView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -221,11 +222,11 @@ public class DetailActivity extends AppCompatActivity {
         initListener ();
         initAdapter ();
 //        getWorkOrderDetailFromServer(78759, 97);
-//        getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getContract_number ());
+        getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ());
         Utils.hideSoftKeyboard (this);
 
 
-        new LoadServiceChecksInLinearLayout (this).execute ();
+//        new LoadServiceChecksInLinearLayout (this).execute ();
 
 
 //        new LoadServiceChecks (this).execute ();
@@ -350,6 +351,7 @@ public class DetailActivity extends AppCompatActivity {
                     tvCancel.setBackgroundResource (R.color.background_button_red_pressed);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvCancel.setBackgroundResource (R.color.background_button_red);
+                    finish ();
                 }
                 return true;
             }
@@ -583,7 +585,7 @@ public class DetailActivity extends AppCompatActivity {
         ivTechSignature.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
-                showSignatureDialog (1);
+                showSignatureDialog (1, 0);
             }
         });
         ivCustomerSignature.setOnClickListener (new View.OnClickListener () {
@@ -593,7 +595,7 @@ public class DetailActivity extends AppCompatActivity {
                     etCustomerName.setError ("Please enter the name");
                     Utils.shakeView (DetailActivity.this, etCustomerName);
                 } else {
-                    showSignatureDialog (2);
+                    showSignatureDialog (2, 0);
                 }
             }
         });
@@ -620,7 +622,6 @@ public class DetailActivity extends AppCompatActivity {
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvAfterImage.setBackgroundResource (R.color.background_button_green);
                     selectImage (AFTER_IMAGE_PICKER);
-
                 }
                 return true;
             }
@@ -654,6 +655,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void initData () {
+
+
         //    Utils.setTypefaceToAllViews (this, tvNoInternetConnection);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
         Utils.hideKeyboard (DetailActivity.this, etOnSiteContact);
@@ -714,6 +717,8 @@ public class DetailActivity extends AppCompatActivity {
         Constants.workOrderDetail.setGenerator_condition_flag (2);
         Constants.workOrderDetail.setGenerator_condition_text ("GOOD");
         tvWorkOrderDescription.setText ("WO#" + Constants.workOrderDetail.getWork_order_id () + " for " + Constants.workOrderDetail.getSite_name ());
+
+
     }
 
     private void initAdapter () {
@@ -722,59 +727,6 @@ public class DetailActivity extends AppCompatActivity {
         spGeneratorMake.setAdapter (adapter);
     }
 
-    private void getWorkOrderDetailFromServer (final int wo_id, final int wo_contract_number) {
-        if (NetworkConnection.isNetworkAvailable (this)) {
-            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
-            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
-                    new Response.Listener<String> () {
-                        @Override
-                        public void onResponse (String response) {
-                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
-                            if (response != null) {
-                                try {
-                                    JSONObject jsonObj = new JSONObject (response);
-                                    JSONArray jsonArray = jsonObj.getJSONArray ("service_forms");
-                                    if (jsonArray.length () == 0) {
-
-                                    } else {
-
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace ();
-                                }
-                            } else {
-                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener () {
-                        @Override
-                        public void onErrorResponse (VolleyError error) {
-                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
-                        }
-                    }) {
-                @Override
-                public byte[] getBody () throws com.android.volley.AuthFailureError {
-
-                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
-                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
-                            "\"API_function\":\"getWorkorderForms\",\n" +
-                            "\"API_parameters\":{\"WO_NUM\" : \"" + wo_id + "\",\"CONTRACT_NUM\": \"" + wo_contract_number + "\"}}";
-                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
-                    return str.getBytes ();
-                }
-
-                public String getBodyContentType () {
-                    return "application/json; charset=utf-8";
-                }
-            };
-            Utils.sendRequest (strRequest);
-
-        } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
-        }
-    }
 
     private void sendFormDetailToServer () {
         if (NetworkConnection.isNetworkAvailable (this)) {
@@ -878,7 +830,7 @@ public class DetailActivity extends AppCompatActivity {
         client.disconnect ();
     }
 
-    private void showSignatureDialog (final int flag) {
+    private void showSignatureDialog (final int flag, final int image_id) {
         Button btSignCancel;
         Button btSignClear;
         Button btSignSave;
@@ -918,7 +870,7 @@ public class DetailActivity extends AppCompatActivity {
                 Bitmap bp = signatureView.getSignatureBitmap ();
                 switch (flag) {
                     case 1:
-                        ImageDetail signatureImageDetail = new ImageDetail (Utils.bitmapToBase64 (bp), "", "Tech", "");
+                        ImageDetail signatureImageDetail = new ImageDetail (image_id, Utils.bitmapToBase64 (bp), "", "Tech", "", "");
                         signatureImageList.add (signatureImageDetail);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail);
@@ -927,7 +879,7 @@ public class DetailActivity extends AppCompatActivity {
                         ivTechSignature.setImageBitmap (bp);
                         break;
                     case 2:
-                        ImageDetail signatureImageDetail2 = new ImageDetail (Utils.bitmapToBase64 (bp), "", "Customer", etCustomerName.getText ().toString ());
+                        ImageDetail signatureImageDetail2 = new ImageDetail (image_id, Utils.bitmapToBase64 (bp), "", "Customer", etCustomerName.getText ().toString (), "");
                         signatureImageList.add (signatureImageDetail2);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail2);
@@ -1032,7 +984,7 @@ public class DetailActivity extends AppCompatActivity {
                         Bundle extras = data.getExtras ();
                         Bitmap thePic = extras.getParcelable ("data");
 
-                        ImageDetail beforeImageDetail = new ImageDetail (Utils.bitmapToBase64 (thePic), "before_img_" + date, "", "");
+                        ImageDetail beforeImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic), "before_img_" + date, "", "", "");
                         beforeImageList.add (beforeImageDetail);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail);
@@ -1057,7 +1009,7 @@ public class DetailActivity extends AppCompatActivity {
                         Bundle extras2 = data.getExtras ();
                         Bitmap thePic2 = extras2.getParcelable ("data");
 
-                        ImageDetail afterImageDetail = new ImageDetail (Utils.bitmapToBase64 (thePic2), "after_img_" + date, "", "");
+                        ImageDetail afterImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic2), "after_img_" + date, "", "", "");
                         afterImageList.add (afterImageDetail);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail2);
@@ -1086,7 +1038,7 @@ public class DetailActivity extends AppCompatActivity {
                         Bundle extras3 = data.getExtras ();
                         Bitmap thePic3 = extras3.getParcelable ("data");
 
-                        ImageDetail beforeImageDetail2 = new ImageDetail (Utils.bitmapToBase64 (thePic3), "before_img_" + date, "", "");
+                        ImageDetail beforeImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic3), "before_img_" + date, "", "", "");
                         beforeImageList.add (beforeImageDetail2);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail3);
@@ -1113,7 +1065,7 @@ public class DetailActivity extends AppCompatActivity {
                         Bundle extras4 = data.getExtras ();
                         Bitmap thePic4 = extras4.getParcelable ("data");
 
-                        ImageDetail afterImageDetail2 = new ImageDetail (Utils.bitmapToBase64 (thePic4), "after_img_" + date, "", "");
+                        ImageDetail afterImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic4), "after_img_" + date, "", "", "");
                         afterImageList.add (afterImageDetail2);
 
 //                        Constants.workOrderDetail.setImageInList (imageDetail4);
@@ -1139,7 +1091,7 @@ public class DetailActivity extends AppCompatActivity {
                     case PICK_FROM_GALLERY_LIST_ITEM_2:
                         Bundle extras5 = data.getExtras ();
                         Bitmap thePic5 = extras5.getParcelable ("data");
-                        ImageDetail smCheckImageDetail = new ImageDetail (Utils.bitmapToBase64 (thePic5), "smcheck_img_" + date, "", "");
+                        ImageDetail smCheckImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic5), "smcheck_img_" + date, "", "", "");
                         for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                             ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
                             if (serviceCheck.getService_check_id () == smCheckIdTemp) {
@@ -1162,7 +1114,7 @@ public class DetailActivity extends AppCompatActivity {
                         Bundle extras6 = data.getExtras ();
                         Bitmap thePic6 = extras6.getParcelable ("data");
 
-                        ImageDetail smCheckImageDetail2 = new ImageDetail (Utils.bitmapToBase64 (thePic6), "smcheck_img_" + date, "", "");
+                        ImageDetail smCheckImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic6), "smcheck_img_" + date, "", "", "");
                         for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                             ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
                             if (serviceCheck.getService_check_id () == smCheckIdTemp) {
@@ -1215,7 +1167,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public boolean validate () {
-
+/*
         if (etTimeIn.getText ().toString ().length () == 0) {
             Utils.showToast (DetailActivity.this, "Please set the time in");
             return false;
@@ -1240,8 +1192,8 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             return true;
         }
-
-//        return true;
+*/
+        return true;
     }
 
     private void showSaveSerialDialog (final int serial_id, final int contract_num, final String serial_type) {
@@ -1252,7 +1204,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvAddSerial;
         TextView tvCancelSerial;
 
-        final Serial generatorSerial = new Serial (false, serial_id, 0, "", "", "", "");
+        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, "", "", "", "");
 
         dialogAddNewSerial = new Dialog (DetailActivity.this);
         dialogAddNewSerial.setContentView (R.layout.dialog_add_generator_serial);
@@ -1405,14 +1357,14 @@ public class DetailActivity extends AppCompatActivity {
 
                                                 Serial ATSSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 atsSerialList.add (ATSSerial);
                                                 break;
                                             case "Engine":
                                                 Serial engineSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;
@@ -1424,72 +1376,9 @@ public class DetailActivity extends AppCompatActivity {
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
-
-                            llEngineSerial.removeAllViews ();
-                            llATSSerial.removeAllViews ();
-
-                            for (int i = 0; i < engineSerialList.size (); i++) {
-                                final Serial engineSerial = engineSerialList.get (i);
-                                View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
-
-                                TextView tvEngineSerial = (TextView) child.findViewById (R.id.tvGeneratorSerial);
-                                TextView tvEngineModel = (TextView) child.findViewById (R.id.tvGeneratorModel);
-                                TextView tvEngineManufacturer = (TextView) child.findViewById (R.id.tvGeneratorManufacturer);
-                                final CheckBox cbSelected = (CheckBox) child.findViewById (R.id.cbSelected);
-
-                                cbSelected.setVisibility (View.VISIBLE);
-                                tvEngineSerial.setText (engineSerial.getSerial_number ());
-                                tvEngineModel.setText (engineSerial.getModel_number ());
-                                tvEngineManufacturer.setText (engineSerial.getManufacturer_name ());
-
-                                llEngineSerial.addView (child);
-
-                                cbSelected.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                                    @Override
-                                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                                        if (cbSelected.isChecked ()) {
-                                            engineSerial.setChecked (true);
-//                                            Constants.workOrderDetail.setSerialInEngineList (engineSerial);
-                                        } else {
-                                            engineSerial.setChecked (false);
-//                                            Constants.workOrderDetail.removeSerialInEngineList (engineSerial.getSerial_id ());
-                                        }
-                                    }
-                                });
-                            }
-
-
-                            for (int i = 0; i < atsSerialList.size (); i++) {
-                                final Serial atsSerial = atsSerialList.get (i);
-                                View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
-
-                                TextView tvATSSerial = (TextView) child.findViewById (R.id.tvGeneratorSerial);
-                                TextView tvATSModel = (TextView) child.findViewById (R.id.tvGeneratorModel);
-                                TextView tvATSManufacturer = (TextView) child.findViewById (R.id.tvGeneratorManufacturer);
-                                final CheckBox cbSelected = (CheckBox) child.findViewById (R.id.cbSelected);
-
-                                cbSelected.setVisibility (View.VISIBLE);
-
-                                tvATSSerial.setText (atsSerial.getSerial_number ());
-                                tvATSModel.setText (atsSerial.getModel_number ());
-                                tvATSManufacturer.setText (atsSerial.getManufacturer_name ());
-
-                                llATSSerial.addView (child);
-
-                                cbSelected.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
-                                    @Override
-                                    public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
-                                        if (cbSelected.isChecked ()) {
-                                            atsSerial.setChecked (true);
-//                                            Constants.workOrderDetail.setSerialInATSList (atsSerial);
-                                        } else {
-                                            atsSerial.setChecked (false);
-//                                            Constants.workOrderDetail.removeSerialInATSList (atsSerial.getSerial_id ());
-                                        }
-                                    }
-                                });
-                            }
                         }
+
+//                        }
 /*
 
                         Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
@@ -1630,7 +1519,86 @@ public class DetailActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            //          Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+        }
+    }
+
+    private void LoadSerialsInLayout () {
+        llEngineSerial.removeAllViews ();
+        llATSSerial.removeAllViews ();
+
+        for (int i = 0; i < engineSerialList.size (); i++) {
+            final Serial engineSerial = engineSerialList.get (i);
+            View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
+
+            TextView tvEngineSerial = (TextView) child.findViewById (R.id.tvGeneratorSerial);
+            TextView tvEngineModel = (TextView) child.findViewById (R.id.tvGeneratorModel);
+            TextView tvEngineManufacturer = (TextView) child.findViewById (R.id.tvGeneratorManufacturer);
+            final CheckBox cbSelected = (CheckBox) child.findViewById (R.id.cbSelected);
+
+            cbSelected.setVisibility (View.VISIBLE);
+            tvEngineSerial.setText (engineSerial.getSerial_number ());
+            tvEngineModel.setText (engineSerial.getModel_number ());
+            tvEngineManufacturer.setText (engineSerial.getManufacturer_name ());
+
+            if (engineSerial.isChecked ()) {
+                cbSelected.setChecked (true);
+            } else {
+                cbSelected.setChecked (false);
+            }
+
+            llEngineSerial.addView (child);
+
+
+            cbSelected.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
+                @Override
+                public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
+                    if (cbSelected.isChecked ()) {
+                        engineSerial.setChecked (true);
+//                                            Constants.workOrderDetail.setSerialInEngineList (engineSerial);
+                    } else {
+                        engineSerial.setChecked (false);
+//                                            Constants.workOrderDetail.removeSerialInEngineList (engineSerial.getSerial_id ());
+                    }
+                }
+            });
+        }
+
+
+        for (int i = 0; i < atsSerialList.size (); i++) {
+            final Serial atsSerial = atsSerialList.get (i);
+            View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
+
+            TextView tvATSSerial = (TextView) child.findViewById (R.id.tvGeneratorSerial);
+            TextView tvATSModel = (TextView) child.findViewById (R.id.tvGeneratorModel);
+            TextView tvATSManufacturer = (TextView) child.findViewById (R.id.tvGeneratorManufacturer);
+            final CheckBox cbSelected = (CheckBox) child.findViewById (R.id.cbSelected);
+
+            cbSelected.setVisibility (View.VISIBLE);
+
+            tvATSSerial.setText (atsSerial.getSerial_number ());
+            tvATSModel.setText (atsSerial.getModel_number ());
+            tvATSManufacturer.setText (atsSerial.getManufacturer_name ());
+            if (atsSerial.isChecked ()) {
+                cbSelected.setChecked (true);
+            } else {
+                cbSelected.setChecked (false);
+            }
+
+            llATSSerial.addView (child);
+
+            cbSelected.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
+                @Override
+                public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
+                    if (cbSelected.isChecked ()) {
+                        atsSerial.setChecked (true);
+//                                            Constants.workOrderDetail.setSerialInATSList (atsSerial);
+                    } else {
+                        atsSerial.setChecked (false);
+//                                            Constants.workOrderDetail.removeSerialInATSList (atsSerial.getSerial_id ());
+                    }
+                }
+            });
         }
     }
 
@@ -1688,6 +1656,260 @@ public class DetailActivity extends AppCompatActivity {
         return String.valueOf (responseJSON);
     }
 
+    private void getWorkOrderDetailFromServer (final int wo_id, final int generator_serial_id) {
+        if (NetworkConnection.isNetworkAvailable (this)) {
+            Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    switch (jsonObj.getInt ("error_code")) {
+                                        case 0:
+                                            setFormDetails (jsonObj);
+//                                            intent = new Intent (activity, ViewFormActivity.class);
+                                            break;
+                                        default:
+                                            LoadSerialsInLayout ();
+                                            new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+//                                            intent = new Intent (activity, DetailActivity.class);
+                                            break;
+                                    }
+
+//
+//                                    Utils.showOkDialog (DetailActivity.this, "Form is already saved with this serial id " +
+//                                            "it will load the saved form data", false);
+
+/*
+                                    JSONArray jsonArray = jsonObj.getJSONArray ("service_forms");
+                                    if (jsonArray.length () == 0) {
+
+                                    } else {
+                                        for (int i=0;i<jsonArray.length ();i++){
+                                            JSONObject jsonObject = jsonArray.getJSONObject (i);
+                                            if (jsonObject.getInt ("GEN_SERIALID") == generator_serial_id){
+                                                Utils.showOkDialog (DetailActivity.this, "Form is already saved with this serial id " +
+                                                        "it will load the saved form data", false);
+                                                setFormDetails (jsonObject);
+                                            }
+                                            else{
+                                                new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+                                                LoadSerialsInLayout ();
+                                            }
+                                        }
+                                    }
+*/
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace ();
+                                    LoadSerialsInLayout ();
+                                    new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+                                }
+                            } else {
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+//                                LoadSerialsInLayout ();
+//                                new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            LoadSerialsInLayout ();
+                            new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+                        }
+                    }) {
+                @Override
+                public byte[] getBody () throws com.android.volley.AuthFailureError {
+
+                    String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                            "\"API_password\":\"" + Constants.api_password + "\",\n" +
+//                            "\"API_function\":\"getWorkorderForms\",\n" +
+//                            "\"API_parameters\":{\"WO_NUM\" : \"" + wo_id + "\"}}";
+                            "\"API_function\":\"getServiceForm\",\n" +
+                            "\"API_parameters\":{\"WO_NUM\" : " + wo_id + ", \"GEN_SERIALID\" : " + generator_serial_id + "}}";
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                    return str.getBytes ();
+                }
+
+                public String getBodyContentType () {
+                    return "application/json; charset=utf-8";
+                }
+            };
+            Utils.sendRequest (strRequest);
+        } else {
+//            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+
+            LoadSerialsInLayout ();
+            new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+        }
+    }
+
+    private void setFormDetails (JSONObject jsonObject) {
+        try {
+            Constants.workOrderDetail.setForm_id (jsonObject.getInt ("ES_ID"));
+            etTimeIn.setText (jsonObject.getString ("TIME_IN"));
+            etOnSiteContact.setText (jsonObject.getString ("ONSITE_CONTACT"));
+            etEmail.setText (jsonObject.getString ("EMAIL"));
+            etKwRating.setText (jsonObject.getString ("KW_RATING"));
+            switch (jsonObject.getString ("GEN_STATUS").toUpperCase ()) {
+                case "GOOD":
+                    rbGood.setChecked (true);
+                    break;
+                case "FAIR":
+                    rbFair.setChecked (true);
+                    break;
+                case "POOR":
+                    rbPoor.setChecked (true);
+                    break;
+            }
+            etGeneratorConditionComment.setText (jsonObject.getString ("GEN_CONDITION"));
+            etComment.setText (jsonObject.getString ("COMMENTS"));
+            etTimeOut.setText (jsonObject.getString ("TIME_OUT"));
+
+            DateFormat df = new SimpleDateFormat ("yyyyMMdd_HHmmss");
+            final String date = df.format (Calendar.getInstance ().getTime ());
+
+
+            JSONArray jsonArrayBeforeImages = jsonObject.getJSONArray ("beforeImages");
+            for (int i = 0; i < jsonArrayBeforeImages.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayBeforeImages.getJSONObject (i);
+                    ImageView image = new ImageView (DetailActivity.this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams (300, 225);
+                    params.setMargins (10, 10, 10, 10);
+                    image.setLayoutParams (params);
+                    llBeforeImage.addView (image);
+                    Picasso.with (DetailActivity.this).load (jsonObject1.getString ("img_url")).into (image);
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+
+            JSONArray jsonArrayAfterImages = jsonObject.getJSONArray ("afterImages");
+            for (int i = 0; i < jsonArrayAfterImages.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayAfterImages.getJSONObject (i);
+                    ImageView image = new ImageView (DetailActivity.this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams (300, 225);
+                    params.setMargins (10, 10, 10, 10);
+                    image.setLayoutParams (params);
+                    llAfterImage.addView (image);
+                    Picasso.with (DetailActivity.this).load (jsonObject1.getString ("img_url")).into (image);
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+            JSONArray jsonArraySignatures = jsonObject.getJSONArray ("signatures");
+            for (int i = 0; i < jsonArraySignatures.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArraySignatures.getJSONObject (i);
+                    switch (jsonObject1.getString ("sub_categories")) {
+                        case "Tech":
+                            Picasso.with (DetailActivity.this).load (jsonObject1.getString ("signature_url")).into (ivTechSignature);
+                            break;
+                        case "Customer":
+                            etCustomerName.setText (jsonObject1.getString ("signator"));
+                            Picasso.with (DetailActivity.this).load (jsonObject1.getString ("signature_url")).into (ivCustomerSignature);
+                            break;
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+            JSONArray jsonArraySerials = jsonObject.getJSONArray ("linked_serials");
+            for (int i = 0; i < jsonArraySerials.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArraySerials.getJSONObject (i);
+                    for (int j = 0; j < engineSerialList.size (); j++) {
+                        Serial engineSerial = engineSerialList.get (j);
+                        if (jsonObject1.getInt ("serial_id") == engineSerial.getSerial_id ()) {
+                            engineSerial.setChecked (false);
+                        } else {
+                            engineSerial.setChecked (true);
+                        }
+                    }
+                    for (int k = 0; k < atsSerialList.size (); k++) {
+                        Serial atsSerial = atsSerialList.get (k);
+                        if (jsonObject1.getInt ("serial_id") == atsSerial.getSerial_id ()) {
+                            atsSerial.setChecked (false);
+                        } else {
+                            atsSerial.setChecked (true);
+                        }
+                    }
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+
+            JSONArray jsonArray = jsonObject.getJSONArray ("form_checks");
+            for (int i = 0; i < jsonArray.length (); i++) {
+                JSONObject jsonObject1 = jsonArray.getJSONObject (i);
+                for (int j = 0; j < Constants.serviceCheckList.size (); j++) {
+                    ServiceCheck serviceCheck = Constants.serviceCheckList.get (j);
+                    if (jsonObject1.getInt ("smcheck_id") == serviceCheck.getService_check_id ()) {
+                        serviceCheck.setComment (jsonObject1.getString ("Comment"));
+                        serviceCheck.setSelection_text (jsonObject1.getString ("Status"));
+                        switch (jsonObject1.getString ("Status")) {
+                            case "NA":
+                                serviceCheck.setSelection_text ("NA");
+                                serviceCheck.setSelection_flag (0);
+                                break;
+                            case "N/A":
+                                serviceCheck.setSelection_text ("N/A");
+                                serviceCheck.setSelection_flag (0);
+                                break;
+                            case "Pass":
+                                serviceCheck.setSelection_text ("Pass");
+                                serviceCheck.setSelection_flag (3);
+                                break;
+                            case "Advise":
+                                serviceCheck.setSelection_text ("Advise");
+                                serviceCheck.setSelection_flag (2);
+                                break;
+                            case "Fail":
+                                serviceCheck.setSelection_text ("Fail");
+                                serviceCheck.setSelection_flag (1);
+                                break;
+                            case "Yes":
+                                serviceCheck.setSelection_text ("Yes");
+                                serviceCheck.setSelection_flag (2);
+                                break;
+                            case "No":
+                                serviceCheck.setSelection_text ("No");
+                                serviceCheck.setSelection_flag (1);
+                                break;
+                        }
+
+                        ImageDetail imageDetail;
+                        if (jsonObject1.getInt ("Image") != 0) {
+                            imageDetail = new ImageDetail (jsonObject1.getInt ("Image"), "", "smcheck_img_" + date, "", "", jsonObject1.getString ("img_url"));
+                            serviceCheck.setSmCheckImageInList (imageDetail);
+                        } else {
+                            imageDetail = new ImageDetail (0, "", "", "", "", "");
+                        }
+
+                    }
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace ();
+        }
+        LoadSerialsInLayout ();
+        new LoadServiceChecksInLinearLayout (this).execute ();
+    }
+
     private class LoadServiceChecksInLinearLayout extends AsyncTask<String, Void, String> {
         Activity activity;
 
@@ -1697,6 +1919,20 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute () {
+            llFuelSystem.removeAllViews ();
+            llPreStartChecksCoolingSystem.removeAllViews ();
+            llLubricationSystem.removeAllViews ();
+            llAirSystem.removeAllViews ();
+            llExhaustSystem.removeAllViews ();
+            llGenerator.removeAllViews ();
+            llControlPanelCabinets.removeAllViews ();
+            llATSMain.removeAllViews ();
+            llStartingSystem.removeAllViews ();
+            llGeneratorEnclosure.removeAllViews ();
+            llStartupAndRunningCheck.removeAllViews ();
+            llScheduledMaintenance.removeAllViews ();
+
+
             for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                 final ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
 
@@ -1739,6 +1975,7 @@ public class DetailActivity extends AppCompatActivity {
                 });
 
                 tvHeading.setText (text);
+                etComment.setText (serviceCheck.getComment ());
 
                 rbPass.setOnCheckedChangeListener (new CompoundButton.OnCheckedChangeListener () {
                     @Override
@@ -1773,7 +2010,11 @@ public class DetailActivity extends AppCompatActivity {
                             serviceCheck.setSelection_text ("Advise");
                             serviceCheck.setSelection_flag (2);
                             serviceCheck.setComment_required (true);
-                            etComment.setError ("Comment is required");
+                            if (etComment.getText ().toString ().length () > 0) {
+                                etComment.setError (null);
+                            } else {
+                                etComment.setError ("Comment is required");
+                            }
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_check_white, getApplicationContext ().getTheme ()));
@@ -1795,7 +2036,11 @@ public class DetailActivity extends AppCompatActivity {
                             serviceCheck.setSelection_text ("Fail");
                             serviceCheck.setSelection_flag (1);
                             serviceCheck.setComment_required (true);
-                            etComment.setError ("Comment is required");
+                            if (etComment.getText ().toString ().length () > 0) {
+                                etComment.setError (null);
+                            } else {
+                                etComment.setError ("Comment is required");
+                            }
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_clear, getApplicationContext ().getTheme ()));
@@ -1958,6 +2203,7 @@ public class DetailActivity extends AppCompatActivity {
                         llScheduledMaintenance.addView (child);
                         break;
                 }
+
 
                 etComment.addTextChangedListener (new TextWatcher () {
                     @Override

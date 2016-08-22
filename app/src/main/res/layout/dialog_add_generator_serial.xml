@@ -24,7 +24,8 @@
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="ADD NEW SERIAL"
-                android:textColor="@color/text_color_white"/>
+                android:textColor="@color/text_color_white"
+                android:textSize="@dimen/text_size_medium"/>
         </RelativeLayout>
         <LinearLayout
             android:id="@+id/llAddGeneratorSerial"
@@ -34,10 +35,33 @@
             android:layout_margin="10dp"
             android:orientation="vertical"
             android:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvSerialId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Serial ID"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/etSerialId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/layout_edittext"
+                android:inputType="text"
+                android:padding="5dp"
+                android:textSize="@dimen/text_size_medium"
+                android:visibility="gone"/>
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Serial"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"/>
 
             <EditText
@@ -46,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/layout_edittext"
                 android:inputType="text"
-                android:padding="5dp"/>
+                android:padding="5dp"
+                android:textSize="@dimen/text_size_medium"/>
 
 
             <TextView
@@ -54,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Model"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
             />
             <EditText
@@ -63,12 +89,14 @@
                 android:background="@drawable/layout_edittext"
                 android:inputType="text"
                 android:padding="5dp"
+                android:textSize="@dimen/text_size_medium"
             />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Manufacturer"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
             />
             <Spinner
@@ -103,6 +131,7 @@
                     android:paddingRight="5dp"
                     android:text="CANCEL"
                     android:textColor="@color/text_color_white"
+                    android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"/>
                 <TextView
                     android:id="@+id/tvAddSerial"
@@ -117,6 +146,7 @@
                     android:paddingRight="5dp"
                     android:text="ADD"
                     android:textColor="@color/text_color_white"
+                    android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>

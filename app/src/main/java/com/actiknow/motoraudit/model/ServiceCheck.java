@@ -165,4 +165,9 @@ public class ServiceCheck {
         this.smCheckImageList.add (smCheckImage);
     }
 
+    public void removeSmCheckImageInList (int position) {
+        if (smCheckImageList.size () > 0)
+            this.smCheckImageList.remove (position);
+    }
+
 }

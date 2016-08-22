@@ -1,6 +1,26 @@
 package com.actiknow.motoraudit.helper;
 
-/*
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.actiknow.motoraudit.model.Manufacturer;
+import com.actiknow.motoraudit.model.Serial;
+import com.actiknow.motoraudit.model.ServiceCheck;
+import com.actiknow.motoraudit.model.WorkOrder;
+import com.actiknow.motoraudit.utils.AppConfigTags;
+import com.actiknow.motoraudit.utils.Utils;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Database Version
@@ -9,67 +29,68 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "liveAudit";
+    private static final String DATABASE_NAME = "MotorAudit";
 
     // Table Names
-    private static final String TABLE_QUESTIONS = "questions";
-    private static final String TABLE_ATMS = "atms";
-    private static final String TABLE_REPORT = "report";
-    private static final String TABLE_AUDITOR_LOCATION = "geo_location";
+    private static final String TABLE_MANUFACTURER = "manufacturer";
+    private static final String TABLE_WORKORDER = "workorder";
+    private static final String TABLE_SERVICE_CHECK = "service_check";
+    private static final String TABLE_CONTRACT_SERIAL = "contract_serial";
 
     // Common column names
     private static final String KEY_ID = "id";
     private static final String KEY_CREATED_AT = "created_at";
 
-    // QUESTIONS Table - column names
-    private static final String KEY_QUESTION = "question";
+    // MANUFACTURER Table - column names
+    private static final String KEY_MANUFACTURER_ID = "manufacturer_id";
+    private static final String KEY_MANUFACTURER_NAME = "manufacturer_name";
 
-    // ATMS Table - column names
-    private static final String KEY_ATM_ID = "atm_id";
-    private static final String KEY_ATM_UNIQUE_ID = "atm_unique_id";
-    private static final String KEY_AGENCY_ID = "agency_id";
-    private static final String KEY_LAST_AUDIT_DATE = "last_audit_date";
-    private static final String KEY_BANK_NAME = "bank_name";
-    private static final String KEY_ADDRESS = "address";
-    private static final String KEY_CITY = "city";
-    private static final String KEY_PINCODE = "pincode";
+    // WORKORDER Table - column names
+    private static final String KEY_WORKORDER_NUMBER = "workorder_number";
+    private static final String KEY_CONTRACT_NUMBER = "contract_number";
+    private static final String KEY_SITE_NAME = "site_name";
+    private static final String KEY_CUSTOMER_NAME = "customer_name";
+    private static final String KEY_CUSTOMER_ID = "customer_id";
 
-    // REPORT Table - column names
-    private static final String KEY_AUDITOR_ID = "auditor_id";
-    private static final String KEY_ISSUES_JSON = "issues_json";
-    private static final String KEY_SIGN_IMAGE = "sign_image";
-    private static final String KEY_RATING = "rating";
-    private static final String KEY_GEO_IMAGE = "geo_image";
-    private static final String KEY_LATITUDE = "latitude";
-    private static final String KEY_LONGITUDE = "longitude";
+    // SERVICE_CHECK Table - column names
+    private static final String KEY_SERVICE_CHECK_ID = "service_check_id";
+    private static final String KEY_HEADING = "heading";
+    private static final String KEY_SUB_HEADING = "sub_heading";
+    private static final String KEY_PASS_REQUIRED = "pass_required";
+    private static final String KEY_GROUP_ID = "group_id";
+    private static final String KEY_GROUP_NAME = "group_name";
+    private static final String KEY_GROUP_TYPE = "group_type";
 
 
-    // AUDITOR_LOCATION Table - column names
-    private static final String KEY_TIME = "time";
-    private static final String KEY_AUDITOR_LOCATION_ID = "auditor_location_id";
+    // CONTRACT_SERIAL Table - column names
+    private static final String KEY_SERVICE_SERIAL_ID = "service_serial_id";
+    private static final String KEY_SERIAL_NUMBER = "serial_number";
+    private static final String KEY_MODEL_NUMBER = "model_number";
+    private static final String KEY_SERIAL_TYPE = "serial_type";
 
-    // Question table Create Statements
-    private static final String CREATE_TABLE_QUESTIONS = "CREATE TABLE "
-            + TABLE_QUESTIONS + "(" + KEY_ID + " INTEGER PRIMARY KEY," +KEY_QUESTION
-            + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+    // Manufacturer table Create Statements
+    private static final String CREATE_TABLE_MANUFACTURER = "CREATE TABLE "
+            + TABLE_MANUFACTURER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_MANUFACTURER_NAME
+            + " TEXT," + KEY_MANUFACTURER_ID + " INTEGER," + KEY_CREATED_AT + " DATETIME" + ")";
 
-    // ATM table create statement
-    private static final String CREATE_TABLE_ATMS = "CREATE TABLE " + TABLE_ATMS
-            + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_AGENCY_ID + " INTEGER," + KEY_ATM_ID + " INTEGER," + KEY_ATM_UNIQUE_ID + " TEXT,"
-            + KEY_LAST_AUDIT_DATE + " TEXT," + KEY_BANK_NAME + " TEXT," + KEY_ADDRESS + " TEXT," + KEY_CITY + " TEXT,"
-            + KEY_PINCODE + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+    // Workorder table create statement
+    private static final String CREATE_TABLE_WORKORDER = "CREATE TABLE " + TABLE_WORKORDER
+            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_WORKORDER_NUMBER + " INTEGER," + KEY_CONTRACT_NUMBER + " INTEGER,"
+            + KEY_SITE_NAME + " TEXT," + KEY_CUSTOMER_NAME + " TEXT," + KEY_CUSTOMER_ID + " INTEGER," + KEY_CREATED_AT + " DATETIME" + ")";
 
-    // Report table create statement
-    private static final String CREATE_TABLE_REPORT = "CREATE TABLE " + TABLE_REPORT
-            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ATM_ID + " INTEGER," + KEY_ATM_UNIQUE_ID + " TEXT," + KEY_AGENCY_ID + " INTEGER,"
-            + KEY_AUDITOR_ID + " INTEGER," + KEY_ISSUES_JSON + " TEXT," + KEY_RATING + " INTEGER," +
-            KEY_GEO_IMAGE + " TEXT," + KEY_LATITUDE + " TEXT," + KEY_LONGITUDE + " TEXT," +
-            KEY_SIGN_IMAGE + " TEXT," + KEY_TIME + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+    // ServiceCheck table create statement
+    private static final String CREATE_TABLE_SERVICE_CHECK = "CREATE TABLE " + TABLE_SERVICE_CHECK
+            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_SERVICE_CHECK_ID + " INTEGER," + KEY_HEADING + " TEXT," + KEY_SUB_HEADING + " TEXT,"
+            + KEY_PASS_REQUIRED + " INTEGER DEFAULT 0," + KEY_GROUP_ID + " INTEGER," + KEY_GROUP_NAME + " TEXT," +
+            KEY_GROUP_TYPE + " INTEGER," + KEY_CREATED_AT + " DATETIME" + ")";
+
 
     // Auditor location table create statement
-    private static final String CREATE_TABLE_AUDITOR_LOCATION = "CREATE TABLE " + TABLE_AUDITOR_LOCATION
-            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_AUDITOR_ID + " INTEGER," +
-            KEY_LATITUDE + " TEXT," + KEY_LONGITUDE + " TEXT," + KEY_TIME + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+    private static final String CREATE_TABLE_CONTRACT_SERIAL = "CREATE TABLE " + TABLE_CONTRACT_SERIAL
+            + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_SERVICE_SERIAL_ID + " INTEGER," +
+            KEY_SERIAL_NUMBER + " TEXT," + KEY_MODEL_NUMBER + " TEXT," + KEY_MANUFACTURER_ID + " INTEGER," +
+            KEY_MANUFACTURER_NAME + " TEXT," + KEY_SERIAL_TYPE + " TEXT," + KEY_WORKORDER_NUMBER + " INTEGER," +
+            KEY_CREATED_AT + " DATETIME" + ")";
 
     public DatabaseHandler (Context context) {
         super (context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -77,393 +98,395 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate (SQLiteDatabase db) {
-        db.execSQL (CREATE_TABLE_QUESTIONS);
-        db.execSQL (CREATE_TABLE_ATMS);
-        db.execSQL (CREATE_TABLE_REPORT);
-        db.execSQL (CREATE_TABLE_AUDITOR_LOCATION);
+        db.execSQL (CREATE_TABLE_MANUFACTURER);
+        db.execSQL (CREATE_TABLE_WORKORDER);
+        db.execSQL (CREATE_TABLE_SERVICE_CHECK);
+        db.execSQL (CREATE_TABLE_CONTRACT_SERIAL);
     }
 
     @Override
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_QUESTIONS);
-        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_ATMS);
-        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_REPORT);
-        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_AUDITOR_LOCATION);
+        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_MANUFACTURER);
+        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_WORKORDER);
+        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_SERVICE_CHECK);
+        db.execSQL ("DROP TABLE IF EXISTS " + TABLE_CONTRACT_SERIAL);
         onCreate (db);
     }
 
-    // ------------------------ "questions" table methods ----------------//
+    // ------------------------ "Manufacturer" table methods ----------------//
 
-    public long createQuestion (Question question) {
+    public long createManufacturer (Manufacturer manufacturer) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Question", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Manufacturer", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_ID, question.getQuestion_id ());
-        values.put (KEY_QUESTION, question.getQuestion ());
+        values.put (KEY_MANUFACTURER_ID, manufacturer.getManufacturer_id ());
+        values.put (KEY_MANUFACTURER_NAME, manufacturer.getManufacturer_name ());
         values.put (KEY_CREATED_AT, getDateTime ());
-        long question_id = db.insert (TABLE_QUESTIONS, null, values);
-        return question_id;
+        long manufacturer_id = db.insert (TABLE_MANUFACTURER, null, values);
+        return manufacturer_id;
     }
 
-    public Question getQuestion (long question_id) {
+    public Manufacturer getManufacturer (long manufacturer_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_QUESTIONS + " WHERE " + KEY_ID + " = " + question_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Question where ID = " + question_id, false);
+        String selectQuery = "SELECT  * FROM " + TABLE_MANUFACTURER + " WHERE " + KEY_MANUFACTURER_ID + " = " + manufacturer_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Manufacturer where Manufacturer id = " + manufacturer_id, false);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
-        Question question = new Question ();
-        question.setQuestion_id (c.getInt (c.getColumnIndex (KEY_ID)));
-        question.setQuestion ((c.getString (c.getColumnIndex (KEY_QUESTION))));
-        return question;
+        Manufacturer manufacturer = new Manufacturer ();
+        manufacturer.setManufacturer_id (c.getInt (c.getColumnIndex (KEY_MANUFACTURER_ID)));
+        manufacturer.setManufacturer_name ((c.getString (c.getColumnIndex (KEY_MANUFACTURER_NAME))));
+        return manufacturer;
     }
 
-    public List<Question> getAllQuestions () {
-        List<Question> questions = new ArrayList<Question> ();
-        String selectQuery = "SELECT  * FROM " + TABLE_QUESTIONS;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all questions", false);
+    public List<Manufacturer> getAllManufacturers () {
+        List<Manufacturer> manufacturers = new ArrayList<Manufacturer> ();
+        String selectQuery = "SELECT  * FROM " + TABLE_MANUFACTURER;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all manufacturers", false);
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor c = db.rawQuery (selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst ()) {
             do {
-                Question question = new Question ();
-                question.setQuestion_id (c.getInt ((c.getColumnIndex (KEY_ID))));
-                question.setQuestion ((c.getString (c.getColumnIndex (KEY_QUESTION))));
-                questions.add (question);
+                Manufacturer manufacturer = new Manufacturer ();
+                manufacturer.setManufacturer_id (c.getInt ((c.getColumnIndex (KEY_MANUFACTURER_ID))));
+                manufacturer.setManufacturer_name ((c.getString (c.getColumnIndex (KEY_MANUFACTURER_NAME))));
+                manufacturers.add (manufacturer);
             } while (c.moveToNext ());
         }
-        return questions;
+        return manufacturers;
     }
 
-    public int getQuestionCount () {
-        String countQuery = "SELECT  * FROM " + TABLE_QUESTIONS;
+    public int getManufacturerCount () {
+        String countQuery = "SELECT  * FROM " + TABLE_MANUFACTURER;
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor cursor = db.rawQuery (countQuery, null);
         int count = cursor.getCount ();
         cursor.close ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total questions count : " + count, false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total manufacturers count : " + count, false);
         return count;
     }
 
-    public int updateQuestion (Question question) {
+    public int updateManufacturer (Manufacturer manufacturer) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update questions", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update manufacturer", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_QUESTION, question.getQuestion ());
+        values.put (KEY_MANUFACTURER_ID, manufacturer.getManufacturer_id ());
+        values.put (KEY_MANUFACTURER_NAME, manufacturer.getManufacturer_name ());
         // updating row
-        return db.update (TABLE_QUESTIONS, values, KEY_ID + " = ?", new String[] {String.valueOf (question.getQuestion_id ())});
+        return db.update (TABLE_MANUFACTURER, values, KEY_MANUFACTURER_ID + " = ?", new String[] {String.valueOf (manufacturer.getManufacturer_id ())});
     }
 
-    public void deleteQuestion (long question_id) {
+    public void deleteManufacturer (long manufacturer_id) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete question where ID = " + question_id, false);
-        db.delete (TABLE_QUESTIONS, KEY_ID + " = ?",
-                new String[] {String.valueOf (question_id)});
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete manufacturer where manufacturer id = " + manufacturer_id, false);
+        db.delete (TABLE_MANUFACTURER, KEY_MANUFACTURER_ID + " = ?",
+                new String[] {String.valueOf (manufacturer_id)});
     }
 
-    public void deleteAllQuestion () {
+    public void deleteAllManufacturer () {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all questions", false);
-        db.execSQL ("delete from " + TABLE_QUESTIONS);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all manufacturers", false);
+        db.execSQL ("delete from " + TABLE_MANUFACTURER);
     }
 
 
-    // ------------------------ "atms" table methods ----------------//
+    // ------------------------ "workorder" table methods ----------------//
 
-    public long createAtm (Atm atm) {
+    public long createWorkorder (WorkOrder workOrder) {
         SQLiteDatabase db = this.getWritableDatabase ();
         ContentValues values = new ContentValues ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Atm", false);
-        values.put (KEY_ID, atm.getAtm_id ());
-        values.put (KEY_AGENCY_ID, atm.getAtm_agency_id ());
-        values.put (KEY_ATM_ID, atm.getAtm_id ());
-        values.put (KEY_ATM_UNIQUE_ID, atm.getAtm_unique_id ());
-        values.put (KEY_LAST_AUDIT_DATE, atm.getAtm_last_audit_date ());
-        values.put (KEY_BANK_NAME, atm.getAtm_bank_name ());
-        values.put (KEY_ADDRESS, atm.getAtm_address ());
-        values.put (KEY_CITY, atm.getAtm_city ());
-        values.put (KEY_PINCODE, atm.getAtm_pincode ());
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Workorder", false);
+        values.put (KEY_WORKORDER_NUMBER, workOrder.getWo_id ());
+        values.put (KEY_CONTRACT_NUMBER, workOrder.getWo_contract_num ());
+        values.put (KEY_SITE_NAME, workOrder.getWo_site_name ());
+        values.put (KEY_CUSTOMER_NAME, workOrder.getWo_customer_name ());
+        values.put (KEY_CUSTOMER_ID, workOrder.getWo_customer_id ());
         values.put (KEY_CREATED_AT, getDateTime ());
-        long atm_id = db.insert (TABLE_ATMS, null, values);
+        long atm_id = db.insert (TABLE_WORKORDER, null, values);
         return atm_id;
     }
 
-    public Atm getAtm (long atm_id) {
+    public WorkOrder getWorkOrder (long wo_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_ATMS + " WHERE " + KEY_ID + " = " + atm_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Atm where ID = " + atm_id, false);
+        String selectQuery = "SELECT  * FROM " + TABLE_WORKORDER + " WHERE " + KEY_WORKORDER_NUMBER + " = " + wo_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Workorder where Workorder number = " + wo_id, false);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
-        Atm atm = new Atm ();
-        atm.setAtm_id (c.getInt (c.getColumnIndex (KEY_ID)));
-        atm.setAtm_agency_id (c.getInt (c.getColumnIndex (KEY_AGENCY_ID)));
-        atm.setAtm_id (c.getInt (c.getColumnIndex (KEY_ATM_ID)));
-        atm.setAtm_unique_id (c.getString (c.getColumnIndex (KEY_ATM_UNIQUE_ID)));
-        atm.setAtm_last_audit_date (c.getString (c.getColumnIndex (KEY_LAST_AUDIT_DATE)));
-        atm.setAtm_bank_name (c.getString (c.getColumnIndex (KEY_BANK_NAME)));
-        atm.setAtm_address (c.getString (c.getColumnIndex (KEY_ADDRESS)));
-        atm.setAtm_city (c.getString (c.getColumnIndex (KEY_CITY)));
-        atm.setAtm_pincode (c.getString (c.getColumnIndex (KEY_PINCODE)));
-        return atm;
+        WorkOrder workOrder = new WorkOrder ();
+        workOrder.setWo_id (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+        workOrder.setWo_contract_num (c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)));
+        workOrder.setWo_site_name (c.getString (c.getColumnIndex (KEY_SITE_NAME)));
+        workOrder.setWo_customer_name (c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)));
+        workOrder.setWo_customer_id (c.getInt (c.getColumnIndex (KEY_CUSTOMER_ID)));
+        return workOrder;
     }
 
-    public List<Atm> getAllAtms () {
-        List<Atm> atms = new ArrayList<Atm> ();
-        String selectQuery = "SELECT  * FROM " + TABLE_ATMS;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all atm", false);
+    public List<WorkOrder> getAllWorkorders () {
+        List<WorkOrder> workOrders = new ArrayList<WorkOrder> ();
+        String selectQuery = "SELECT  * FROM " + TABLE_WORKORDER;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all Workorders", false);
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor c = db.rawQuery (selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst ()) {
             do {
-                Atm atm = new Atm ();
-                atm.setAtm_agency_id (c.getInt (c.getColumnIndex (KEY_AGENCY_ID)));
-                atm.setAtm_id (c.getInt (c.getColumnIndex (KEY_ATM_ID)));
-                atm.setAtm_unique_id (c.getString (c.getColumnIndex (KEY_ATM_UNIQUE_ID)));
-                atm.setAtm_last_audit_date (c.getString (c.getColumnIndex (KEY_LAST_AUDIT_DATE)));
-                atm.setAtm_bank_name (c.getString (c.getColumnIndex (KEY_BANK_NAME)));
-                atm.setAtm_address (c.getString (c.getColumnIndex (KEY_ADDRESS)));
-                atm.setAtm_city (c.getString (c.getColumnIndex (KEY_CITY)));
-                atm.setAtm_pincode (c.getString (c.getColumnIndex (KEY_PINCODE)));
-                atms.add (atm);
+                WorkOrder workOrder = new WorkOrder ();
+                workOrder.setWo_id (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+                workOrder.setWo_contract_num (c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)));
+                workOrder.setWo_site_name (c.getString (c.getColumnIndex (KEY_SITE_NAME)));
+                workOrder.setWo_customer_name (c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)));
+                workOrder.setWo_customer_id (c.getInt (c.getColumnIndex (KEY_CUSTOMER_ID)));
+                workOrders.add (workOrder);
             } while (c.moveToNext ());
         }
-        return atms;
+        return workOrders;
     }
 
-    public int getAtmCount () {
-        String countQuery = "SELECT  * FROM " + TABLE_ATMS;
+    public int getWorkorderCount () {
+        String countQuery = "SELECT  * FROM " + TABLE_WORKORDER;
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor cursor = db.rawQuery (countQuery, null);
         int count = cursor.getCount ();
         cursor.close ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total atm count : " + count, false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total workorder count : " + count, false);
         return count;
     }
 
-    public int updateAtm (Atm atm) {
+    public int updateWorkorder (WorkOrder workOrder) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update atm", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update workorder", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_ATM_ID, atm.getAtm_id ());
-        values.put (KEY_ATM_UNIQUE_ID, atm.getAtm_unique_id ());
-        values.put (KEY_AGENCY_ID, atm.getAtm_agency_id ());
-        values.put (KEY_LAST_AUDIT_DATE, atm.getAtm_last_audit_date ());
-        values.put (KEY_BANK_NAME, atm.getAtm_bank_name ());
-        values.put (KEY_ADDRESS, atm.getAtm_address ());
-        values.put (KEY_CITY, atm.getAtm_city ());
-        values.put (KEY_PINCODE, atm.getAtm_pincode ());
+        values.put (KEY_WORKORDER_NUMBER, workOrder.getWo_id ());
+        values.put (KEY_CONTRACT_NUMBER, workOrder.getWo_contract_num ());
+        values.put (KEY_SITE_NAME, workOrder.getWo_site_name ());
+        values.put (KEY_CUSTOMER_NAME, workOrder.getWo_customer_name ());
+        values.put (KEY_CUSTOMER_ID, workOrder.getWo_customer_id ());
         // updating row
-        return db.update (TABLE_ATMS, values, KEY_ID + " = ?", new String[] {String.valueOf (atm.getAtm_id ())});
+        return db.update (TABLE_WORKORDER, values, KEY_WORKORDER_NUMBER + " = ?", new String[] {String.valueOf (workOrder.getWo_id ())});
     }
 
-    public void deleteAtm (long atm_id) {
+    public void deleteWorkorder (long workorder_id) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete atm where ID = " + atm_id, false);
-        db.delete (TABLE_ATMS, KEY_ID + " = ?", new String[] {String.valueOf (atm_id)});
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete workorder where wo id = " + workorder_id, false);
+        db.delete (TABLE_WORKORDER, KEY_WORKORDER_NUMBER + " = ?", new String[] {String.valueOf (workorder_id)});
     }
 
-    public void deleteAllAtms () {
+    public void deleteAllWorkorders () {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all atm", false);
-        db.execSQL ("delete from " + TABLE_ATMS);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all workorders", false);
+        db.execSQL ("delete from " + TABLE_WORKORDER);
     }
 
-    // ------------------------ "reports" table methods ----------------//
+    // ------------------------ "SERVICE CHECK" table methods ----------------//
 
-    public long createReport (Report report) {
+    public long createServiceCheck (ServiceCheck serviceCheck) {
         SQLiteDatabase db = this.getWritableDatabase ();
         ContentValues values = new ContentValues ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Report", false);
-        values.put (KEY_AGENCY_ID, report.getAgency_id ());
-        values.put (KEY_ATM_ID, report.getAtm_id ());
-        values.put (KEY_ATM_UNIQUE_ID, report.getAtm_unique_id ());
-        values.put (KEY_AUDITOR_ID, report.getAuditor_id ());
-        values.put (KEY_ISSUES_JSON, report.getIssues_json_array ());
-        values.put (KEY_GEO_IMAGE, report.getGeo_image_string ());
-        values.put (KEY_LATITUDE, report.getLatitude ());
-        values.put (KEY_LONGITUDE, report.getLongitude ());
-        values.put (KEY_RATING, report.getRating ());
-        values.put (KEY_SIGN_IMAGE, report.getSignature_image_string ());
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating Servicecheck", false);
+        values.put (KEY_SERVICE_CHECK_ID, serviceCheck.getService_check_id ());
+        values.put (KEY_HEADING, serviceCheck.getHeading ());
+        values.put (KEY_SUB_HEADING, serviceCheck.getSub_heading ());
+        if (serviceCheck.isPass_required ()) {
+            values.put (KEY_PASS_REQUIRED, 1);
+        } else {
+            values.put (KEY_PASS_REQUIRED, 0);
+        }
+        values.put (KEY_GROUP_ID, serviceCheck.getGroup_id ());
+        values.put (KEY_GROUP_NAME, serviceCheck.getGroup_name ());
+        values.put (KEY_GROUP_TYPE, serviceCheck.getGroup_type ());
         values.put (KEY_CREATED_AT, getDateTime ());
-        long report_id = db.insert (TABLE_REPORT, null, values);
-        return report_id;
+        long service_check_id = db.insert (TABLE_SERVICE_CHECK, null, values);
+        return service_check_id;
     }
 
-    public Report getReport (long report_id) {
+    public ServiceCheck getServiceCheck (long service_check_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_REPORT + " WHERE " + KEY_ID + " = " + report_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Report where ID = " + report_id, false);
+        String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_CHECK + " WHERE " + KEY_SERVICE_CHECK_ID + " = " + service_check_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Service check where service check id = " + service_check_id, false);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
-        Report report = new Report ();
-        report.setReport_id (c.getInt (c.getColumnIndex (KEY_ID)));
-        report.setAgency_id (c.getInt (c.getColumnIndex (KEY_AGENCY_ID)));
-        report.setAtm_id (c.getInt (c.getColumnIndex (KEY_ATM_ID)));
-        report.setAtm_unique_id (c.getString (c.getColumnIndex (KEY_ATM_UNIQUE_ID)));
-        report.setAuditor_id (c.getInt (c.getColumnIndex (KEY_AUDITOR_ID)));
-        report.setIssues_json_array (c.getString (c.getColumnIndex (KEY_ISSUES_JSON)));
-        report.setGeo_image_string (c.getString (c.getColumnIndex (KEY_GEO_IMAGE)));
-        report.setLatitude (c.getString (c.getColumnIndex (KEY_LATITUDE)));
-        report.setLongitude (c.getString (c.getColumnIndex (KEY_LONGITUDE)));
-        report.setRating (c.getInt (c.getColumnIndex (KEY_RATING)));
-        report.setSignature_image_string (c.getString (c.getColumnIndex (KEY_SIGN_IMAGE)));
-        return report;
+        ServiceCheck serviceCheck = new ServiceCheck ();
+        serviceCheck.setService_check_id (c.getInt (c.getColumnIndex (KEY_SERVICE_CHECK_ID)));
+        serviceCheck.setHeading (c.getString (c.getColumnIndex (KEY_HEADING)));
+        serviceCheck.setSub_heading (c.getString (c.getColumnIndex (KEY_SUB_HEADING)));
+        Boolean pass_required = (c.getInt (c.getColumnIndex (KEY_PASS_REQUIRED)) == 1);
+        serviceCheck.setPass_required (pass_required);
+        serviceCheck.setGroup_id (c.getInt (c.getColumnIndex (KEY_GROUP_ID)));
+        serviceCheck.setGroup_type (c.getInt (c.getColumnIndex (KEY_GROUP_TYPE)));
+        serviceCheck.setGroup_name (c.getString (c.getColumnIndex (KEY_GROUP_NAME)));
+        serviceCheck.setComment ("");
+        serviceCheck.setComment_required (false);
+        serviceCheck.setSelection_flag (0);
+        serviceCheck.setSelection_text ("N/A");
+        return serviceCheck;
     }
 
-    public List<Report> getAllReports () {
-        List<Report> reports = new ArrayList<Report> ();
-        String selectQuery = "SELECT  * FROM " + TABLE_REPORT;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all reports", false);
+    public List<ServiceCheck> getAllServiceChecks () {
+        List<ServiceCheck> serviceChecks = new ArrayList<ServiceCheck> ();
+        String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_CHECK;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all service checks", false);
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor c = db.rawQuery (selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst ()) {
             do {
-                Report report = new Report ();
-                report.setReport_id (c.getInt (c.getColumnIndex (KEY_ID)));
-                report.setAgency_id (c.getInt (c.getColumnIndex (KEY_AGENCY_ID)));
-                report.setAtm_id (c.getInt (c.getColumnIndex (KEY_ATM_ID)));
-                report.setAtm_unique_id (c.getString (c.getColumnIndex (KEY_ATM_UNIQUE_ID)));
-                report.setAuditor_id (c.getInt (c.getColumnIndex (KEY_AUDITOR_ID)));
-                report.setIssues_json_array (c.getString (c.getColumnIndex (KEY_ISSUES_JSON)));
-                report.setGeo_image_string (c.getString (c.getColumnIndex (KEY_GEO_IMAGE)));
-                report.setLatitude (c.getString (c.getColumnIndex (KEY_LATITUDE)));
-                report.setLongitude (c.getString (c.getColumnIndex (KEY_LONGITUDE)));
-                report.setRating (c.getInt (c.getColumnIndex (KEY_RATING)));
-                report.setSignature_image_string (c.getString (c.getColumnIndex (KEY_SIGN_IMAGE)));
-                reports.add (report);
+                ServiceCheck serviceCheck = new ServiceCheck ();
+                serviceCheck.setService_check_id (c.getInt (c.getColumnIndex (KEY_SERVICE_CHECK_ID)));
+                serviceCheck.setHeading (c.getString (c.getColumnIndex (KEY_HEADING)));
+                serviceCheck.setSub_heading (c.getString (c.getColumnIndex (KEY_SUB_HEADING)));
+                Boolean pass_required = (c.getInt (c.getColumnIndex (KEY_PASS_REQUIRED)) == 1);
+                serviceCheck.setPass_required (pass_required);
+                serviceCheck.setGroup_id (c.getInt (c.getColumnIndex (KEY_GROUP_ID)));
+                serviceCheck.setGroup_type (c.getInt (c.getColumnIndex (KEY_GROUP_TYPE)));
+                serviceCheck.setGroup_name (c.getString (c.getColumnIndex (KEY_GROUP_NAME)));
+                serviceCheck.setComment ("");
+                serviceCheck.setComment_required (false);
+                serviceCheck.setSelection_flag (0);
+                serviceCheck.setSelection_text ("N/A");
+                serviceChecks.add (serviceCheck);
             } while (c.moveToNext ());
         }
-        return reports;
+        return serviceChecks;
     }
 
-    public int getReportCount () {
-        String countQuery = "SELECT  * FROM " + TABLE_REPORT;
+    public int getServiceCheckCount () {
+        String countQuery = "SELECT  * FROM " + TABLE_SERVICE_CHECK;
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor cursor = db.rawQuery (countQuery, null);
         int count = cursor.getCount ();
         cursor.close ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total report count : " + count, false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total service check count : " + count, false);
         return count;
     }
 
-    public int updateReport (Report report) {
+    public int updateServiceCheck (ServiceCheck serviceCheck) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update report", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update  service check", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_ATM_ID, report.getAtm_id ());
-        values.put (KEY_ATM_UNIQUE_ID, report.getAtm_unique_id ());
-        values.put (KEY_AGENCY_ID, report.getAgency_id ());
-        values.put (KEY_AUDITOR_ID, report.getAuditor_id ());
-        values.put (KEY_ISSUES_JSON, report.getIssues_json_array ());
-        values.put (KEY_RATING, report.getRating ());
-        values.put (KEY_GEO_IMAGE, report.getGeo_image_string ());
-        values.put (KEY_LATITUDE, report.getLatitude ());
-        values.put (KEY_LONGITUDE, report.getLongitude ());
-        values.put (KEY_SIGN_IMAGE, report.getSignature_image_string ());
+        values.put (KEY_HEADING, serviceCheck.getHeading ());
+        values.put (KEY_SUB_HEADING, serviceCheck.getSub_heading ());
+        if (serviceCheck.isPass_required ()) {
+            values.put (KEY_PASS_REQUIRED, 1);
+        } else {
+            values.put (KEY_PASS_REQUIRED, 0);
+        }
+        values.put (KEY_GROUP_ID, serviceCheck.getGroup_id ());
+        values.put (KEY_GROUP_NAME, serviceCheck.getGroup_name ());
+        values.put (KEY_GROUP_TYPE, serviceCheck.getGroup_type ());
         // updating row
-        return db.update (TABLE_REPORT, values, KEY_ID + " = ?", new String[] {String.valueOf (report.getReport_id ())});
+        return db.update (TABLE_SERVICE_CHECK, values, KEY_SERVICE_CHECK_ID + " = ?", new String[] {String.valueOf (serviceCheck.getService_check_id ())});
     }
 
-    public void deleteReport (String geo_image_string) {
+    public void deleteServiceCheck (int service_check_id) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete report where geo_image_string = " + geo_image_string, false);
-        db.delete (TABLE_REPORT, KEY_GEO_IMAGE + " = ?", new String[] {geo_image_string});
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete service check where id = " + service_check_id, false);
+        db.delete (TABLE_SERVICE_CHECK, KEY_SERVICE_CHECK_ID + " = ?", new String[] {String.valueOf (service_check_id)});
     }
 
-    public void deleteAllReports () {
+    public void deleteAllServiceChecks () {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all reports", false);
-        db.execSQL ("delete from " + TABLE_REPORT);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all service checks", false);
+        db.execSQL ("delete from " + TABLE_SERVICE_CHECK);
     }
 
-    // ------------------------ "auditor location" table methods ----------------//
 
-    public long createAuditorLocation (AuditorLocation auditorLocation) {
+    // ------------------------ "CONTRACT_SERIAL" table methods ----------------//
+
+    public long createContractSerial (Serial contractSerial) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating auditorlocation", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Creating contract serial", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_AUDITOR_ID, auditorLocation.getAuditor_id ());
-        values.put (KEY_LATITUDE, auditorLocation.getLatitude ());
-        values.put (KEY_LONGITUDE, auditorLocation.getLongitude ());
-        values.put (KEY_TIME, auditorLocation.getTime ());
+        values.put (KEY_SERVICE_SERIAL_ID, contractSerial.getSerial_id ());
+        values.put (KEY_SERIAL_NUMBER, contractSerial.getSerial_number ());
+        values.put (KEY_MODEL_NUMBER, contractSerial.getModel_number ());
+        values.put (KEY_MANUFACTURER_ID, contractSerial.getManufacturer_id ());
+        values.put (KEY_MANUFACTURER_NAME, contractSerial.getManufacturer_name ());
+        values.put (KEY_SERIAL_TYPE, contractSerial.getSerial_type ());
+        values.put (KEY_WORKORDER_NUMBER, contractSerial.getWo_number ());
         values.put (KEY_CREATED_AT, getDateTime ());
-        long auditor_location_id = db.insert (TABLE_AUDITOR_LOCATION, null, values);
+        long auditor_location_id = db.insert (TABLE_CONTRACT_SERIAL, null, values);
         return auditor_location_id;
     }
 
-    public AuditorLocation getauditorLocation (long auditor_location_id) {
+    public Serial getContractSerial (long service_serial_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_AUDITOR_LOCATION + " WHERE " + KEY_ID + " = " + auditor_location_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get auditor location where ID = " + auditor_location_id, false);
+        String selectQuery = "SELECT  * FROM " + TABLE_CONTRACT_SERIAL + " WHERE " + KEY_SERVICE_SERIAL_ID + " = " + service_serial_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get contract serial where serial id = " + service_serial_id, false);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
-        AuditorLocation auditorLocation = new AuditorLocation ();
-        auditorLocation.setAuditor_id (c.getInt (c.getColumnIndex (KEY_AUDITOR_ID)));
-        auditorLocation.setTime (c.getString (c.getColumnIndex (KEY_TIME)));
-        auditorLocation.setLatitude (c.getString (c.getColumnIndex (KEY_LATITUDE)));
-        auditorLocation.setLongitude (c.getString (c.getColumnIndex (KEY_LONGITUDE)));
-        return auditorLocation;
+        Serial contractSerial = new Serial ();
+        contractSerial.setSerial_id (c.getInt (c.getColumnIndex (KEY_SERVICE_SERIAL_ID)));
+        contractSerial.setSerial_number (c.getString (c.getColumnIndex (KEY_SERIAL_NUMBER)));
+        contractSerial.setModel_number (c.getString (c.getColumnIndex (KEY_MODEL_NUMBER)));
+        contractSerial.setManufacturer_id (c.getInt (c.getColumnIndex (KEY_MANUFACTURER_ID)));
+        contractSerial.setManufacturer_name (c.getString (c.getColumnIndex (KEY_MANUFACTURER_NAME)));
+        contractSerial.setSerial_type (c.getString (c.getColumnIndex (KEY_SERIAL_TYPE)));
+        contractSerial.setWo_number (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+        return contractSerial;
     }
 
-    public List<AuditorLocation> getAllAuditorLocation () {
-        List<AuditorLocation> auditorLocations = new ArrayList<AuditorLocation> ();
-        String selectQuery = "SELECT  * FROM " + TABLE_AUDITOR_LOCATION;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all Auditor Locations", false);
+    public List<Serial> getAllContractSerials (int wo_number) {
+        List<Serial> contractSerials = new ArrayList<Serial> ();
+        String selectQuery = "SELECT  * FROM " + TABLE_CONTRACT_SERIAL + " WHERE " + KEY_WORKORDER_NUMBER + " = " + wo_number;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all contract serials for wo number = " + wo_number, false);
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor c = db.rawQuery (selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst ()) {
             do {
-                AuditorLocation auditorLocation = new AuditorLocation ();
-                auditorLocation.setAuditor_id (c.getInt (c.getColumnIndex (KEY_AUDITOR_ID)));
-                auditorLocation.setTime (c.getString (c.getColumnIndex (KEY_TIME)));
-                auditorLocation.setLatitude (c.getString (c.getColumnIndex (KEY_LATITUDE)));
-                auditorLocation.setLongitude (c.getString (c.getColumnIndex (KEY_LONGITUDE)));
-                auditorLocations.add (auditorLocation);
+                Serial contractSerial = new Serial ();
+                contractSerial.setSerial_id (c.getInt (c.getColumnIndex (KEY_SERVICE_SERIAL_ID)));
+                contractSerial.setSerial_number (c.getString (c.getColumnIndex (KEY_SERIAL_NUMBER)));
+                contractSerial.setModel_number (c.getString (c.getColumnIndex (KEY_MODEL_NUMBER)));
+                contractSerial.setManufacturer_id (c.getInt (c.getColumnIndex (KEY_MANUFACTURER_ID)));
+                contractSerial.setManufacturer_name (c.getString (c.getColumnIndex (KEY_MANUFACTURER_NAME)));
+                contractSerial.setSerial_type (c.getString (c.getColumnIndex (KEY_SERIAL_TYPE)));
+                contractSerial.setWo_number (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+                contractSerials.add (contractSerial);
             } while (c.moveToNext ());
         }
-        return auditorLocations;
+        return contractSerials;
     }
 
-    public int getAuditorLocationCount () {
-        String countQuery = "SELECT  * FROM " + TABLE_AUDITOR_LOCATION;
+    public int getContractSerialCount () {
+        String countQuery = "SELECT  * FROM " + TABLE_CONTRACT_SERIAL;
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor cursor = db.rawQuery (countQuery, null);
         int count = cursor.getCount ();
         cursor.close ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total auditor locations count : " + count, false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total contract serial count : " + count, false);
         return count;
     }
 
-    public int updateAuditorLocation (AuditorLocation auditorLocation) {
+    public int updateContractSerial (Serial contractSerial) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update auditor location", false);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update contract serial", false);
         ContentValues values = new ContentValues ();
-        values.put (KEY_AUDITOR_ID, auditorLocation.getAuditor_id ());
-        values.put (KEY_GEO_IMAGE, auditorLocation.getTime ());
-        values.put (KEY_LATITUDE, auditorLocation.getLatitude ());
-        values.put (KEY_LONGITUDE, auditorLocation.getLongitude ());
+        values.put (KEY_SERIAL_NUMBER, contractSerial.getSerial_number ());
+        values.put (KEY_MODEL_NUMBER, contractSerial.getModel_number ());
+        values.put (KEY_MANUFACTURER_ID, contractSerial.getManufacturer_id ());
+        values.put (KEY_MANUFACTURER_NAME, contractSerial.getManufacturer_name ());
+        values.put (KEY_SERIAL_TYPE, contractSerial.getSerial_type ());
+        values.put (KEY_WORKORDER_NUMBER, contractSerial.getWo_number ());
         // updating row
-        return db.update (TABLE_AUDITOR_LOCATION, values, KEY_ID + " = ?", new String[] {String.valueOf (auditorLocation.getAuditor_location_id ())});
+        return db.update (TABLE_CONTRACT_SERIAL, values, KEY_SERVICE_SERIAL_ID + " = ?", new String[] {String.valueOf (contractSerial.getSerial_id ())});
     }
 
-    public void deleteAuditorLocation (String time) {
+    public void deleteContractSerial (int service_serial_id) {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete auditor location where time = " + time, false);
-        db.delete (TABLE_AUDITOR_LOCATION, KEY_TIME + " = ?",
-                new String[] {time});
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete contract serial where serial id = " + service_serial_id, false);
+        db.delete (TABLE_CONTRACT_SERIAL, KEY_SERVICE_SERIAL_ID + " = ?",
+                new String[] {String.valueOf (service_serial_id)});
     }
 
-    public void deleteAllAuditorLocation () {
+    public void deleteAllContractSerials () {
         SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all auditor locations", false);
-        db.execSQL ("delete from " + TABLE_AUDITOR_LOCATION);
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete all contract serials", false);
+        db.execSQL ("delete from " + TABLE_CONTRACT_SERIAL);
     }
 
 
@@ -478,8 +501,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Date date = new Date ();
         return dateFormat.format (date);
     }
-
-
-
 }
-*/

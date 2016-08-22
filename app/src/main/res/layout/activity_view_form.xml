@@ -59,10 +59,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:background="@color/background_button_green"
-                    android:drawableLeft="@drawable/ic_check"
+                    android:drawableLeft="@drawable/ic_edit"
                     android:gravity="center"
                     android:paddingRight="5dp"
-                    android:text="SAVE"
+                    android:text="EDIT"
                     android:textColor="@color/text_color_white"
                     android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"/>
@@ -96,31 +96,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="3">
-                        <EditText
-                            android:id="@+id/etTimeIn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2.5"
-                            android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:inputType="datetime"
-                            android:padding="5dp"
-                            android:textSize="@dimen/text_size_medium"/>
+                        android:weightSum="3.0">
                         <TextView
-                            android:id="@+id/tvSet"
+                            android:id="@+id/tvTimeIn"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@color/background_blue"
-                            android:gravity="center"
-                            android:padding="7dp"
-                            android:text="SET"
-                            android:textColor="@color/text_color_white"
+                            android:layout_weight="3.0"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
                     </LinearLayout>
                     <TextView
@@ -130,13 +112,11 @@
                         android:text="Onsite Contact"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"/>
-                    <EditText
-                        android:id="@+id/etOnSiteContact"
+                    <TextView
+                        android:id="@+id/tvOnSiteContact"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/layout_edittext"
-                        android:inputType="text"
-                        android:padding="5dp"
+                        android:text=""
                         android:textSize="@dimen/text_size_medium"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -145,13 +125,11 @@
                         android:text="Email"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"/>
-                    <EditText
-                        android:id="@+id/etEmail"
+                    <TextView
+                        android:id="@+id/tvEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/layout_edittext"
-                        android:inputType="textEmailAddress"
-                        android:padding="5dp"
+                        android:text=""
                         android:textSize="@dimen/text_size_medium"/>
                 </LinearLayout>
 
@@ -181,23 +159,6 @@
                             android:textColor="@color/text_color_white"
                             android:textSize="@dimen/text_size_medium"/>
 
-                        <TextView
-                            android:id="@+id/tvAddBeforeImage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="5dp"
-                            android:background="@color/background_button_green"
-                            android:drawableLeft="@drawable/ic_add"
-                            android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="ADD"
-                            android:textColor="@color/text_color_white"
-                            android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- Before Image Layout Body -->
                     <HorizontalScrollView
@@ -253,38 +214,24 @@
                             android:text="Generator Model"
                             android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etGeneratorModel"
+                        <TextView
+                            android:id="@+id/tvGeneratorModel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:padding="5dp"/>
+                            android:text=""
+                            android:textSize="@dimen/text_size_medium"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Generator Make"
-                            android:textStyle="bold"/>
-                        <Spinner
-                            android:id="@+id/spGeneratorMake"
-                            style="@style/spinner_style"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="0dp"
-                            android:padding="0dp"
-                            android:spinnerMode="dialog"
                             android:textSize="@dimen/text_size_medium"
-                            android:visibility="gone"/>
-                        <EditText
-                            android:id="@+id/etGeneratorMake"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tvGeneratorMake"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:padding="5dp"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
 
                         <TextView
@@ -294,14 +241,11 @@
                             android:text="Generator Serial"
                             android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etGeneratorSerial"
+                        <TextView
+                            android:id="@+id/tvGeneratorSerial"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:padding="5dp"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -310,12 +254,11 @@
                             android:text="KwRating"
                             android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etKwRating"
+                        <TextView
+                            android:id="@+id/tvKwRating"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:padding="5dp"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
                     </LinearLayout>
                 </RelativeLayout>
@@ -344,23 +287,6 @@
                             android:textColor="@color/text_color_white"
                             android:textSize="@dimen/text_size_medium"/>
 
-                        <TextView
-                            android:id="@+id/tvAddEngineSerial"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="5dp"
-                            android:background="@color/background_button_green"
-                            android:drawableLeft="@drawable/ic_add"
-                            android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="ADD"
-                            android:textColor="@color/text_color_white"
-                            android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- Engine Serial Layout Body -->
                     <LinearLayout
@@ -398,23 +324,6 @@
                             android:textColor="@color/text_color_white"
                             android:textSize="@dimen/text_size_medium"/>
 
-                        <TextView
-                            android:id="@+id/tvAddAtsSerial"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="5dp"
-                            android:background="@color/background_button_green"
-                            android:drawableLeft="@drawable/ic_add"
-                            android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="ADD"
-                            android:textColor="@color/text_color_white"
-                            android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- ATS Serial Layout Body -->
                     <LinearLayout
@@ -471,7 +380,6 @@
 
 
                         </LinearLayout>
-
 
 
                     </RelativeLayout>
@@ -950,59 +858,32 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
                             android:text="(*Based on parts available,overall condition)"
-                            android:textSize="@dimen/text_size_small"/>
+                            android:textSize="@dimen/text_size_small"
+                        />
 
-
-                        <RadioGroup
-                            android:id="@+id/rgOverAllCondition"
+                        <TextView
+                            android:id="@+id/tvGeneratorCondition"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:orientation="horizontal">
+                            android:text=""
+                            android:textSize="@dimen/text_size_medium"
+                            android:textStyle="bold"/>
 
-                            <RadioButton
-                                android:id="@+id/rbGood"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="true"
-                                android:text="Good"
-                                android:textColor="@color/color_pass"
-                                android:textSize="@dimen/text_size_medium"/>
-
-                            <RadioButton
-                                android:id="@+id/rbFair"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:text="Fair"
-                                android:textColor="@color/color_advice"
-                                android:textSize="@dimen/text_size_medium"/>
-
-                            <RadioButton
-                                android:id="@+id/rbPoor"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:text="Poor"
-                                android:textColor="@color/color_fail"
-                                android:textSize="@dimen/text_size_medium"/>
-                        </RadioGroup>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="10dp"
                             android:text="Please describe your rating of the generator."
                             android:textColor="@color/text_color_black"
                             android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"/>
-                        <EditText
-                            android:id="@+id/etGeneratorConditionComment"
+                        <TextView
+                            android:id="@+id/tvGeneratorConditionComment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/layout_edittext"
-                            android:padding="5dp"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
                     </LinearLayout>
                 </RelativeLayout>
@@ -1032,14 +913,13 @@
                             android:textSize="@dimen/text_size_medium"/>
                     </RelativeLayout>
                     <!-- Comments Layout Body-->
-                    <EditText
-                        android:id="@+id/etComment"
+                    <TextView
+                        android:id="@+id/tvComment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl15"
                         android:layout_margin="10dp"
-                        android:background="@drawable/layout_edittext"
-                        android:padding="5dp"
+                        android:text=""
                         android:textSize="@dimen/text_size_medium"/>
                 </RelativeLayout>
 
@@ -1068,23 +948,6 @@
                             android:textColor="@color/text_color_white"
                             android:textSize="@dimen/text_size_medium"/>
 
-                        <TextView
-                            android:id="@+id/tvAddAfterImage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="5dp"
-                            android:background="@color/background_button_green"
-                            android:drawableLeft="@drawable/ic_add"
-                            android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="ADD"
-                            android:textColor="@color/text_color_white"
-                            android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold"/>
                     </RelativeLayout>
                     <!-- After Image Layout Body -->
 
@@ -1177,22 +1040,21 @@
                         android:textStyle="bold"
                     />
 
-                    <EditText
-                        android:id="@+id/etCustomerName"
+                    <TextView
+                        android:id="@+id/tvCustomerName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tvSignatureName"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:background="@drawable/layout_edittext"
-                        android:padding="5dp"
+                        android:text=""
                         android:textSize="@dimen/text_size_medium"/>
 
                     <ImageView
                         android:id="@+id/ivCustomerSignature"
                         android:layout_width="wrap_content"
                         android:layout_height="150dp"
-                        android:layout_below="@+id/etCustomerName"
+                        android:layout_below="@+id/tvCustomerName"
                         android:padding="10dp"
                         android:src="@drawable/image_placeholder"/>
                 </RelativeLayout>
@@ -1218,32 +1080,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="3">
-                        <EditText
-                            android:id="@+id/etTimeOut"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2.5"
-                            android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:inputType="datetime"
-                            android:padding="5dp"
-                            android:textSize="@dimen/text_size_medium"/>
+                        android:weightSum="3.0">
                         <TextView
-                            android:id="@+id/tvTimeOutSet"
+                            android:id="@+id/tvTimeOut"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@color/background_blue"
-                            android:gravity="center"
-                            android:padding="7dp"
-                            android:text="SET"
-                            android:textColor="@color/text_color_white"
+                            android:layout_weight="3.0"
+                            android:text=""
                             android:textSize="@dimen/text_size_medium"/>
+
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>

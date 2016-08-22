@@ -9,8 +9,8 @@ import java.util.List;
 
 public class WorkOrderDetail {
 
-    private int form_id, work_order_id, contract_number, generator_make_id, generator_condition_flag, emp_id; // Generator condition flag  0=> POOR, 1=> FAIR, 2=> GOOD
-    private String customer_name, generator_serial_id, site_name, time_in, onsite_contact, email, generator_model,
+    private int form_id, work_order_id, contract_number, generator_make_id, generator_condition_flag, emp_id, generator_serial_id; // Generator condition flag  0=> POOR, 1=> FAIR, 2=> GOOD
+    private String customer_name, site_name, time_in, onsite_contact, email, generator_model,
             generator_make_name, generator_serial, kw_rating, engine_serial_json, ats_serial_json, service_check_json,
             generator_condition_text, generator_condition_comment, comments, time_out, before_image_list_json,
             after_image_list_json, signature_image_list_json;
@@ -25,7 +25,7 @@ public class WorkOrderDetail {
     }
 
     public WorkOrderDetail (int form_id, int work_order_id, int contract_number, int generator_make_id, int emp_id,
-                            int generator_condition_flag, String customer_name, String generator_serial_id,
+                            int generator_condition_flag, String customer_name, int generator_serial_id,
                             String site_name, String time_in, String onsite_contact, String email,
                             String generator_model, String generator_make_name, String generator_serial,
                             String kw_rating, String engine_serial_json, String ats_serial_json,
@@ -169,13 +169,13 @@ public class WorkOrderDetail {
         Utils.showLog (Log.DEBUG, "customer_name", customer_name, false);
     }
 
-    public String getGenerator_serial_id () {
+    public int getGenerator_serial_id () {
         return generator_serial_id;
     }
 
-    public void setGenerator_serial_id (String generator_serial_id) {
+    public void setGenerator_serial_id (int generator_serial_id) {
         this.generator_serial_id = generator_serial_id;
-        Utils.showLog (Log.DEBUG, "generator_serial_id", generator_serial_id, false);
+        Utils.showLog (Log.DEBUG, "generator_serial_id", "" + generator_serial_id, false);
     }
 
     public String getSite_name () {

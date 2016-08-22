@@ -35,6 +35,8 @@ import com.android.volley.toolbox.StringRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -118,6 +120,37 @@ public class Utils {
         AlertDialog alert = builder.create ();
         alert.show ();
     }
+
+    public static String URLToBase64 (String url) {
+        try {
+            URL url2 = new URL (url);
+            HttpURLConnection connection = (HttpURLConnection) url2.openConnection ();
+            connection.setDoInput (true);
+            connection.connect ();
+            InputStream input = connection.getInputStream ();
+            Bitmap myBitmap = BitmapFactory.decodeStream (input);
+            return Utils.bitmapToBase64 (myBitmap);
+        } catch (IOException e) {
+            e.printStackTrace ();
+            return "";
+        }
+    }
+
+    public static Bitmap URLToBitmap (String url) {
+        try {
+            URL url2 = new URL (url);
+            HttpURLConnection connection = (HttpURLConnection) url2.openConnection ();
+            connection.setDoInput (true);
+            connection.connect ();
+            InputStream input = connection.getInputStream ();
+            Bitmap myBitmap = BitmapFactory.decodeStream (input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace ();
+            return null;
+        }
+    }
+
 
     public static void showSnackBar (CoordinatorLayout coordinatorLayout, String message) {
         final Snackbar snackbar = Snackbar
