@@ -70,6 +70,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
         initListener ();
         initAdapter ();
         getContractSerialsFromServer (Constants.workOrderDetail.getWork_order_id ());
+        db.closeDB ();
     }
 
     private void initView () {
@@ -87,7 +88,11 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                     tvAddSerial.setBackgroundResource (R.color.background_button_green_pressed);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvAddSerial.setBackgroundResource (R.color.background_button_green);
-                    showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), false);
+                    if (NetworkConnection.isNetworkAvailable (ServiceFormsListActivity.this)) {
+                        showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), false);
+                    } else {
+                        Utils.showOkDialog (ServiceFormsListActivity.this, "Sorry you cannot add a new serial in Offline mode", false);
+                    }
                 }
                 return true;
             }
@@ -117,7 +122,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
         TextView tvAddSerial;
         TextView tvCancelSerial;
 
-        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, "", "", "", "");
+        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, 0, "", "", "", "");
 
         dialogAddNewSerial = new Dialog (ServiceFormsListActivity.this);
         dialogAddNewSerial.setContentView (R.layout.dialog_add_generator_serial);
@@ -340,11 +345,11 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                                     json_array_len = jsonArray.length ();
                                     for (int j = 0; j < jsonArray.length (); j++) {
                                         JSONObject c = jsonArray.getJSONObject (j);
-                                        if (c.getString ("Type").equalsIgnoreCase ("Generator")) {
+                                        if (c.getString ("Type").equalsIgnoreCase ("Generator") || c.getString ("Type").equalsIgnoreCase ("")) {
                                             is_data_received = 1;
                                             Serial generatorSerial = new
                                                     Serial (false, c.getInt ("serviceSerials_id"),
-                                                    c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
+                                                    c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
                                                     c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                             generatorSerialList.add (generatorSerial);
                                         }
@@ -399,30 +404,30 @@ public class ServiceFormsListActivity extends AppCompatActivity {
 //            showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), true);
 
             progressBar.setVisibility (View.GONE);
-            getContractSerialsFromLocalDatabase (wo_id);
+            getGeneratorSerialsFromLocalDatabase (wo_id);
 
 
             //        Utils.showOkDialog (ServiceFormsListActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
     }
 
-    private void getContractSerialsFromLocalDatabase (int wo_id) {
+    private void getGeneratorSerialsFromLocalDatabase (int wo_id) {
         Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the contract serials from local database for wo id = " + wo_id, true);
         generatorSerialList.clear ();
 
 
         List<Serial> allContractSerials = db.getAllContractSerials (wo_id);
 
-        if (allContractSerials.size () > 0) {
-            tvNoSerialFound.setVisibility (View.GONE);
-            lvGeneratorSerial.setVisibility (View.VISIBLE);
-        } else {
-            tvNoSerialFound.setVisibility (View.VISIBLE);
-            lvGeneratorSerial.setVisibility (View.GONE);
-        }
+        tvNoSerialFound.setVisibility (View.VISIBLE);
+        lvGeneratorSerial.setVisibility (View.GONE);
 
-        for (Serial contractSerial : allContractSerials)
-            generatorSerialList.add (contractSerial);
+        for (Serial contractSerial : allContractSerials) {
+            if (contractSerial.getSerial_type ().equalsIgnoreCase ("Generator") || contractSerial.getSerial_type ().equalsIgnoreCase ("")) {
+                generatorSerialList.add (contractSerial);
+                tvNoSerialFound.setVisibility (View.GONE);
+                lvGeneratorSerial.setVisibility (View.VISIBLE);
+            }
+        }
         adapter.notifyDataSetChanged ();
     }
 

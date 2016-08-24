@@ -3,10 +3,10 @@ package com.actiknow.motoraudit.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,10 +38,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.adapter.ManufacturerAdapter;
+import com.actiknow.motoraudit.helper.DatabaseHandler;
 import com.actiknow.motoraudit.model.ImageDetail;
 import com.actiknow.motoraudit.model.Serial;
 import com.actiknow.motoraudit.model.ServiceCheck;
@@ -77,18 +77,12 @@ public class DetailActivity extends AppCompatActivity {
     public static final int AFTER_IMAGE_PICKER = 2;
     public static final int LIST_ITEM_PICKER = 3;
 
-    public static final int PICK_FROM_CAMERA_BEFORE_IMAGE_1 = 111;
-    public static final int PICK_FROM_GALLERY_BEFORE_IMAGE_1 = 121;
-    public static final int PICK_FROM_CAMERA_AFTER_IMAGE_1 = 211;
-    public static final int PICK_FROM_GALLERY_AFTER_IMAGE_1 = 221;
-    public static final int PICK_FROM_CAMERA_LIST_ITEM_1 = 311;
-    public static final int PICK_FROM_GALLERY_LIST_ITEM_1 = 321;
-    public static final int PICK_FROM_CAMERA_BEFORE_IMAGE_2 = 112;
-    public static final int PICK_FROM_GALLERY_BEFORE_IMAGE_2 = 122;
-    public static final int PICK_FROM_CAMERA_AFTER_IMAGE_2 = 212;
-    public static final int PICK_FROM_GALLERY_AFTER_IMAGE_2 = 222;
-    public static final int PICK_FROM_CAMERA_LIST_ITEM_2 = 312;
-    public static final int PICK_FROM_GALLERY_LIST_ITEM_2 = 322;
+    public static final int PICK_FROM_CAMERA_BEFORE_IMAGE = 11;
+    public static final int PICK_FROM_GALLERY_BEFORE_IMAGE = 12;
+    public static final int PICK_FROM_CAMERA_AFTER_IMAGE = 21;
+    public static final int PICK_FROM_GALLERY_AFTER_IMAGE = 22;
+    public static final int PICK_FROM_CAMERA_LIST_ITEM = 31;
+    public static final int PICK_FROM_GALLERY_LIST_ITEM = 32;
 
     GoogleApiClient client;
     TextView tvWorkOrderDescription;
@@ -187,8 +181,6 @@ public class DetailActivity extends AppCompatActivity {
 
     ManufacturerAdapter adapter;
 
-
-    ArrayList<String> listItem = new ArrayList<String> ();
     ArrayList<String> listGoodCondition = new ArrayList<String> ();
     ArrayList<String> listFairCondition = new ArrayList<String> ();
     ArrayList<String> listPoorCondition = new ArrayList<String> ();
@@ -198,14 +190,12 @@ public class DetailActivity extends AppCompatActivity {
     ProgressDialog pDialog;
 
     ManufacturerAdapter manufacturerAdapter;
-
+    DatabaseHandler db;
     private List<Serial> engineSerialList = new ArrayList<> ();
     private List<Serial> atsSerialList = new ArrayList<> ();
     private List<ImageDetail> beforeImageList = new ArrayList<> ();
     private List<ImageDetail> afterImageList = new ArrayList<> ();
-    private List<ImageDetail> smCheckImageList = new ArrayList<> ();
     private List<ImageDetail> signatureImageList = new ArrayList<> ();
-
     private int smCheckIdTemp = 0;
     private int formIdTemp = 0;
 
@@ -221,15 +211,10 @@ public class DetailActivity extends AppCompatActivity {
         initData ();
         initListener ();
         initAdapter ();
-//        getWorkOrderDetailFromServer(78759, 97);
         getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ());
         Utils.hideSoftKeyboard (this);
 
-
-//        new LoadServiceChecksInLinearLayout (this).execute ();
-
-
-//        new LoadServiceChecks (this).execute ();
+        db.closeDB ();
     }
 
     private void initView () {
@@ -373,11 +358,13 @@ public class DetailActivity extends AppCompatActivity {
                                 jsonObject.put ("name_id", String.valueOf (serviceCheck.getService_check_id ()));
                                 jsonObject.put ("status", serviceCheck.getSelection_text ());
 
+
+                                JSONObject jsonObject1 = new JSONObject ();
+
                                 if (serviceCheck.getSmCheckImageList ().size () > 0) {
                                     JSONArray jsonArraySmCheckImage = new JSONArray ();
                                     for (int j = 0; j < serviceCheck.getSmCheckImageList ().size (); j++) {
                                         ImageDetail smCheckImageDetail = serviceCheck.getSmCheckImageList ().get (j);
-                                        JSONObject jsonObject1 = new JSONObject ();
                                         jsonObject1.put ("64_image", smCheckImageDetail.getImage_str ());
 //                                        jsonObject1.put ("64_image", "helo");
                                         jsonObject1.put ("file_name", smCheckImageDetail.getFile_name ());
@@ -634,7 +621,12 @@ public class DetailActivity extends AppCompatActivity {
                     tvAddEngineSerial.setBackgroundResource (R.color.background_button_green_pressed);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvAddEngineSerial.setBackgroundResource (R.color.background_button_green);
-                    showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), "Engine");
+                    if (NetworkConnection.isNetworkAvailable (DetailActivity.this)) {
+                        showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), "Engine");
+                    } else {
+                        Utils.showOkDialog (DetailActivity.this, "Sorry you cannot add a new serial in Offline mode", false);
+                    }
+
                 }
                 return true;
             }
@@ -647,7 +639,11 @@ public class DetailActivity extends AppCompatActivity {
                     tvAddATSSerial.setBackgroundResource (R.color.background_button_green_pressed);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvAddATSSerial.setBackgroundResource (R.color.background_button_green);
-                    showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), "ATS");
+                    if (NetworkConnection.isNetworkAvailable (DetailActivity.this)) {
+                        showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), "ATS");
+                    } else {
+                        Utils.showOkDialog (DetailActivity.this, "Sorry you cannot add a new serial in Offline mode", false);
+                    }
                 }
                 return true;
             }
@@ -655,8 +651,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void initData () {
-
-
+        db = new DatabaseHandler (getApplicationContext ());
+        Utils.clearAllServiceChecks ();
         //    Utils.setTypefaceToAllViews (this, tvNoInternetConnection);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
         Utils.hideKeyboard (DetailActivity.this, etOnSiteContact);
@@ -727,7 +723,6 @@ public class DetailActivity extends AppCompatActivity {
         spGeneratorMake.setAdapter (adapter);
     }
 
-
     private void sendFormDetailToServer () {
         if (NetworkConnection.isNetworkAvailable (this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
@@ -786,7 +781,24 @@ public class DetailActivity extends AppCompatActivity {
             Utils.sendRequest (strRequest);
 
         } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            pDialog.dismiss ();
+//            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            db.createServiceForm (Constants.workOrderDetail);
+            AlertDialog.Builder builder = new AlertDialog.Builder (DetailActivity.this);
+            builder.setMessage ("Form detail have been saved offline and will be uploaded once the network connection is available")
+                    .setCancelable (false)
+                    .setPositiveButton ("OK", new DialogInterface.OnClickListener () {
+                        public void onClick (DialogInterface dialog, int id) {
+                            dialog.dismiss ();
+                            Intent intent = new Intent (DetailActivity.this, MainActivity.class);
+                            intent.addFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity (intent);
+                            finish ();
+                        }
+                    });
+            AlertDialog alert = builder.create ();
+            alert.show ();
+
         }
     }
 
@@ -893,7 +905,10 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    private void selectImage (final int flag) {
+    private boolean selectImage (final int flag) {
+
+        final boolean[] cancel_flag = new boolean[1];
+
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder (this);
@@ -905,62 +920,56 @@ public class DetailActivity extends AppCompatActivity {
                 if (options[item].equals ("Take Photo")) {
                     switch (flag) {
                         case BEFORE_IMAGE_PICKER:
+//                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
                             intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
-                            startActivityForResult (intent, PICK_FROM_CAMERA_BEFORE_IMAGE_1);
+                            startActivityForResult (intent, PICK_FROM_CAMERA_BEFORE_IMAGE);
                             break;
                         case AFTER_IMAGE_PICKER:
+//                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
                             intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
-                            startActivityForResult (intent, PICK_FROM_CAMERA_AFTER_IMAGE_1);
+                            startActivityForResult (intent, PICK_FROM_CAMERA_AFTER_IMAGE);
                             break;
                         case LIST_ITEM_PICKER:
+//                            intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
                             intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
-                            startActivityForResult (intent, PICK_FROM_CAMERA_LIST_ITEM_1);
+                            startActivityForResult (intent, PICK_FROM_CAMERA_LIST_ITEM);
                             break;
                     }
+                    cancel_flag[0] = true;
+
                 } else if (options[item].equals ("Choose from Gallery")) {
                     switch (flag) {
                         case BEFORE_IMAGE_PICKER:
                             Intent i = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult (i, PICK_FROM_GALLERY_BEFORE_IMAGE_1);
+                            startActivityForResult (i, PICK_FROM_GALLERY_BEFORE_IMAGE);
                             break;
                         case AFTER_IMAGE_PICKER:
                             Intent i2 = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult (i2, PICK_FROM_GALLERY_AFTER_IMAGE_1);
+                            startActivityForResult (i2, PICK_FROM_GALLERY_AFTER_IMAGE);
                             break;
                         case LIST_ITEM_PICKER:
                             Intent i3 = new Intent (Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult (i3, PICK_FROM_GALLERY_LIST_ITEM_1);
+                            startActivityForResult (i3, PICK_FROM_GALLERY_LIST_ITEM);
                             break;
+
                     }
 
-                    // Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    ///startActivityForResult(intent, 1);
-
-//                    Intent intent = new Intent ();
-//                    intent.setType ("image/*");
-//                    intent.setAction (Intent.ACTION_GET_CONTENT);
-//                    intent.putExtra ("aspectX", 4);
-//                    intent.putExtra ("aspectY", 3);
-                    //indicate output X and Y
-//                    intent.putExtra ("outputX", 256);
-//                    intent.putExtra ("outputY", 256);
-
-//                    try {
-
-//                        intent.putExtra ("return-data", true);
-//                        startActivityForResult (intent, PICK_FROM_GALLERY);
-//
-//                    } catch (ActivityNotFoundException e) {
-//                        // Do nothing for now
-//                    }
-
+                    cancel_flag[0] = true;
 
                 } else if (options[item].equals ("Cancel")) {
                     dialog.dismiss ();
+                    cancel_flag[0] = false;
                 }
             }
         });
         builder.show ();
+
+
+        if (cancel_flag[0]) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -970,25 +979,17 @@ public class DetailActivity extends AppCompatActivity {
         final String date = df.format (Calendar.getInstance ().getTime ());
         try {
             if (resultCode == RESULT_OK) {
+                File f = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
                 switch (requestCode) {
-                    case PICK_FROM_CAMERA_BEFORE_IMAGE_1:
-                        File file = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
-                        try {
-                            cropCapturedImage (Uri.fromFile (file), PICK_FROM_CAMERA_BEFORE_IMAGE_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
-                        }
-                        break;
-                    case PICK_FROM_CAMERA_BEFORE_IMAGE_2:
+                    case PICK_FROM_CAMERA_BEFORE_IMAGE:
                         ImageView image = null;
-                        Bundle extras = data.getExtras ();
-                        Bitmap thePic = extras.getParcelable ("data");
-
+                        Bitmap thePic = null;
+                        if (f.exists ()) {
+                            thePic = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
+                        }
+                        //Bitmap thePic = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
                         ImageDetail beforeImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic), "before_img_" + date, "", "", "");
                         beforeImageList.add (beforeImageDetail);
-
-//                        Constants.workOrderDetail.setImageInList (imageDetail);
-//                        Constants.workOrderDetail.setBefore_image_str(Utils.bitmapToBase64(thePic));
                         image = new ImageView (DetailActivity.this);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams (300, 225);
                         params.setMargins (10, 10, 10, 10);
@@ -996,81 +997,40 @@ public class DetailActivity extends AppCompatActivity {
                         llBeforeImage.addView (image);
                         image.setImageBitmap (thePic);
                         break;
-                    case PICK_FROM_CAMERA_AFTER_IMAGE_1:
-                        File file2 = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
-                        try {
-                            cropCapturedImage (Uri.fromFile (file2), PICK_FROM_CAMERA_AFTER_IMAGE_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
-                        }
-                        break;
-                    case PICK_FROM_CAMERA_AFTER_IMAGE_2:
+                    case PICK_FROM_CAMERA_AFTER_IMAGE:
                         ImageView image2 = null;
-                        Bundle extras2 = data.getExtras ();
-                        Bitmap thePic2 = extras2.getParcelable ("data");
+                        Bitmap thePic2 = null;
+                        if (f.exists ()) {
+                            thePic2 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
+                        }
 
+//                        Bitmap thePic2 = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
                         ImageDetail afterImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic2), "after_img_" + date, "", "", "");
                         afterImageList.add (afterImageDetail);
-
-//                        Constants.workOrderDetail.setImageInList (imageDetail2);
-
-
-//                        Constants.workOrderDetail.setAfter_image_str(Utils.bitmapToBase64(thePic2));
                         image2 = new ImageView (DetailActivity.this);
                         LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams (300, 225);
                         params3.setMargins (10, 10, 10, 10);
                         image2.setLayoutParams (params3);
                         llAfterImage.addView (image2);
                         image2.setImageBitmap (thePic2);
-                        // ivAfterImage.setImageBitmap(thePic2);
                         break;
-
-
-                    case PICK_FROM_GALLERY_BEFORE_IMAGE_1:
-                        Uri selectedImage = data.getData ();
-                        try {
-                            cropCapturedImage (selectedImage, PICK_FROM_GALLERY_BEFORE_IMAGE_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
-                        }
-                        break;
-                    case PICK_FROM_GALLERY_BEFORE_IMAGE_2:
-                        Bundle extras3 = data.getExtras ();
-                        Bitmap thePic3 = extras3.getParcelable ("data");
-
+                    case PICK_FROM_GALLERY_BEFORE_IMAGE:
+                        final Uri uri = data.getData ();
+                        Bitmap thePic3 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri));
                         ImageDetail beforeImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic3), "before_img_" + date, "", "", "");
                         beforeImageList.add (beforeImageDetail2);
-
-//                        Constants.workOrderDetail.setImageInList (imageDetail3);
-
-//                        Constants.workOrderDetail.setBefore_image_str(Utils.bitmapToBase64(thePic3));
                         image = new ImageView (DetailActivity.this);
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams (300, 225);
                         params2.setMargins (10, 10, 10, 10);
                         image.setLayoutParams (params2);
                         llBeforeImage.addView (image);
                         image.setImageBitmap (thePic3);
-
-                        // ivBeforeImage.setImageBitmap(thePic3);
                         break;
-                    case PICK_FROM_GALLERY_AFTER_IMAGE_1:
-                        Uri selectedImage2 = data.getData ();
-                        try {
-                            cropCapturedImage (selectedImage2, PICK_FROM_GALLERY_AFTER_IMAGE_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
-                        }
-                        break;
-                    case PICK_FROM_GALLERY_AFTER_IMAGE_2:
-                        Bundle extras4 = data.getExtras ();
-                        Bitmap thePic4 = extras4.getParcelable ("data");
-
+                    case PICK_FROM_GALLERY_AFTER_IMAGE:
+                        final Uri uri2 = data.getData ();
+                        Bitmap thePic4 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri2));
                         ImageDetail afterImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic4), "after_img_" + date, "", "", "");
                         afterImageList.add (afterImageDetail2);
-
-//                        Constants.workOrderDetail.setImageInList (imageDetail4);
-//          Constants.workOrderDetail.setAfter_image_str (Utils.bitmapToBase64 (thePic4));
-
                         image2 = new ImageView (DetailActivity.this);
                         LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams (300, 225);
                         params4.setMargins (10, 10, 10, 10);
@@ -1078,19 +1038,9 @@ public class DetailActivity extends AppCompatActivity {
                         llAfterImage.addView (image2);
                         image2.setImageBitmap (thePic4);
                         break;
-
-                    case PICK_FROM_GALLERY_LIST_ITEM_1:
-                        Uri selectedImage3 = data.getData ();
-                        try {
-                            cropCapturedImage (selectedImage3, PICK_FROM_GALLERY_LIST_ITEM_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
-                        }
-                        break;
-
-                    case PICK_FROM_GALLERY_LIST_ITEM_2:
-                        Bundle extras5 = data.getExtras ();
-                        Bitmap thePic5 = extras5.getParcelable ("data");
+                    case PICK_FROM_GALLERY_LIST_ITEM:
+                        final Uri uri3 = data.getData ();
+                        Bitmap thePic5 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri3));
                         ImageDetail smCheckImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic5), "smcheck_img_" + date, "", "", "");
                         for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                             ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
@@ -1099,21 +1049,13 @@ public class DetailActivity extends AppCompatActivity {
                             }
                         }
                         smCheckIdTemp = 0;
-
                         break;
-
-                    case PICK_FROM_CAMERA_LIST_ITEM_1:
-                        File file3 = new File (Environment.getExternalStorageDirectory () + File.separator + "img.jpg");
-                        try {
-                            cropCapturedImage (Uri.fromFile (file3), PICK_FROM_CAMERA_LIST_ITEM_1);
-                        } catch (ActivityNotFoundException aNFE) {
-                            Toast.makeText (this, "Sorry - your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
+                    case PICK_FROM_CAMERA_LIST_ITEM:
+                        Bitmap thePic6 = null;
+                        if (f.exists ()) {
+                            thePic6 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
                         }
-                        break;
-                    case PICK_FROM_CAMERA_LIST_ITEM_2:
-                        Bundle extras6 = data.getExtras ();
-                        Bitmap thePic6 = extras6.getParcelable ("data");
-
+//                        Bitmap thePic6 = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
                         ImageDetail smCheckImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic6), "smcheck_img_" + date, "", "", "");
                         for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                             ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
@@ -1127,42 +1069,6 @@ public class DetailActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace ();
-        }
-    }
-
-    public void cropCapturedImage (Uri picUri, int flag) {
-        try {
-            Intent cropIntent = new Intent ("com.android.camera.action.CROP");
-            cropIntent.setDataAndType (picUri, "image/*");
-            cropIntent.putExtra ("crop", "true");
-            cropIntent.putExtra ("aspectX", 4);
-            cropIntent.putExtra ("aspectY", 3);
-            cropIntent.putExtra ("outputX", 512);
-            cropIntent.putExtra ("outputY", 512);
-            cropIntent.putExtra ("return-data", true);
-            switch (flag) {
-                case PICK_FROM_CAMERA_BEFORE_IMAGE_1:
-                    startActivityForResult (cropIntent, PICK_FROM_CAMERA_BEFORE_IMAGE_2);
-                    break;
-                case PICK_FROM_CAMERA_AFTER_IMAGE_1:
-                    startActivityForResult (cropIntent, PICK_FROM_CAMERA_AFTER_IMAGE_2);
-                    break;
-                case PICK_FROM_CAMERA_LIST_ITEM_1:
-                    startActivityForResult (cropIntent, PICK_FROM_CAMERA_LIST_ITEM_2);
-                    break;
-
-                case PICK_FROM_GALLERY_BEFORE_IMAGE_1:
-                    startActivityForResult (cropIntent, PICK_FROM_GALLERY_BEFORE_IMAGE_2);
-                    break;
-                case PICK_FROM_GALLERY_AFTER_IMAGE_1:
-                    startActivityForResult (cropIntent, PICK_FROM_GALLERY_AFTER_IMAGE_2);
-                    break;
-                case PICK_FROM_GALLERY_LIST_ITEM_1:
-                    startActivityForResult (cropIntent, PICK_FROM_GALLERY_LIST_ITEM_2);
-                    break;
-            }
-        } catch (Exception e) {
-            Toast.makeText (DetailActivity.this, "Your device doesn't support the crop action!", Toast.LENGTH_SHORT).show ();
         }
     }
 
@@ -1204,7 +1110,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvAddSerial;
         TextView tvCancelSerial;
 
-        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, "", "", "", "");
+        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, 0, "", "", "", "");
 
         dialogAddNewSerial = new Dialog (DetailActivity.this);
         dialogAddNewSerial.setContentView (R.layout.dialog_add_generator_serial);
@@ -1222,7 +1128,6 @@ public class DetailActivity extends AppCompatActivity {
 
         manufacturerAdapter = new ManufacturerAdapter (DetailActivity.this, R.layout.spinner_item, Constants.manufacturerList);
         spManufacturer.setAdapter (manufacturerAdapter);
-
 
         tvCancelSerial.setOnClickListener (new View.OnClickListener () {
             @Override
@@ -1329,7 +1234,7 @@ public class DetailActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            Utils.showOkDialog (DetailActivity.this, "Sorry you cannot add a new serial in Offline mode", false);
         }
     }
 
@@ -1340,11 +1245,8 @@ public class DetailActivity extends AppCompatActivity {
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
-
-
                             Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
-
                                 atsSerialList.clear ();
                                 engineSerialList.clear ();
                                 try {
@@ -1354,17 +1256,16 @@ public class DetailActivity extends AppCompatActivity {
                                         JSONObject c = jsonArray.getJSONObject (j);
                                         switch (c.getString ("Type")) {
                                             case "ATS":
-
                                                 Serial ATSSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 atsSerialList.add (ATSSerial);
                                                 break;
                                             case "Engine":
                                                 Serial engineSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;
@@ -1376,6 +1277,8 @@ public class DetailActivity extends AppCompatActivity {
                             } else {
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
+
+                            LoadSerialsInLayout (true);
                         }
 
 //                        }
@@ -1519,15 +1422,21 @@ public class DetailActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
+            getSerialsFromLocalDatabase (wo_id);
             //          Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
     }
 
-    private void LoadSerialsInLayout () {
+    private void LoadSerialsInLayout (boolean new_serial) {
+        int i;
         llEngineSerial.removeAllViews ();
         llATSSerial.removeAllViews ();
 
-        for (int i = 0; i < engineSerialList.size (); i++) {
+//        if (new_serial){
+//        } else {
+//        }
+
+        for (i = 0; i < engineSerialList.size (); i++) {
             final Serial engineSerial = engineSerialList.get (i);
             View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
 
@@ -1555,17 +1464,15 @@ public class DetailActivity extends AppCompatActivity {
                 public void onCheckedChanged (CompoundButton compoundButton, boolean b) {
                     if (cbSelected.isChecked ()) {
                         engineSerial.setChecked (true);
-//                                            Constants.workOrderDetail.setSerialInEngineList (engineSerial);
                     } else {
                         engineSerial.setChecked (false);
-//                                            Constants.workOrderDetail.removeSerialInEngineList (engineSerial.getSerial_id ());
                     }
                 }
             });
         }
 
 
-        for (int i = 0; i < atsSerialList.size (); i++) {
+        for (i = 0; i < atsSerialList.size (); i++) {
             final Serial atsSerial = atsSerialList.get (i);
             View child = getLayoutInflater ().inflate (R.layout.listview_item_generator_serial, null);
 
@@ -1673,7 +1580,7 @@ public class DetailActivity extends AppCompatActivity {
 //                                            intent = new Intent (activity, ViewFormActivity.class);
                                             break;
                                         default:
-                                            LoadSerialsInLayout ();
+                                            LoadSerialsInLayout (false);
                                             new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
 //                                            intent = new Intent (activity, DetailActivity.class);
                                             break;
@@ -1705,7 +1612,7 @@ public class DetailActivity extends AppCompatActivity {
 
                                 } catch (JSONException e) {
                                     e.printStackTrace ();
-                                    LoadSerialsInLayout ();
+                                    LoadSerialsInLayout (false);
                                     new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
                                 }
                             } else {
@@ -1719,7 +1626,7 @@ public class DetailActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse (VolleyError error) {
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
-                            LoadSerialsInLayout ();
+                            LoadSerialsInLayout (false);
                             new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
                         }
                     }) {
@@ -1742,9 +1649,8 @@ public class DetailActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest);
         } else {
-//            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
-
-            LoadSerialsInLayout ();
+            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+            LoadSerialsInLayout (false);
             new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
         }
     }
@@ -1906,8 +1812,27 @@ public class DetailActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace ();
         }
-        LoadSerialsInLayout ();
+        LoadSerialsInLayout (false);
         new LoadServiceChecksInLinearLayout (this).execute ();
+    }
+
+    private void getSerialsFromLocalDatabase (int wo_id) {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the engine serials from local database for wo id = " + wo_id, true);
+        engineSerialList.clear ();
+        atsSerialList.clear ();
+
+        List<Serial> allSerials = db.getAllContractSerials (wo_id);
+        for (Serial serial : allSerials) {
+            switch (serial.getSerial_type ()) {
+                case "Engine":
+                    engineSerialList.add (serial);
+                    break;
+                case "ATS":
+                    atsSerialList.add (serial);
+                    break;
+
+            }
+        }
     }
 
     private class LoadServiceChecksInLinearLayout extends AsyncTask<String, Void, String> {
@@ -1964,12 +1889,15 @@ public class DetailActivity extends AppCompatActivity {
                     public void onClick (View view) {
                         Utils.showLog (Log.DEBUG, "servicecheck_id", "" + serviceCheck.getService_check_id (), true);
                         smCheckIdTemp = serviceCheck.getService_check_id ();
-                        selectImage (LIST_ITEM_PICKER);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_check_blue, getApplicationContext ().getTheme ()));
+                        if (selectImage (LIST_ITEM_PICKER)) {
+                            Utils.showLog (Log.DEBUG, "CHECK IMAGE :", "TRUE", true);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_check_blue, getApplicationContext ().getTheme ()));
+                            } else {
+                                ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_check_blue));
+                            }
                         } else {
-                            ivImageSelected.setImageDrawable (getResources ().getDrawable (R.drawable.ic_check_blue));
+                            Utils.showLog (Log.DEBUG, "CHECK IMAGE :", "FALSE", true);
                         }
                     }
                 });
@@ -2168,39 +2096,51 @@ public class DetailActivity extends AppCompatActivity {
                 switch (serviceCheck.getGroup_id ()) {
                     case 1:
                         llFuelSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view1", true);
                         break;
                     case 2:
                         llPreStartChecksCoolingSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view2", true);
                         break;
                     case 3:
                         llLubricationSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view3", true);
                         break;
                     case 4:
                         llAirSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view4", true);
                         break;
                     case 5:
                         llExhaustSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view5", true);
                         break;
                     case 6:
                         llGenerator.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view6", true);
                         break;
                     case 7:
                         llControlPanelCabinets.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view7", true);
                         break;
                     case 8:
                         llATSMain.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view8", true);
                         break;
                     case 9:
                         llStartingSystem.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view9", true);
                         break;
                     case 10:
                         llGeneratorEnclosure.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view10", true);
                         break;
                     case 11:
                         llStartupAndRunningCheck.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view11", true);
                         break;
                     case 12:
                         llScheduledMaintenance.addView (child);
+//                        Utils.showLog (Log.DEBUG, "VIEW", "view12", true);
                         break;
                 }
 
@@ -2239,11 +2179,9 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute (String result) {
-
             Utils.hideSoftKeyboard (activity);
-
+            Utils.showLog (Log.DEBUG, "LOAD SERIALS", "in post execute", true);
             pDialog.dismiss ();
-
         }
     }
 }

@@ -24,6 +24,7 @@ import com.actiknow.motoraudit.model.Manufacturer;
 import com.actiknow.motoraudit.model.Serial;
 import com.actiknow.motoraudit.model.ServiceCheck;
 import com.actiknow.motoraudit.model.WorkOrder;
+import com.actiknow.motoraudit.model.WorkOrderDetail;
 import com.actiknow.motoraudit.utils.AppConfigTags;
 import com.actiknow.motoraudit.utils.AppConfigURL;
 import com.actiknow.motoraudit.utils.Constants;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout mDrawerPanel;
     private List<WorkOrder> workOrderList = new ArrayList<> ();
 
+    private List<WorkOrderDetail> workOrderDetialListTemp = new ArrayList<> ();
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -89,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AllWorkOrdersAdapter (this, workOrderList);
         lvAllWorkOrder.setAdapter (adapter);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
+
+        if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this)) {
+//            db.deleteAllServiceForms ();
+//            workOrderDetialListTemp = db.getAllServiceForms ();
+            uploadStoredServiceFormsToServer ();
+        }
     }
 
     private void setUpNavigationDrawer () {
@@ -183,18 +192,22 @@ public class MainActivity extends AppCompatActivity {
                                         workOrder.setWo_customer_name (jsonObject.getString (AppConfigTags.WO_CUSTOMER_NAME));
                                         if (sync) {
                                             db.createWorkorder (workOrder);
-                                            JSONArray jsonArrayContractSerial = jsonObject.getJSONArray ("CONTRACT_SERIALS");
-                                            for (int j = 0; j < jsonArrayContractSerial.length (); j++) {
-                                                JSONObject c = jsonArrayContractSerial.getJSONObject (j);
-                                                Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
-                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
-                                                        Utils.getManufacturerName (c.getInt ("manufacturer_id")));
+                                            if (! jsonObject.getString ("CONTRACT_SERIALS").equalsIgnoreCase ("")) {
+                                                JSONArray jsonArrayContractSerial = jsonObject.getJSONArray ("CONTRACT_SERIALS");
+                                                for (int j = 0; j < jsonArrayContractSerial.length (); j++) {
+
+                                                    JSONObject c = jsonArrayContractSerial.getJSONObject (j);
+//                                                    Utils.showLog (Log.DEBUG, "FORM ID :", "" + c.getInt ("form_id"), true);
+                                                    Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
+                                                            c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
+                                                            c.getInt ("form_id"), c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
+                                                            Utils.getManufacturerName (c.getInt ("manufacturer_id")));
 //                                                Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
 //                                                        c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
 //                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
 //                                                        c.getString ("manufacturer_name"));
-                                                db.createContractSerial (contractSerial);
+                                                    db.createContractSerial (contractSerial, false);
+                                                }
                                             }
                                         } else {
                                             workOrderList.add (workOrder);
@@ -208,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                                     progressDialog.dismiss ();
                                     Utils.showOkDialog (MainActivity.this, "All Data have been successfully synced from the server", false);
                                 } else {
-                                    getWorkOrderListFromLocalDatabase ();
+                                    //      getWorkOrderListFromLocalDatabase ();
                                 }
 
                             } else {
@@ -249,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
                             lvAllWorkOrder.setVisibility (View.VISIBLE);
                             if (sync) {
                                 progressDialog.dismiss ();
+                                Utils.showOkDialog (MainActivity.this, "An error occurred, Data can't be synced", false);
                             } else {
                                 getWorkOrderListFromLocalDatabase ();
                             }
@@ -519,6 +533,12 @@ public class MainActivity extends AppCompatActivity {
                                                         serviceCheck.setGroup_type (1);
                                                 }
                                             }
+
+                                            if (sync) {
+                                                db.updateServiceCheck (serviceCheck);
+                                            } else {
+                                            }
+
                                         }
                                     }
 
@@ -581,8 +601,11 @@ public class MainActivity extends AppCompatActivity {
         Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the service checks from local database", true);
         Constants.serviceCheckList.clear ();
         List<ServiceCheck> allServiceChecks = db.getAllServiceChecks ();
-        for (ServiceCheck serviceCheck : allServiceChecks)
+        for (ServiceCheck serviceCheck : allServiceChecks) {
             Constants.serviceCheckList.add (serviceCheck);
+//            Utils.showLog (Log.DEBUG, "KARMAN", serviceCheck.getHeading (), true);
+//            Utils.showLog (Log.DEBUG, "KARMAN", "" + serviceCheck.getGroup_id (), true);
+        }
     }
 
     private void getWorkOrderListFromLocalDatabase () {
@@ -658,6 +681,121 @@ public class MainActivity extends AppCompatActivity {
         getWorkOrderListFromServer (true);
         getManufacturerListFromServer (true);
         setServiceCheckList (true);
+    }
+
+
+    private void uploadStoredServiceFormsToServer () {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the service from local database", true);
+        List<WorkOrderDetail> allServiceForms = db.getAllServiceForms ();
+        for (WorkOrderDetail serviceForm : allServiceForms) {
+            final WorkOrderDetail finalServiceForm = serviceForm;
+            if (NetworkConnection.isNetworkAvailable (this)) {
+                Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+                StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                        new Response.Listener<String> () {
+                            @Override
+                            public void onResponse (String response) {
+                                Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                                if (response != null) {
+                                    try {
+                                        JSONObject jsonObj = new JSONObject (response);
+                                        switch (jsonObj.getInt ("error_code")) {
+                                            case 0:
+                                                db.deleteServiceForm (finalServiceForm.getGenerator_serial_id ());
+                                                break;
+                                            default:
+//                                                Utils.showToast (DetailActivity.this, jsonObj.getString ("error_message"));
+                                                break;
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace ();
+                                    }
+                                } else {
+                                    Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener () {
+                            @Override
+                            public void onErrorResponse (VolleyError error) {
+                                Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            }
+                        }) {
+                    @Override
+                    public byte[] getBody () throws com.android.volley.AuthFailureError {
+
+                        String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                                "\"API_password\":\"" + Constants.api_password + "\",\n" +
+                                "\"API_function\":\"saveFormData\",\n" +
+                                "\"API_parameters\":" + createResponse (finalServiceForm) + "}";
+                        Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                        return str.getBytes ();
+                    }
+
+                    public String getBodyContentType () {
+                        return "application/json; charset=utf-8";
+                    }
+                };
+                Utils.sendRequest (strRequest);
+
+            } else {
+            }
+        }
+    }
+
+
+    private String createResponse (WorkOrderDetail workOrderDetail) {
+        JSONObject responseJSON = new JSONObject ();
+        try {
+            JSONObject jsonObjectSmChecks = new JSONObject (workOrderDetail.getService_check_json ());
+            JSONArray jsonArraySmChecks = jsonObjectSmChecks.getJSONArray ("smchecks");
+
+            JSONObject jsonObjectEngineSerial = new JSONObject (workOrderDetail.getEngine_serial_json ());
+            JSONArray jsonArrayEngineSerial = jsonObjectEngineSerial.getJSONArray ("engSerialCheck");
+
+            JSONObject jsonObjectATSSerial = new JSONObject (workOrderDetail.getAts_serial_json ());
+            JSONArray jsonArrayATSSerial = jsonObjectATSSerial.getJSONArray ("atsSerialCheck");
+
+            JSONObject jsonObjectBeforeImages = new JSONObject (workOrderDetail.getBefore_image_list_json ());
+            JSONArray jsonArrayBeforeImages = jsonObjectBeforeImages.getJSONArray ("beforeImages");
+
+            JSONObject jsonObjectAfterImages = new JSONObject (workOrderDetail.getAfter_image_list_json ());
+            JSONArray jsonArrayAfterImages = jsonObjectAfterImages.getJSONArray ("afterImages");
+
+            JSONObject jsonObjectSignatureImages = new JSONObject (workOrderDetail.getSignature_image_list_json ());
+            JSONArray jsonArraySignatureImages = jsonObjectSignatureImages.getJSONArray ("signatures");
+
+
+            responseJSON.put ("formId", workOrderDetail.getForm_id ());
+            responseJSON.put ("wo", workOrderDetail.getWork_order_id ());
+            responseJSON.put ("genSerialID", workOrderDetail.getGenerator_serial_id ());
+            responseJSON.put ("empid", workOrderDetail.getEmp_id ());
+            responseJSON.put ("custName", workOrderDetail.getCustomer_name ());
+            responseJSON.put ("onsiteContact", workOrderDetail.getOnsite_contact ());
+            responseJSON.put ("email", workOrderDetail.getEmail ());
+            responseJSON.put ("kwRating", workOrderDetail.getKw_rating ());
+            responseJSON.put ("timeIn", workOrderDetail.getTime_in ());
+            responseJSON.put ("timeOut", workOrderDetail.getTime_out ());
+            responseJSON.put ("genCondition", workOrderDetail.getGenerator_condition_comment ());
+            responseJSON.put ("genStatus", workOrderDetail.getGenerator_condition_text ());
+            responseJSON.put ("GenSerial", workOrderDetail.getGenerator_serial ());
+            responseJSON.put ("GenModel", workOrderDetail.getGenerator_model ());
+            responseJSON.put ("GenMake", workOrderDetail.getGenerator_make_id ());
+            responseJSON.put ("comments", workOrderDetail.getComments ());
+            responseJSON.put ("beforeImages", jsonArrayBeforeImages);
+            responseJSON.put ("afterImages", jsonArrayAfterImages);
+            responseJSON.put ("smchecks", jsonArraySmChecks);
+            responseJSON.put ("engSerialCheck", jsonArrayEngineSerial);
+            responseJSON.put ("atsSerialCheck", jsonArrayATSSerial);
+            responseJSON.put ("signatures", jsonArraySignatureImages);
+
+
+        } catch (JSONException e) {
+            Utils.showLog (Log.ERROR, "JSON EXCEPTION", e.getMessage (), true);
+        }
+
+        Utils.showLog (Log.ERROR, "RESPONSE", String.valueOf (responseJSON), true);
+        return String.valueOf (responseJSON);
     }
 
 }

@@ -29,9 +29,11 @@ import android.widget.Toast;
 import com.actiknow.motoraudit.R;
 import com.actiknow.motoraudit.app.AppController;
 import com.actiknow.motoraudit.model.Manufacturer;
+import com.actiknow.motoraudit.model.ServiceCheck;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -328,11 +330,27 @@ public class Utils {
         return null;
     }
 
-
     public static void shakeView (Activity activity, View view) {
         Animation shake;
         shake = AnimationUtils.loadAnimation (activity, R.anim.shake);
         view.setAnimation (shake);
+    }
+
+    public static void clearAllServiceChecks () {
+        for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
+            ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
+            serviceCheck.setSelection_flag (0);
+            serviceCheck.setSelection_text ("");
+            serviceCheck.setComment ("");
+            serviceCheck.removeSmCheckImageInList (0);
+        }
+    }
+
+    public static Bitmap compressBitmap (Bitmap bitmap) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream ();
+        bitmap.compress (Bitmap.CompressFormat.JPEG, 50, out);
+        Bitmap decoded = BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ()));
+        return decoded;
     }
 
 }

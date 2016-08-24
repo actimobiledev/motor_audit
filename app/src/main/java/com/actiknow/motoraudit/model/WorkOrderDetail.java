@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.actiknow.motoraudit.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class WorkOrderDetail {
 
     private int form_id, work_order_id, contract_number, generator_make_id, generator_condition_flag, emp_id, generator_serial_id; // Generator condition flag  0=> POOR, 1=> FAIR, 2=> GOOD
@@ -15,11 +12,11 @@ public class WorkOrderDetail {
             generator_condition_text, generator_condition_comment, comments, time_out, before_image_list_json,
             after_image_list_json, signature_image_list_json;
 
-    private List<ServiceCheck> serviceCheckList = new ArrayList<ServiceCheck> ();
+//    private List<ServiceCheck> serviceCheckList = new ArrayList<ServiceCheck> ();
 
-    private List<ImageDetail> imageList = new ArrayList<ImageDetail> ();
-    private List<Serial> engineSerialList = new ArrayList<Serial> ();
-    private List<Serial> atsSerialList = new ArrayList<Serial> ();
+//    private List<ImageDetail> imageList = new ArrayList<ImageDetail> ();
+//    private List<Serial> engineSerialList = new ArrayList<Serial> ();
+//    private List<Serial> atsSerialList = new ArrayList<Serial> ();
 
     public WorkOrderDetail () {
     }
@@ -31,8 +28,8 @@ public class WorkOrderDetail {
                             String kw_rating, String engine_serial_json, String ats_serial_json,
                             String service_check_json, String generator_condition_text,
                             String generator_condition_comment, String comments, String time_out, String before_image_list_json,
-                            String after_image_list_json, String signature_image_list_json,
-                            List<ServiceCheck> serviceCheckList, List<ImageDetail> imageList, List<Serial> engineSerialList, List<Serial> atsSerialList) {
+                            String after_image_list_json, String signature_image_list_json) {//,
+//                            List<ServiceCheck> serviceCheckList, List<ImageDetail> imageList, List<Serial> engineSerialList, List<Serial> atsSerialList) {
         this.form_id = form_id;
         this.work_order_id = work_order_id;
         this.contract_number = contract_number;
@@ -59,10 +56,10 @@ public class WorkOrderDetail {
         this.before_image_list_json = before_image_list_json;
         this.after_image_list_json = after_image_list_json;
         this.signature_image_list_json = signature_image_list_json;
-        this.serviceCheckList = serviceCheckList;
-        this.imageList = imageList;
-        this.engineSerialList = engineSerialList;
-        this.atsSerialList = atsSerialList;
+//        this.serviceCheckList = serviceCheckList;
+//        this.imageList = imageList;
+//        this.engineSerialList = engineSerialList;
+//        this.atsSerialList = atsSerialList;
     }
 
 
@@ -259,20 +256,21 @@ public class WorkOrderDetail {
         Utils.showLog (Log.DEBUG, "service_check_json", service_check_json, false);
     }
 
-    public List<ServiceCheck> getServiceCheckList () {
-        return serviceCheckList;
-    }
+    /*
+        public List<ServiceCheck> getServiceCheckList () {
+            return serviceCheckList;
+        }
 
-    public void setServiceCheckList (List<ServiceCheck> serviceCheckList) {
-        this.serviceCheckList = serviceCheckList;
-        Utils.showLog (Log.DEBUG, "SERVICE CHECK", "SET SERVICE CHECK LIST", false);
-    }
+        public void setServiceCheckList (List<ServiceCheck> serviceCheckList) {
+            this.serviceCheckList = serviceCheckList;
+            Utils.showLog (Log.DEBUG, "SERVICE CHECK", "SET SERVICE CHECK LIST", false);
+        }
 
-    public void setServiceCheckItem (ServiceCheck serviceCheck) {
-        this.serviceCheckList.add (serviceCheck);
-        Utils.showLog (Log.DEBUG, "SERVICE CHECK", "ADDED A NEW SERVICE CHECK IN SERVICE CHECK LIST", false);
-    }
-
+        public void setServiceCheckItem (ServiceCheck serviceCheck) {
+            this.serviceCheckList.add (serviceCheck);
+            Utils.showLog (Log.DEBUG, "SERVICE CHECK", "ADDED A NEW SERVICE CHECK IN SERVICE CHECK LIST", false);
+        }
+    */
     public String getGenerator_condition_text () {
         return generator_condition_text;
     }
@@ -308,6 +306,8 @@ public class WorkOrderDetail {
         this.time_out = time_out;
         Utils.showLog (Log.DEBUG, "time_out", time_out, false);
     }
+
+    /*
 
     public List<ImageDetail> getImageList () {
         return imageList;
@@ -377,4 +377,5 @@ public class WorkOrderDetail {
         this.atsSerialList.clear ();
         Utils.showLog (Log.INFO, "ats_serial", "removed all serials in ats list", true);
     }
+*/
 }

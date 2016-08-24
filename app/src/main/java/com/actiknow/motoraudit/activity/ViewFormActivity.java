@@ -289,6 +289,7 @@ public class ViewFormActivity extends AppCompatActivity {
     }
 
     private void initData () {
+        Utils.clearAllServiceChecks ();
         //    Utils.setTypefaceToAllViews (this, tvNoInternetConnection);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
 
@@ -341,7 +342,6 @@ public class ViewFormActivity extends AppCompatActivity {
             tvConditionDetails.setText ("" + PoorConditionText);
             tlPoor.addView (row);
         }
-
         tvWorkOrderDescription.setText ("WO#" + Constants.workOrderDetail.getWork_order_id () + " for " + Constants.workOrderDetail.getSite_name ());
     }
 
@@ -412,14 +412,14 @@ public class ViewFormActivity extends AppCompatActivity {
 
                                                 Serial ATSSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 atsSerialList.add (ATSSerial);
                                                 break;
                                             case "Engine":
                                                 Serial engineSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, c.getString ("serial"),
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
                                                         c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;

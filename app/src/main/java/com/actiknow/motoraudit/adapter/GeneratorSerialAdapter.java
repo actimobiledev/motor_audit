@@ -94,13 +94,13 @@ public class GeneratorSerialAdapter extends BaseAdapter {
                 Constants.workOrderDetail.setGenerator_make_id (generatorSerial.getManufacturer_id ());
                 Constants.workOrderDetail.setGenerator_make_name (generatorSerial.getManufacturer_name ());
                 Constants.workOrderDetail.setGenerator_serial_id (generatorSerial.getSerial_id ());
-                getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ());
+                getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id (), generatorSerial.getForm_id ());
             }
         });
         return convertView;
     }
 
-    private void getWorkOrderDetailFromServer (final int wo_id, final int generator_serial_id) {
+    private void getWorkOrderDetailFromServer (final int wo_id, final int generator_serial_id, final int form_id) {
         if (NetworkConnection.isNetworkAvailable (activity)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
             StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
@@ -139,6 +139,8 @@ public class GeneratorSerialAdapter extends BaseAdapter {
                         @Override
                         public void onErrorResponse (VolleyError error) {
                             Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            Intent intent = new Intent (activity, DetailActivity.class);
+                            activity.startActivity (intent);
                         }
                     }) {
                 @Override
@@ -160,6 +162,13 @@ public class GeneratorSerialAdapter extends BaseAdapter {
             };
             Utils.sendRequest (strRequest);
         } else {
+//            Utils.showLog (Log.DEBUG, "FORM ID IN OFFLINE :", "" + form_id, true);
+            if (form_id == 0) {
+                Intent intent = new Intent (activity, DetailActivity.class);
+                activity.startActivity (intent);
+            } else {
+                Utils.showOkDialog (activity, "Sorry a form for this Serial already exist", false);
+            }
         }
     }
 

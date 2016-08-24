@@ -5,16 +5,17 @@ package com.actiknow.motoraudit.model;
  */
 public class Serial {
     boolean checked;
-    int serial_id, manufacturer_id, wo_number;
+    int serial_id, manufacturer_id, wo_number, form_id;
     String serial_number, model_number, serial_type, manufacturer_name;
 
-    public Serial (boolean checked, int serial_id, int manufacturer_id, int wo_number,
+    public Serial (boolean checked, int serial_id, int manufacturer_id, int wo_number, int form_id,
                    String serial_number, String model_number, String serial_type,
                    String manufacturer_name) {
         this.checked = checked;
         this.serial_id = serial_id;
         this.manufacturer_id = manufacturer_id;
         this.wo_number = wo_number;
+        this.form_id = form_id;
         this.serial_number = serial_number;
         this.model_number = model_number;
         this.serial_type = serial_type;
@@ -54,6 +55,14 @@ public class Serial {
 
     public void setWo_number (int wo_number) {
         this.wo_number = wo_number;
+    }
+
+    public int getForm_id () {
+        return form_id;
+    }
+
+    public void setForm_id (int form_id) {
+        this.form_id = form_id;
     }
 
     public String getSerial_number () {
