@@ -697,6 +697,8 @@ public class MainActivity extends AppCompatActivity {
     private void uploadStoredServiceFormsToServer () {
         Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the service from local database", true);
         List<WorkOrderDetail> allServiceForms = db.getAllServiceForms ();
+        final int i = allServiceForms.size ();
+        final int j = 1;
         for (WorkOrderDetail serviceForm : allServiceForms) {
             final WorkOrderDetail finalServiceForm = serviceForm;
             if (NetworkConnection.isNetworkAvailable (this)) {
@@ -711,9 +713,12 @@ public class MainActivity extends AppCompatActivity {
                                         JSONObject jsonObj = new JSONObject (response);
                                         switch (jsonObj.getInt ("error_code")) {
                                             case 0:
-                                                Utils.showOkDialog (MainActivity.this, "The offline saved form :" +
-                                                        "\nWorkOrder Number " + finalServiceForm.getWork_order_id () +
-                                                        "\nSerial ID" + finalServiceForm.getGenerator_serial_id () + "\nwas successfully uploaded and Form ID :" + jsonObj.getInt ("formId"), false);
+                                                if (j == i) {
+
+                                                }
+//                                                Utils.showOkDialog (MainActivity.this, "The offline saved form :" +
+//                                                        "\nWorkOrder Number " + finalServiceForm.getWork_order_id () +
+//                                                        "\nSerial ID" + finalServiceForm.getGenerator_serial_id () + "\nwas successfully uploaded and Form ID :" + jsonObj.getInt ("formId"), false);
                                                 db.deleteServiceForm (finalServiceForm.getGenerator_serial_id ());
                                                 break;
                                             default:
@@ -732,14 +737,13 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onErrorResponse (VolleyError error) {
                                 Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
-                                Utils.showOkDialog (MainActivity.this, "There was an error saving the offline saved form :" +
-                                        "\nWO Number " + finalServiceForm.getWork_order_id () +
-                                        "\nSerial ID " + finalServiceForm.getGenerator_serial_id (), false);
+//                                Utils.showOkDialog (MainActivity.this, "There was an error uploading the offline saved form :" +
+//                                        "\nWO Number " + finalServiceForm.getWork_order_id () +
+//                                        "\nSerial ID " + finalServiceForm.getGenerator_serial_id (), false);
                             }
                         }) {
                     @Override
                     public byte[] getBody () throws com.android.volley.AuthFailureError {
-
                         String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
                                 "\"API_password\":\"" + Constants.api_password + "\",\n" +
                                 "\"API_function\":\"saveFormData\",\n" +
@@ -753,7 +757,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
                 Utils.sendRequest (strRequest, 100);
-
             } else {
             }
         }

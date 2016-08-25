@@ -354,12 +354,20 @@ public class Utils {
             } else {
                 bitmap.compress (Bitmap.CompressFormat.JPEG, 20, out);
             }
-            decoded = BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ()));
+            decoded = Utils.scaleDown (BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ())), 1536, true);
         } catch (Exception e) {
             e.printStackTrace ();
             Utils.showLog (Log.ERROR, "EXCEPTION", e.getMessage (), true);
         }
         return decoded;
+    }
+
+    public static Bitmap scaleDown (Bitmap realImage, float maxImageSize, boolean filter) {
+        float ratio = Math.min ((float) maxImageSize / realImage.getWidth (), (float) maxImageSize / realImage.getHeight ());
+        int width = Math.round ((float) ratio * realImage.getWidth ());
+        int height = Math.round ((float) ratio * realImage.getHeight ());
+        Bitmap newBitmap = Bitmap.createScaledBitmap (realImage, width, height, filter);
+        return newBitmap;
     }
 
 }

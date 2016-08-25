@@ -348,6 +348,9 @@ public class DetailActivity extends AppCompatActivity {
             public boolean onTouch (View v, MotionEvent event) {
                 if (event.getAction () == MotionEvent.ACTION_DOWN) {
                     if (validate ()) {
+                        pDialog = new ProgressDialog (DetailActivity.this);
+                        Utils.showProgressDialog (pDialog, null);
+
                         JSONObject smChecksJSON = new JSONObject ();
                         JSONArray jsonArraySmChecks = new JSONArray ();
                         try {
@@ -524,8 +527,8 @@ public class DetailActivity extends AppCompatActivity {
                         Utils.showLog (Log.INFO, "WORK ORDER SIGNATURE IMAGES", Constants.workOrderDetail.getSignature_image_list_json (), true);
 
 
-                        pDialog = new ProgressDialog (DetailActivity.this);
-                        Utils.showProgressDialog (pDialog, null);
+//                        pDialog = new ProgressDialog (DetailActivity.this);
+//                        Utils.showProgressDialog (pDialog, null);
 
                         sendFormDetailToServer ();
 
