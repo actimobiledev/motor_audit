@@ -320,7 +320,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             Utils.showOkDialog (ServiceFormsListActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
         }
@@ -399,7 +399,7 @@ public class ServiceFormsListActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
 //            showSaveSerialDialog (0, Constants.workOrderDetail.getContract_number (), true);
 

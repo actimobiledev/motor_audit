@@ -160,7 +160,7 @@ public class GeneratorSerialAdapter extends BaseAdapter {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
 //            Utils.showLog (Log.DEBUG, "FORM ID IN OFFLINE :", "" + form_id, true);
             if (form_id == 0) {

@@ -44,7 +44,6 @@ import java.util.Date;
 import java.util.List;
 
 
-
 /**
  * Created by Admin on 23-12-2015.
  */
@@ -184,8 +183,7 @@ public class Utils {
         if (message != null) {
             tvMessage.setText (message);
             tvMessage.setVisibility (View.VISIBLE);
-        }
-        else
+        } else
             tvMessage.setVisibility (View.GONE);
         progressDialog.setCancelable (false);
     }
@@ -241,10 +239,11 @@ public class Utils {
         return false;
     }
 
-    public static void sendRequest (StringRequest strRequest) {
+    public static void sendRequest (StringRequest strRequest, int timeout_seconds) {
+        int timeout = timeout_seconds * 1000;
         strRequest.setShouldCache (false);
         AppController.getInstance ().addToRequestQueue (strRequest);
-        strRequest.setRetryPolicy (new DefaultRetryPolicy (30000,
+        strRequest.setRetryPolicy (new DefaultRetryPolicy (timeout,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
@@ -346,10 +345,20 @@ public class Utils {
         }
     }
 
-    public static Bitmap compressBitmap (Bitmap bitmap) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream ();
-        bitmap.compress (Bitmap.CompressFormat.JPEG, 50, out);
-        Bitmap decoded = BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ()));
+    public static Bitmap compressBitmap (Bitmap bitmap, Activity activity) {
+        Bitmap decoded = null;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream ();
+            if (NetworkConnection.isNetworkAvailable (activity)) {
+                bitmap.compress (Bitmap.CompressFormat.JPEG, 20, out);
+            } else {
+                bitmap.compress (Bitmap.CompressFormat.JPEG, 20, out);
+            }
+            decoded = BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ()));
+        } catch (Exception e) {
+            e.printStackTrace ();
+            Utils.showLog (Log.ERROR, "EXCEPTION", e.getMessage (), true);
+        }
         return decoded;
     }
 

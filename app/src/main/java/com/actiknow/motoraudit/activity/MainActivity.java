@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
         if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this)) {
 //            db.deleteAllServiceForms ();
 //            workOrderDetialListTemp = db.getAllServiceForms ();
-            uploadStoredServiceFormsToServer ();
+//            uploadStoredServiceFormsToServer ();
+//            Utils.showOkDialog (this, "Offline saved form are present in the local database and will be synced in the background, " +
+//                    "you will get a message once the process is complete", false);
         }
     }
 
@@ -283,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 60);
         } else {
             progressBar.setVisibility (View.GONE);
             lvAllWorkOrder.setVisibility (View.VISIBLE);
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             if (sync) {
             } else {
@@ -579,7 +581,7 @@ public class MainActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             if (sync) {
             } else {
@@ -681,6 +683,14 @@ public class MainActivity extends AppCompatActivity {
         getWorkOrderListFromServer (true);
         getManufacturerListFromServer (true);
         setServiceCheckList (true);
+        if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this)) {
+//            db.deleteAllServiceForms ();
+//            workOrderDetialListTemp = db.getAllServiceForms ();
+            uploadStoredServiceFormsToServer ();
+//            Utils.showOkDialog (this, "Offline saved form are present in the local database and will be synced in the background, " +
+//                    "you will get a message once the process is complete", false);
+        }
+
     }
 
 
@@ -701,6 +711,9 @@ public class MainActivity extends AppCompatActivity {
                                         JSONObject jsonObj = new JSONObject (response);
                                         switch (jsonObj.getInt ("error_code")) {
                                             case 0:
+                                                Utils.showOkDialog (MainActivity.this, "The offline saved form :" +
+                                                        "\nWorkOrder Number " + finalServiceForm.getWork_order_id () +
+                                                        "\nSerial ID" + finalServiceForm.getGenerator_serial_id () + "\nwas successfully uploaded and Form ID :" + jsonObj.getInt ("formId"), false);
                                                 db.deleteServiceForm (finalServiceForm.getGenerator_serial_id ());
                                                 break;
                                             default:
@@ -719,6 +732,9 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onErrorResponse (VolleyError error) {
                                 Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                                Utils.showOkDialog (MainActivity.this, "There was an error saving the offline saved form :" +
+                                        "\nWO Number " + finalServiceForm.getWork_order_id () +
+                                        "\nSerial ID " + finalServiceForm.getGenerator_serial_id (), false);
                             }
                         }) {
                     @Override
@@ -736,7 +752,7 @@ public class MainActivity extends AppCompatActivity {
                         return "application/json; charset=utf-8";
                     }
                 };
-                Utils.sendRequest (strRequest);
+                Utils.sendRequest (strRequest, 100);
 
             } else {
             }

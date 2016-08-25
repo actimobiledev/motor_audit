@@ -28,7 +28,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
 
 
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     // Database Name
     private static final String DATABASE_NAME = "MotorAudit";
@@ -128,8 +128,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             KEY_KW_RATING + " TEXT," + KEY_TIME_IN + " TEXT," + KEY_TIME_OUT + " TEXT," +
             KEY_GEN_CONDITION + " TEXT," + KEY_GEN_STATUS + " TEXT," + KEY_COMMENTS + " TEXT," +
             KEY_GEN_SERIAL + " TEXT," + KEY_GEN_MODEL + " TEXT," + KEY_GEN_MAKE + " INTEGER," +
-            KEY_BEFORE_IMAGE_JSON + " TEXT," + KEY_AFTER_IMAGE_JSON + " TEXT," + KEY_SERVICE_CHECK_JSON + " TEXT," +
-            KEY_ENG_SERIAL_JSON + " TEXT," + KEY_ATS_SERIAL_JSON + " TEXT," + KEY_SIGNATURE_JSON + " TEXT," +
+            KEY_BEFORE_IMAGE_JSON + " BLOB," + KEY_AFTER_IMAGE_JSON + " BLOB," + KEY_SERVICE_CHECK_JSON + " BLOB," +
+            KEY_ENG_SERIAL_JSON + " BLOB," + KEY_ATS_SERIAL_JSON + " BLOB," + KEY_SIGNATURE_JSON + " BLOB," +
             KEY_CREATED_AT + " DATETIME" + ")";
 
     public DatabaseHandler (Context context) {
@@ -712,52 +712,63 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "in the loop", true);
                 WorkOrderDetail serviceForm = new WorkOrderDetail ();
-                serviceForm.setForm_id (c2.getInt (c2.getColumnIndex (KEY_FORM_ID)));
-                serviceForm.setEmp_id (Constants.employee_id);
-                serviceForm.setWork_order_id (c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)));
-                serviceForm.setCustomer_name (c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)));
-                serviceForm.setOnsite_contact (c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)));
-                serviceForm.setEmail (c2.getString (c2.getColumnIndex (KEY_EMAIL)));
-                serviceForm.setContract_number (c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)));
-                serviceForm.setGenerator_serial_id (c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)));
-                serviceForm.setKw_rating (c2.getString (c2.getColumnIndex (KEY_KW_RATING)));
-                serviceForm.setTime_in (c2.getString (c2.getColumnIndex (KEY_TIME_IN)));
-                serviceForm.setTime_out (c2.getString (c2.getColumnIndex (KEY_TIME_OUT)));
-                serviceForm.setGenerator_condition_comment (c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)));
-                serviceForm.setGenerator_condition_text (c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)));
-                serviceForm.setComments (c2.getString (c2.getColumnIndex (KEY_COMMENTS)));
-                serviceForm.setGenerator_serial (c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)));
-                serviceForm.setGenerator_model (c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)));
-                serviceForm.setGenerator_make_id (c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)));
-                serviceForm.setBefore_image_list_json (c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)));
-                serviceForm.setAfter_image_list_json (c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)));
-                serviceForm.setService_check_json (c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)));
-                serviceForm.setEngine_serial_json (c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)));
-                serviceForm.setAts_serial_json (c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)));
-                serviceForm.setSignature_image_list_json (c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)));
 
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_FORM_ID)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_EMAIL)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_KW_RATING)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_IN)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_OUT)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_COMMENTS)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)), false);
-                Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)), false);
+                try {
+
+
+                    serviceForm.setForm_id (c2.getInt (c2.getColumnIndex (KEY_FORM_ID)));
+                    serviceForm.setEmp_id (Constants.employee_id);
+                    serviceForm.setWork_order_id (c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)));
+                    serviceForm.setCustomer_name (c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)));
+                    serviceForm.setOnsite_contact (c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)));
+                    serviceForm.setEmail (c2.getString (c2.getColumnIndex (KEY_EMAIL)));
+                    serviceForm.setContract_number (c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)));
+                    serviceForm.setGenerator_serial_id (c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)));
+                    serviceForm.setKw_rating (c2.getString (c2.getColumnIndex (KEY_KW_RATING)));
+                    serviceForm.setTime_in (c2.getString (c2.getColumnIndex (KEY_TIME_IN)));
+                    serviceForm.setTime_out (c2.getString (c2.getColumnIndex (KEY_TIME_OUT)));
+                    serviceForm.setGenerator_condition_comment (c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)));
+                    serviceForm.setGenerator_condition_text (c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)));
+                    serviceForm.setComments (c2.getString (c2.getColumnIndex (KEY_COMMENTS)));
+                    serviceForm.setGenerator_serial (c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)));
+                    serviceForm.setGenerator_model (c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)));
+                    serviceForm.setGenerator_make_id (c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)));
+                    serviceForm.setBefore_image_list_json (c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)));
+                    serviceForm.setAfter_image_list_json (c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)));
+                    serviceForm.setService_check_json (c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)));
+                    serviceForm.setEngine_serial_json (c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)));
+                    serviceForm.setAts_serial_json (c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)));
+                    serviceForm.setSignature_image_list_json (c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)));
+
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_FORM_ID)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_EMAIL)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_KW_RATING)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_IN)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_OUT)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_COMMENTS)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)), true);
+                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)), true);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace ();
+                    Utils.showLog (Log.DEBUG, "EXCEPTION", e.getMessage (), true);
+                }
+
 
 
                 serviceForms.add (serviceForm);

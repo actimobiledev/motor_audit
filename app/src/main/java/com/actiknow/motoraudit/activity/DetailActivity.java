@@ -778,7 +778,7 @@ public class DetailActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
 
         } else {
             pDialog.dismiss ();
@@ -798,7 +798,6 @@ public class DetailActivity extends AppCompatActivity {
                     });
             AlertDialog alert = builder.create ();
             alert.show ();
-
         }
     }
 
@@ -985,7 +984,7 @@ public class DetailActivity extends AppCompatActivity {
                         ImageView image = null;
                         Bitmap thePic = null;
                         if (f.exists ()) {
-                            thePic = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
+                            thePic = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()), DetailActivity.this);
                         }
                         //Bitmap thePic = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
                         ImageDetail beforeImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic), "before_img_" + date, "", "", "");
@@ -1001,7 +1000,7 @@ public class DetailActivity extends AppCompatActivity {
                         ImageView image2 = null;
                         Bitmap thePic2 = null;
                         if (f.exists ()) {
-                            thePic2 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
+                            thePic2 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()), DetailActivity.this);
                         }
 
 //                        Bitmap thePic2 = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
@@ -1016,7 +1015,7 @@ public class DetailActivity extends AppCompatActivity {
                         break;
                     case PICK_FROM_GALLERY_BEFORE_IMAGE:
                         final Uri uri = data.getData ();
-                        Bitmap thePic3 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri));
+                        Bitmap thePic3 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri), DetailActivity.this);
                         ImageDetail beforeImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic3), "before_img_" + date, "", "", "");
                         beforeImageList.add (beforeImageDetail2);
                         image = new ImageView (DetailActivity.this);
@@ -1028,7 +1027,7 @@ public class DetailActivity extends AppCompatActivity {
                         break;
                     case PICK_FROM_GALLERY_AFTER_IMAGE:
                         final Uri uri2 = data.getData ();
-                        Bitmap thePic4 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri2));
+                        Bitmap thePic4 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri2), DetailActivity.this);
                         ImageDetail afterImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic4), "after_img_" + date, "", "", "");
                         afterImageList.add (afterImageDetail2);
                         image2 = new ImageView (DetailActivity.this);
@@ -1040,7 +1039,7 @@ public class DetailActivity extends AppCompatActivity {
                         break;
                     case PICK_FROM_GALLERY_LIST_ITEM:
                         final Uri uri3 = data.getData ();
-                        Bitmap thePic5 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri3));
+                        Bitmap thePic5 = Utils.compressBitmap (MediaStore.Images.Media.getBitmap (this.getContentResolver (), uri3), DetailActivity.this);
                         ImageDetail smCheckImageDetail = new ImageDetail (0, Utils.bitmapToBase64 (thePic5), "smcheck_img_" + date, "", "", "");
                         for (int i = 0; i < Constants.serviceCheckList.size (); i++) {
                             ServiceCheck serviceCheck = Constants.serviceCheckList.get (i);
@@ -1053,7 +1052,7 @@ public class DetailActivity extends AppCompatActivity {
                     case PICK_FROM_CAMERA_LIST_ITEM:
                         Bitmap thePic6 = null;
                         if (f.exists ()) {
-                            thePic6 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()));
+                            thePic6 = Utils.compressBitmap (BitmapFactory.decodeFile (f.getAbsolutePath ()), DetailActivity.this);
                         }
 //                        Bitmap thePic6 = Utils.compressBitmap ((Bitmap) data.getExtras ().get ("data"));
                         ImageDetail smCheckImageDetail2 = new ImageDetail (0, Utils.bitmapToBase64 (thePic6), "smcheck_img_" + date, "", "", "");
@@ -1232,7 +1231,7 @@ public class DetailActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             Utils.showOkDialog (DetailActivity.this, "Sorry you cannot add a new serial in Offline mode", false);
         }
@@ -1420,7 +1419,7 @@ public class DetailActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             getSerialsFromLocalDatabase (wo_id);
             //          Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
@@ -1647,7 +1646,7 @@ public class DetailActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-            Utils.sendRequest (strRequest);
+            Utils.sendRequest (strRequest, 30);
         } else {
             Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
             LoadSerialsInLayout (false);
