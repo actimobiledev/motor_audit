@@ -354,7 +354,7 @@ public class Utils {
             } else {
                 bitmap.compress (Bitmap.CompressFormat.JPEG, 20, out);
             }
-            decoded = Utils.scaleDown (BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ())), 1536, true);
+            decoded = Utils.scaleDown (BitmapFactory.decodeStream (new ByteArrayInputStream (out.toByteArray ())), 800, true);
         } catch (Exception e) {
             e.printStackTrace ();
             Utils.showLog (Log.ERROR, "EXCEPTION", e.getMessage (), true);
