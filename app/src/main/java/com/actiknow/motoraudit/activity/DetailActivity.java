@@ -215,6 +215,10 @@ public class DetailActivity extends AppCompatActivity {
         Utils.hideSoftKeyboard (this);
 
         db.closeDB ();
+        Runtime rt = Runtime.getRuntime ();
+        long maxMemory = rt.maxMemory ();
+        Utils.showLog (Log.DEBUG, "Max Memory ", "" + maxMemory, true);
+    
     }
 
     private void initView () {

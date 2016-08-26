@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -368,6 +369,10 @@ public class Utils {
         int height = Math.round ((float) ratio * realImage.getHeight ());
         Bitmap newBitmap = Bitmap.createScaledBitmap (realImage, width, height, filter);
         return newBitmap;
+    }
+
+    public static boolean shouldAskPermission () {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
 }

@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         setServiceCheckList (false);
         setUpNavigationDrawer ();
         db.closeDB ();
+        Runtime rt = Runtime.getRuntime ();
+        long maxMemory = rt.maxMemory ();
+        Utils.showLog (Log.DEBUG, "Max Memory ", "" + maxMemory, true);
     }
 
     private void initView () {

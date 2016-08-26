@@ -71,6 +71,9 @@ public class ServiceFormsListActivity extends AppCompatActivity {
         initAdapter ();
         getContractSerialsFromServer (Constants.workOrderDetail.getWork_order_id ());
         db.closeDB ();
+
+        Runtime rt = Runtime.getRuntime ();
+        long maxMemory = rt.maxMemory ();
     }
 
     private void initView () {

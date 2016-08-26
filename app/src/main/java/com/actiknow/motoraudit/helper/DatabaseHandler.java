@@ -232,7 +232,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL ("delete from " + TABLE_MANUFACTURER);
     }
 
-
     // ------------------------ "workorder" table methods ----------------//
 
     public long createWorkorder (WorkOrder workOrder) {
@@ -434,7 +433,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL ("delete from " + TABLE_SERVICE_CHECK);
     }
 
-
     // ------------------------ "CONTRACT_SERIAL" table methods ----------------//
 
     public long createContractSerial (Serial contractSerial, boolean new_flag) {
@@ -612,7 +610,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL ("delete from " + TABLE_CONTRACT_SERIAL);
     }
 
-
     // ------------------------ "SERVICE FORM" table methods ----------------//
 
     public long createServiceForm (WorkOrderDetail serviceForm) {
@@ -669,36 +666,136 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Form id generated" + form_id, true);
         return form_id;
     }
-/*
-    public ServiceCheck getServiceForm (long form_id) {
+
+    public WorkOrderDetail getServiceForm (long form_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_FORM + " WHERE " + KEY_SERVICE_CHECK_ID + " = " + service_check_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Service check where service check id = " + service_check_id, false);
+        String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_FORM + " WHERE " + KEY_ID + " = " + form_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Service form where service form id = " + form_id, false);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
-        ServiceCheck serviceCheck = new ServiceCheck ();
-        serviceCheck.setService_check_id (c.getInt (c.getColumnIndex (KEY_SERVICE_CHECK_ID)));
-        serviceCheck.setHeading (c.getString (c.getColumnIndex (KEY_HEADING)));
-        serviceCheck.setSub_heading (c.getString (c.getColumnIndex (KEY_SUB_HEADING)));
-        Boolean pass_required = (c.getInt (c.getColumnIndex (KEY_PASS_REQUIRED)) == 1);
-        serviceCheck.setPass_required (pass_required);
-        serviceCheck.setGroup_id (c.getInt (c.getColumnIndex (KEY_GROUP_ID)));
-        serviceCheck.setGroup_type (c.getInt (c.getColumnIndex (KEY_GROUP_TYPE)));
-        serviceCheck.setGroup_name (c.getString (c.getColumnIndex (KEY_GROUP_NAME)));
-        serviceCheck.setComment ("");
-        serviceCheck.setComment_required (false);
-        serviceCheck.setSelection_flag (0);
-        serviceCheck.setSelection_text ("N/A");
-        return serviceCheck;
+        WorkOrderDetail serviceForm = new WorkOrderDetail ();
+        try {
+            serviceForm.setForm_id (c.getInt (c.getColumnIndex (KEY_FORM_ID)));
+            serviceForm.setEmp_id (Constants.employee_id);
+            serviceForm.setWork_order_id (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+            serviceForm.setCustomer_name (c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)));
+            serviceForm.setOnsite_contact (c.getString (c.getColumnIndex (KEY_ONSITE_CONTACT)));
+            serviceForm.setEmail (c.getString (c.getColumnIndex (KEY_EMAIL)));
+            serviceForm.setContract_number (c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)));
+            serviceForm.setGenerator_serial_id (c.getInt (c.getColumnIndex (KEY_GEN_SERIAL_ID)));
+            serviceForm.setKw_rating (c.getString (c.getColumnIndex (KEY_KW_RATING)));
+            serviceForm.setTime_in (c.getString (c.getColumnIndex (KEY_TIME_IN)));
+            serviceForm.setTime_out (c.getString (c.getColumnIndex (KEY_TIME_OUT)));
+            serviceForm.setGenerator_condition_comment (c.getString (c.getColumnIndex (KEY_GEN_CONDITION)));
+            serviceForm.setGenerator_condition_text (c.getString (c.getColumnIndex (KEY_GEN_STATUS)));
+            serviceForm.setComments (c.getString (c.getColumnIndex (KEY_COMMENTS)));
+            serviceForm.setGenerator_serial (c.getString (c.getColumnIndex (KEY_GEN_SERIAL)));
+            serviceForm.setGenerator_model (c.getString (c.getColumnIndex (KEY_GEN_MODEL)));
+            serviceForm.setGenerator_make_id (c.getInt (c.getColumnIndex (KEY_GEN_MAKE)));
+            serviceForm.setBefore_image_list_json (c.getString (c.getColumnIndex (KEY_BEFORE_IMAGE_JSON)));
+            serviceForm.setAfter_image_list_json (c.getString (c.getColumnIndex (KEY_AFTER_IMAGE_JSON)));
+            serviceForm.setService_check_json (c.getString (c.getColumnIndex (KEY_SERVICE_CHECK_JSON)));
+            serviceForm.setEngine_serial_json (c.getString (c.getColumnIndex (KEY_ENG_SERIAL_JSON)));
+            serviceForm.setAts_serial_json (c.getString (c.getColumnIndex (KEY_ATS_SERIAL_JSON)));
+            serviceForm.setSignature_image_list_json (c.getString (c.getColumnIndex (KEY_SIGNATURE_JSON)));
+
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_FORM_ID)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ONSITE_CONTACT)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_EMAIL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_GEN_SERIAL_ID)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_KW_RATING)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_TIME_IN)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_TIME_OUT)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_CONDITION)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_STATUS)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_COMMENTS)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_SERIAL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_MODEL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_GEN_MAKE)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_BEFORE_IMAGE_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_AFTER_IMAGE_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_SERVICE_CHECK_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ENG_SERIAL_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ATS_SERIAL_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_SIGNATURE_JSON)), true);
+        } catch (Exception e) {
+            e.printStackTrace ();
+            Utils.showLog (Log.DEBUG, "EXCEPTION", e.getMessage (), true);
+        }
+        return serviceForm;
     }
-*/
+
+
+    public WorkOrderDetail getOfflineServiceForm (int wo_number, int gen_serial_id) {
+        SQLiteDatabase db = this.getReadableDatabase ();
+        String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_FORM + " WHERE " + KEY_WORKORDER_NUMBER + " = " + wo_number + " AND " + KEY_GEN_SERIAL_ID + " = " + gen_serial_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get offline Service form where wo_id = " + wo_number + "and gen_serial_id = " + gen_serial_id, false);
+        Cursor c = db.rawQuery (selectQuery, null);
+        if (c != null)
+            c.moveToFirst ();
+        WorkOrderDetail serviceForm = new WorkOrderDetail ();
+        try {
+            serviceForm.setForm_id (c.getInt (c.getColumnIndex (KEY_FORM_ID)));
+            serviceForm.setEmp_id (Constants.employee_id);
+            serviceForm.setWork_order_id (c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)));
+            serviceForm.setCustomer_name (c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)));
+            serviceForm.setOnsite_contact (c.getString (c.getColumnIndex (KEY_ONSITE_CONTACT)));
+            serviceForm.setEmail (c.getString (c.getColumnIndex (KEY_EMAIL)));
+            serviceForm.setContract_number (c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)));
+            serviceForm.setGenerator_serial_id (c.getInt (c.getColumnIndex (KEY_GEN_SERIAL_ID)));
+            serviceForm.setKw_rating (c.getString (c.getColumnIndex (KEY_KW_RATING)));
+            serviceForm.setTime_in (c.getString (c.getColumnIndex (KEY_TIME_IN)));
+            serviceForm.setTime_out (c.getString (c.getColumnIndex (KEY_TIME_OUT)));
+            serviceForm.setGenerator_condition_comment (c.getString (c.getColumnIndex (KEY_GEN_CONDITION)));
+            serviceForm.setGenerator_condition_text (c.getString (c.getColumnIndex (KEY_GEN_STATUS)));
+            serviceForm.setComments (c.getString (c.getColumnIndex (KEY_COMMENTS)));
+            serviceForm.setGenerator_serial (c.getString (c.getColumnIndex (KEY_GEN_SERIAL)));
+            serviceForm.setGenerator_model (c.getString (c.getColumnIndex (KEY_GEN_MODEL)));
+            serviceForm.setGenerator_make_id (c.getInt (c.getColumnIndex (KEY_GEN_MAKE)));
+            serviceForm.setBefore_image_list_json (c.getString (c.getColumnIndex (KEY_BEFORE_IMAGE_JSON)));
+            serviceForm.setAfter_image_list_json (c.getString (c.getColumnIndex (KEY_AFTER_IMAGE_JSON)));
+            serviceForm.setService_check_json (c.getString (c.getColumnIndex (KEY_SERVICE_CHECK_JSON)));
+            serviceForm.setEngine_serial_json (c.getString (c.getColumnIndex (KEY_ENG_SERIAL_JSON)));
+            serviceForm.setAts_serial_json (c.getString (c.getColumnIndex (KEY_ATS_SERIAL_JSON)));
+            serviceForm.setSignature_image_list_json (c.getString (c.getColumnIndex (KEY_SIGNATURE_JSON)));
+
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_FORM_ID)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_WORKORDER_NUMBER)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_CUSTOMER_NAME)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ONSITE_CONTACT)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_EMAIL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_CONTRACT_NUMBER)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_GEN_SERIAL_ID)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_KW_RATING)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_TIME_IN)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_TIME_OUT)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_CONDITION)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_STATUS)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_COMMENTS)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_SERIAL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_GEN_MODEL)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getInt (c.getColumnIndex (KEY_GEN_MAKE)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_BEFORE_IMAGE_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_AFTER_IMAGE_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_SERVICE_CHECK_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ENG_SERIAL_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_ATS_SERIAL_JSON)), true);
+            Utils.showLog (Log.DEBUG, "database log", "" + c.getString (c.getColumnIndex (KEY_SIGNATURE_JSON)), true);
+        } catch (Exception e) {
+            e.printStackTrace ();
+            Utils.showLog (Log.DEBUG, "EXCEPTION", e.getMessage (), true);
+        }
+        return serviceForm;
+    }
 
 
     public List<WorkOrderDetail> getAllServiceForms () {
         List<WorkOrderDetail> serviceForms = new ArrayList<WorkOrderDetail> ();
         String selectQuery = "SELECT  * FROM " + TABLE_SERVICE_FORM;
-
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "query : " + selectQuery, true);
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all service forms", true);
         SQLiteDatabase db = this.getReadableDatabase ();
@@ -712,65 +809,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "in the loop", true);
                 WorkOrderDetail serviceForm = new WorkOrderDetail ();
-
                 try {
-
-
-                    serviceForm.setForm_id (c2.getInt (c2.getColumnIndex (KEY_FORM_ID)));
-                    serviceForm.setEmp_id (Constants.employee_id);
-                    serviceForm.setWork_order_id (c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)));
-                    serviceForm.setCustomer_name (c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)));
-                    serviceForm.setOnsite_contact (c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)));
-                    serviceForm.setEmail (c2.getString (c2.getColumnIndex (KEY_EMAIL)));
-                    serviceForm.setContract_number (c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)));
-                    serviceForm.setGenerator_serial_id (c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)));
-                    serviceForm.setKw_rating (c2.getString (c2.getColumnIndex (KEY_KW_RATING)));
-                    serviceForm.setTime_in (c2.getString (c2.getColumnIndex (KEY_TIME_IN)));
-                    serviceForm.setTime_out (c2.getString (c2.getColumnIndex (KEY_TIME_OUT)));
-                    serviceForm.setGenerator_condition_comment (c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)));
-                    serviceForm.setGenerator_condition_text (c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)));
-                    serviceForm.setComments (c2.getString (c2.getColumnIndex (KEY_COMMENTS)));
-                    serviceForm.setGenerator_serial (c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)));
-                    serviceForm.setGenerator_model (c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)));
-                    serviceForm.setGenerator_make_id (c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)));
-                    serviceForm.setBefore_image_list_json (c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)));
-                    serviceForm.setAfter_image_list_json (c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)));
-                    serviceForm.setService_check_json (c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)));
-                    serviceForm.setEngine_serial_json (c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)));
-                    serviceForm.setAts_serial_json (c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)));
-                    serviceForm.setSignature_image_list_json (c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)));
-
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_FORM_ID)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_WORKORDER_NUMBER)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_CUSTOMER_NAME)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ONSITE_CONTACT)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_EMAIL)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_CONTRACT_NUMBER)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_SERIAL_ID)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_KW_RATING)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_IN)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_TIME_OUT)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_CONDITION)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_STATUS)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_COMMENTS)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_SERIAL)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_GEN_MODEL)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getInt (c2.getColumnIndex (KEY_GEN_MAKE)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_BEFORE_IMAGE_JSON)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_AFTER_IMAGE_JSON)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SERVICE_CHECK_JSON)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ENG_SERIAL_JSON)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_ATS_SERIAL_JSON)), true);
-                    Utils.showLog (Log.DEBUG, "database log", "" + c2.getString (c2.getColumnIndex (KEY_SIGNATURE_JSON)), true);
-
-
+                    serviceForm = getServiceForm (c2.getInt (c2.getColumnIndex (KEY_ID)));
                 } catch (Exception e) {
                     e.printStackTrace ();
                     Utils.showLog (Log.DEBUG, "EXCEPTION", e.getMessage (), true);
                 }
-
-
-
                 serviceForms.add (serviceForm);
             } while (c2.moveToNext ());
         }
@@ -785,6 +829,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close ();
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get total service form count : " + count, false);
         return count;
+    }
+
+    public boolean isServiceFormPresent (int wo_number, int gen_serial_id) {
+        String countQuery = "SELECT  * FROM " + TABLE_SERVICE_FORM + " WHERE " + KEY_WORKORDER_NUMBER + " = " + wo_number + " AND " + KEY_GEN_SERIAL_ID + " = " + gen_serial_id;
+        SQLiteDatabase db = this.getReadableDatabase ();
+        Cursor cursor = db.rawQuery (countQuery, null);
+        int count = cursor.getCount ();
+        cursor.close ();
+        if (count > 0) {
+            Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Service form is present", false);
+            return true;
+        } else {
+            Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Service form not present", false);
+            return false;
+        }
     }
 
     /*
