@@ -371,7 +371,6 @@ public class ViewFormActivity extends AppCompatActivity {
     @Override
     public void onStop () {
         super.onStop ();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction (
@@ -412,15 +411,15 @@ public class ViewFormActivity extends AppCompatActivity {
 
                                                 Serial ATSSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
-                                                        c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, Constants.workOrderDetail.getContract_number (),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 atsSerialList.add (ATSSerial);
                                                 break;
                                             case "Engine":
                                                 Serial engineSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
-                                                        c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, Constants.workOrderDetail.getContract_number (),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;
                                         }

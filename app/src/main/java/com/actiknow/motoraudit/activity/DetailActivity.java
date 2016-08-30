@@ -45,6 +45,7 @@ import com.actiknow.motoraudit.helper.DatabaseHandler;
 import com.actiknow.motoraudit.model.ImageDetail;
 import com.actiknow.motoraudit.model.Serial;
 import com.actiknow.motoraudit.model.ServiceCheck;
+import com.actiknow.motoraudit.model.WorkOrderDetail;
 import com.actiknow.motoraudit.utils.AppConfigTags;
 import com.actiknow.motoraudit.utils.AppConfigURL;
 import com.actiknow.motoraudit.utils.Constants;
@@ -191,6 +192,7 @@ public class DetailActivity extends AppCompatActivity {
 
     ManufacturerAdapter manufacturerAdapter;
     DatabaseHandler db;
+    WorkOrderDetail offlineServiceForm;
     private List<Serial> engineSerialList = new ArrayList<> ();
     private List<Serial> atsSerialList = new ArrayList<> ();
     private List<ImageDetail> beforeImageList = new ArrayList<> ();
@@ -218,7 +220,7 @@ public class DetailActivity extends AppCompatActivity {
         Runtime rt = Runtime.getRuntime ();
         long maxMemory = rt.maxMemory ();
         Utils.showLog (Log.DEBUG, "Max Memory ", "" + maxMemory, true);
-    
+
     }
 
     private void initView () {
@@ -547,6 +549,7 @@ public class DetailActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         tvSet.setOnTouchListener (new View.OnTouchListener () {
             @Override
             public boolean onTouch (View v, MotionEvent event) {
@@ -561,6 +564,7 @@ public class DetailActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         tvTimeOutSet.setOnTouchListener (new View.OnTouchListener () {
             @Override
             public boolean onTouch (View v, MotionEvent event) {
@@ -582,6 +586,7 @@ public class DetailActivity extends AppCompatActivity {
                 showSignatureDialog (1, 0);
             }
         });
+
         ivCustomerSignature.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
@@ -790,7 +795,13 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             pDialog.dismiss ();
 //            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
-            db.createServiceForm (Constants.workOrderDetail);
+
+            if (db.isOfflineServiceFormPresent (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ())) {
+                db.updateServiceForm (Constants.workOrderDetail);
+            } else {
+                db.createServiceForm (Constants.workOrderDetail);
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder (DetailActivity.this);
             builder.setMessage ("Form detail have been saved offline and will be uploaded once the network connection is available")
                     .setCancelable (false)
@@ -831,7 +842,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onStop () {
         super.onStop ();
-
+        db.closeDB ();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction (
@@ -888,6 +899,15 @@ public class DetailActivity extends AppCompatActivity {
                 Bitmap bp = signatureView.getSignatureBitmap ();
                 switch (flag) {
                     case 1:
+
+                        for (int i = 0; i < signatureImageList.size (); i++) {
+                            ImageDetail imageDetail = signatureImageList.get (i);
+                            if (imageDetail.getDescription ().equalsIgnoreCase ("Tech")) {
+                                signatureImageList.remove (i);
+                            }
+                        }
+
+
                         ImageDetail signatureImageDetail = new ImageDetail (image_id, Utils.bitmapToBase64 (bp), "", "Tech", "", "");
                         signatureImageList.add (signatureImageDetail);
 
@@ -897,6 +917,13 @@ public class DetailActivity extends AppCompatActivity {
                         ivTechSignature.setImageBitmap (bp);
                         break;
                     case 2:
+                        for (int i = 0; i < signatureImageList.size (); i++) {
+                            ImageDetail imageDetail = signatureImageList.get (i);
+                            if (imageDetail.getDescription ().equalsIgnoreCase ("Customer")) {
+                                signatureImageList.remove (i);
+                            }
+                        }
+
                         ImageDetail signatureImageDetail2 = new ImageDetail (image_id, Utils.bitmapToBase64 (bp), "", "Customer", etCustomerName.getText ().toString (), "");
                         signatureImageList.add (signatureImageDetail2);
 
@@ -1116,7 +1143,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvAddSerial;
         TextView tvCancelSerial;
 
-        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, 0, "", "", "", "");
+        final Serial generatorSerial = new Serial (false, serial_id, 0, 0, 0, 0, "", "", "", "");
 
         dialogAddNewSerial = new Dialog (DetailActivity.this);
         dialogAddNewSerial.setContentView (R.layout.dialog_add_generator_serial);
@@ -1264,15 +1291,15 @@ public class DetailActivity extends AppCompatActivity {
                                             case "ATS":
                                                 Serial ATSSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
-                                                        c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, Constants.workOrderDetail.getContract_number (),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 atsSerialList.add (ATSSerial);
                                                 break;
                                             case "Engine":
                                                 Serial engineSerial = new
                                                         Serial (false, c.getInt ("serviceSerials_id"),
-                                                        c.getInt ("manufacturer_id"), wo_id, 0, c.getString ("serial"),
-                                                        c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, Constants.workOrderDetail.getContract_number (),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;
                                         }
@@ -1655,9 +1682,15 @@ public class DetailActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest, 30);
         } else {
-            Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
-            LoadSerialsInLayout (false);
-            new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+            if (db.isOfflineServiceFormPresent (wo_id, generator_serial_id)) {
+                offlineServiceForm = db.getOfflineServiceForm (wo_id, generator_serial_id);
+                setOfflineFormDetails (offlineServiceForm);
+                Utils.showOkDialog (DetailActivity.this, "Seems like there is an offline form is already present in local database, the app will load the details", false);
+            } else {
+                Utils.showOkDialog (DetailActivity.this, "Seems like there is no internet connection, the app will continue in Offline mode", false);
+                LoadSerialsInLayout (false);
+                new LoadServiceChecksInLinearLayout (DetailActivity.this).execute ();
+            }
         }
     }
 
@@ -1805,6 +1838,195 @@ public class DetailActivity extends AppCompatActivity {
                         ImageDetail imageDetail;
                         if (jsonObject1.getInt ("Image") != 0) {
                             imageDetail = new ImageDetail (jsonObject1.getInt ("Image"), "", "smcheck_img_" + date, "", "", jsonObject1.getString ("img_url"));
+                            serviceCheck.setSmCheckImageInList (imageDetail);
+                        } else {
+                            imageDetail = new ImageDetail (0, "", "", "", "", "");
+                        }
+
+                    }
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace ();
+        }
+        LoadSerialsInLayout (false);
+        new LoadServiceChecksInLinearLayout (this).execute ();
+    }
+
+    private void setOfflineFormDetails (WorkOrderDetail offlineServiceForm) {
+        try {
+            Constants.workOrderDetail.setForm_id (offlineServiceForm.getForm_id ());
+            etTimeIn.setText (offlineServiceForm.getTime_in ());
+            etOnSiteContact.setText (offlineServiceForm.getOnsite_contact ());
+            etEmail.setText (offlineServiceForm.getEmail ());
+            etKwRating.setText (offlineServiceForm.getKw_rating ());
+            switch (offlineServiceForm.getGenerator_condition_text ().toUpperCase ()) {
+                case "GOOD":
+                    rbGood.setChecked (true);
+                    break;
+                case "FAIR":
+                    rbFair.setChecked (true);
+                    break;
+                case "POOR":
+                    rbPoor.setChecked (true);
+                    break;
+            }
+            etGeneratorConditionComment.setText (offlineServiceForm.getGenerator_condition_comment ());
+            etComment.setText (offlineServiceForm.getComments ());
+            etTimeOut.setText (offlineServiceForm.getTime_out ());
+
+            DateFormat df = new SimpleDateFormat ("yyyyMMdd_HHmmss");
+            final String date = df.format (Calendar.getInstance ().getTime ());
+
+            JSONObject jsonObjectBeforeImages = new JSONObject (offlineServiceForm.getBefore_image_list_json ());
+            JSONArray jsonArrayBeforeImages = jsonObjectBeforeImages.getJSONArray ("beforeImages");
+            for (int i = 0; i < jsonArrayBeforeImages.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayBeforeImages.getJSONObject (i);
+                    ImageView image = new ImageView (DetailActivity.this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams (300, 225);
+                    params.setMargins (10, 10, 10, 10);
+                    image.setLayoutParams (params);
+                    image.setImageBitmap (Utils.base64ToBitmap (jsonObject1.getString ("64_image")));
+                    llBeforeImage.addView (image);
+
+                    ImageDetail beforeImageDetail = new ImageDetail (0, jsonObject1.getString ("64_image"), "before_img_" + date, "", "", "");
+                    beforeImageList.add (beforeImageDetail);
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+
+            JSONObject jsonObjectAfterImages = new JSONObject (offlineServiceForm.getAfter_image_list_json ());
+            JSONArray jsonArrayAfterImages = jsonObjectAfterImages.getJSONArray ("afterImages");
+            for (int i = 0; i < jsonArrayAfterImages.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayAfterImages.getJSONObject (i);
+                    ImageView image = new ImageView (DetailActivity.this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams (300, 225);
+                    params.setMargins (10, 10, 10, 10);
+                    image.setLayoutParams (params);
+                    image.setImageBitmap (Utils.base64ToBitmap (jsonObject1.getString ("64_image")));
+                    llAfterImage.addView (image);
+
+                    ImageDetail afterImageDetail = new ImageDetail (0, jsonObject1.getString ("64_image"), "after_img_" + date, "", "", "");
+                    afterImageList.add (afterImageDetail);
+
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+            JSONObject jsonObjectSignatures = new JSONObject (offlineServiceForm.getSignature_image_list_json ());
+            JSONArray jsonArraySignatures = jsonObjectSignatures.getJSONArray ("signatures");
+            for (int i = 0; i < jsonArraySignatures.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArraySignatures.getJSONObject (i);
+                    ImageDetail techSignatureDetail = new ImageDetail (0, jsonObject1.getString ("64_image"),
+                            "", jsonObject1.getString ("description"), jsonObject1.getString ("signator"), "");
+
+                    switch (jsonObject1.getString ("description")) {
+                        case "Tech":
+                            ivTechSignature.setImageBitmap (Utils.base64ToBitmap (jsonObject1.getString ("64_image")));
+                            break;
+                        case "Customer":
+                            etCustomerName.setText (jsonObject1.getString ("signator"));
+                            ivCustomerSignature.setImageBitmap (Utils.base64ToBitmap (jsonObject1.getString ("64_image")));
+                            break;
+                    }
+                    signatureImageList.add (techSignatureDetail);
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+
+            JSONObject jsonObjectEngSerials = new JSONObject (offlineServiceForm.getEngine_serial_json ());
+            JSONArray jsonArrayEngSerials = jsonObjectEngSerials.getJSONArray ("engSerialCheck");
+            for (int i = 0; i < jsonArrayEngSerials.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayEngSerials.getJSONObject (i);
+                    for (int j = 0; j < engineSerialList.size (); j++) {
+                        Serial engineSerial = engineSerialList.get (j);
+                        if (jsonObject1.getInt ("serid") == engineSerial.getSerial_id () && jsonObject1.getInt ("checkval") == 0) {
+                            engineSerial.setChecked (false);
+                        } else if (jsonObject1.getInt ("serid") == engineSerial.getSerial_id () && jsonObject1.getInt ("checkval") == 1) {
+                            engineSerial.setChecked (true);
+                        }
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+            JSONObject jsonObjectAtsSerials = new JSONObject (offlineServiceForm.getAts_serial_json ());
+            JSONArray jsonArrayAtsSerials = jsonObjectAtsSerials.getJSONArray ("atsSerialCheck");
+            for (int i = 0; i < jsonArrayAtsSerials.length (); i++) {
+                try {
+                    JSONObject jsonObject1 = jsonArrayAtsSerials.getJSONObject (i);
+                    for (int j = 0; j < atsSerialList.size (); j++) {
+                        Serial atsSerial = atsSerialList.get (j);
+                        if (jsonObject1.getInt ("serid") == atsSerial.getSerial_id () && jsonObject1.getInt ("checkval") == 0) {
+                            atsSerial.setChecked (false);
+                        } else if (jsonObject1.getInt ("serid") == atsSerial.getSerial_id () && jsonObject1.getInt ("checkval") == 1) {
+                            atsSerial.setChecked (true);
+                        }
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace ();
+                }
+            }
+
+            JSONObject jsonObjectFormChecks = new JSONObject (offlineServiceForm.getService_check_json ());
+            JSONArray jsonArrayFormChecks = jsonObjectFormChecks.getJSONArray ("smchecks");
+            for (int i = 0; i < jsonArrayFormChecks.length (); i++) {
+                JSONObject jsonObject1 = jsonArrayFormChecks.getJSONObject (i);
+                for (int j = 0; j < Constants.serviceCheckList.size (); j++) {
+                    ServiceCheck serviceCheck = Constants.serviceCheckList.get (j);
+                    if (jsonObject1.getInt ("name_id") == serviceCheck.getService_check_id ()) {
+                        serviceCheck.setComment (jsonObject1.getString ("text"));
+                        serviceCheck.setSelection_text (jsonObject1.getString ("status"));
+                        switch (jsonObject1.getString ("status")) {
+                            case "NA":
+                                serviceCheck.setSelection_text ("NA");
+                                serviceCheck.setSelection_flag (0);
+                                break;
+                            case "N/A":
+                                serviceCheck.setSelection_text ("N/A");
+                                serviceCheck.setSelection_flag (0);
+                                break;
+                            case "Pass":
+                                serviceCheck.setSelection_text ("Pass");
+                                serviceCheck.setSelection_flag (3);
+                                break;
+                            case "Advise":
+                                serviceCheck.setSelection_text ("Advise");
+                                serviceCheck.setSelection_flag (2);
+                                break;
+                            case "Fail":
+                                serviceCheck.setSelection_text ("Fail");
+                                serviceCheck.setSelection_flag (1);
+                                break;
+                            case "Yes":
+                                serviceCheck.setSelection_text ("Yes");
+                                serviceCheck.setSelection_flag (2);
+                                break;
+                            case "No":
+                                serviceCheck.setSelection_text ("No");
+                                serviceCheck.setSelection_flag (1);
+                                break;
+                        }
+
+
+                        ImageDetail imageDetail;
+                        if (! jsonObject1.getString ("imageId").equalsIgnoreCase ("0")) {
+                            JSONArray jsonArrayFormCheckImage = jsonObject1.getJSONArray ("imageId");
+                            JSONObject jsonObject2 = jsonArrayFormCheckImage.getJSONObject (0);
+                            imageDetail = new ImageDetail (0, jsonObject2.getString ("64_image"), "smcheck_img_" + date, "", "", "");
                             serviceCheck.setSmCheckImageInList (imageDetail);
                         } else {
                             imageDetail = new ImageDetail (0, "", "", "", "", "");

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout mDrawerPanel;
     private List<WorkOrder> workOrderList = new ArrayList<> ();
 
-    private List<WorkOrderDetail> workOrderDetialListTemp = new ArrayList<> ();
+    private List<WorkOrderDetail> workOrderDetailListTemp = new ArrayList<> ();
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -95,14 +95,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AllWorkOrdersAdapter (this, workOrderList);
         lvAllWorkOrder.setAdapter (adapter);
         client = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
-
-        if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this)) {
-//            db.deleteAllServiceForms ();
-//            workOrderDetialListTemp = db.getAllServiceForms ();
-//            uploadStoredServiceFormsToServer ();
-//            Utils.showOkDialog (this, "Offline saved form are present in the local database and will be synced in the background, " +
-//                    "you will get a message once the process is complete", false);
-        }
     }
 
     private void setUpNavigationDrawer () {
@@ -176,7 +168,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse (String response) {
                             int is_data_received = 0;
                             int json_array_len = 0;
-                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+//                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, "workorder list received", true);
                             if (response != null) {
                                 is_data_received = 1;
                                 try {
@@ -205,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
 //                                                    Utils.showLog (Log.DEBUG, "FORM ID :", "" + c.getInt ("form_id"), true);
                                                     Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
                                                             c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
-                                                            c.getInt ("form_id"), c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
+                                                            c.getInt ("form_id"), jsonObject.getInt (AppConfigTags.WO_CONTRACT_NUM),
+                                                            c.getString ("serial"), c.getString ("model"), c.getString ("Type"),
                                                             Utils.getManufacturerName (c.getInt ("manufacturer_id")));
 //                                                Serial contractSerial = new Serial (false, c.getInt ("serviceSerials_id"),
 //                                                        c.getInt ("manufacturer_id"), jsonObject.getInt (AppConfigTags.WO_ID),
@@ -223,6 +217,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 if (sync) {
+                                    workOrderDetailListTemp = db.getAllServiceForms ();
+                                    for (WorkOrderDetail serviceForm : workOrderDetailListTemp) {
+                                        final WorkOrderDetail finalServiceForm = serviceForm;
+                                        db.updateOfflineServiceForm (finalServiceForm.getWork_order_id (), finalServiceForm.getContract_number (),
+                                                finalServiceForm.getGenerator_serial (), finalServiceForm.getGenerator_model (), finalServiceForm.getGenerator_make_id ());
+                                    }
+                                    uploadStoredServiceFormsToServer ();
                                     progressDialog.dismiss ();
                                     Utils.showOkDialog (MainActivity.this, "All Data have been successfully synced from the server", false);
                                 } else {
@@ -310,7 +311,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onResponse (String response) {
                             int json_array_len = 0;
-                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+//                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, "manufacturer list received", true);
                             if (response != null) {
                                 if (sync) {
                                     db.deleteAllManufacturer ();
@@ -471,7 +473,8 @@ public class MainActivity extends AppCompatActivity {
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
-                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+//                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, "service check list received", true);
                             if (response != null) {
                                 try {
                                     if (sync) {
@@ -593,7 +596,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void getManufacturerListFromLocalDatabase () {
         Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the manufacturers from local database", true);
         Constants.manufacturerList.clear ();
@@ -647,6 +649,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStop () {
         super.onStop ();
 
+        db.closeDB ();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction (
@@ -683,16 +686,22 @@ public class MainActivity extends AppCompatActivity {
     private void sync () {
         progressDialog = new ProgressDialog (this);
         Utils.showProgressDialog (progressDialog, null);
-        getWorkOrderListFromServer (true);
+        if (db.getNewContractSerialCount () > 0) {
+            uploadStoredContractSerialsToServer ();
+//            new_serial_flag = true;
+        } else {
+//            new_serial_flag = true;
+            getWorkOrderListFromServer (true);
+        }
         getManufacturerListFromServer (true);
         setServiceCheckList (true);
-        if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this)) {
+//        if (db.getServiceFormCount () > 0 && NetworkConnection.isNetworkAvailable (this) && ! new_serial_flag) {
 //            db.deleteAllServiceForms ();
-//            workOrderDetialListTemp = db.getAllServiceForms ();
-            uploadStoredServiceFormsToServer ();
+//            workOrderDetailListTemp = db.getAllServiceForms ();
+//            uploadStoredServiceFormsToServer ();
 //            Utils.showOkDialog (this, "Offline saved form are present in the local database and will be synced in the background, " +
 //                    "you will get a message once the process is complete", false);
-        }
+//        }
 
     }
 
@@ -763,6 +772,66 @@ public class MainActivity extends AppCompatActivity {
             } else {
             }
         }
+    }
+
+    private void uploadStoredContractSerialsToServer () {
+        Utils.showLog (Log.DEBUG, AppConfigTags.TAG, "Getting all the new contract serials from local database", true);
+        List<Serial> allNewContractSerials = db.getAllNewContractSerials ();
+        final int i = allNewContractSerials.size ();
+        int j = 1;
+        for (Serial contractSerial : allNewContractSerials) {
+            final Serial finalContractSerial = contractSerial;
+            if (NetworkConnection.isNetworkAvailable (this)) {
+                Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.API_URL, true);
+                StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.API_URL,
+                        new Response.Listener<String> () {
+                            @Override
+                            public void onResponse (String response) {
+                                if (response != null) {
+                                    Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                                    try {
+                                        JSONObject jsonObj = new JSONObject (response);
+                                        String serviceSerial_id = jsonObj.getString ("serviceSerial_id");
+//                                        String message = jsonObj.getString ("error_message");
+//                                        int error_code = jsonObj.getInt ("error_code");
+//                                        if (error_code != 0)
+//                                            Utils.showToast (ServiceFormsListActivity.this, message);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace ();
+                                    }
+//                                    getContractSerialsFromServer (Constants.workOrderDetail.getWork_order_id ());
+                                } else {
+                                    Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener () {
+                            @Override
+                            public void onErrorResponse (VolleyError error) {
+                                Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            }
+                        }) {
+                    @Override
+                    public byte[] getBody () throws com.android.volley.AuthFailureError {
+                        String str = "{\"API_username\":\"" + Constants.api_username + "\",\n" +
+                                "\"API_password\":\"" + Constants.api_password + "\",\n" +
+                                "\"API_function\":\"createNewSerial\",\n" +
+                                "\"API_parameters\":{\"contractNum\": \"" + finalContractSerial.getContract_num () + "\", \"serialNumber\": \"" + finalContractSerial.getSerial_number () + "\", \"modelNumber\": \"" + finalContractSerial.getModel_number () + "\", \"manufacturer\": \"" + finalContractSerial.getManufacturer_id () + "\"}}";
+                        Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
+                        return str.getBytes ();
+                    }
+
+                    public String getBodyContentType () {
+                        return "application/json; charset=utf-8";
+                    }
+                };
+                Utils.sendRequest (strRequest, 30);
+            } else {
+            }
+        }
+        getWorkOrderListFromServer (true);
     }
 
 
