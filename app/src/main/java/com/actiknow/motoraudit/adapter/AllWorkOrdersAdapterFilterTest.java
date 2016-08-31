@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.actiknow.motoraudit.R;
@@ -15,29 +17,34 @@ import com.actiknow.motoraudit.activity.ServiceFormsListActivity;
 import com.actiknow.motoraudit.model.WorkOrder;
 import com.actiknow.motoraudit.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AllWorkOrdersAdapter extends BaseAdapter {
+public class AllWorkOrdersAdapterFilterTest extends BaseAdapter implements Filterable {
+    WorkOrderFilter workOrderFilter;
     private Activity activity;
     private LayoutInflater inflater;
     private List<WorkOrder> workOrderList;
-
+    private List<WorkOrder> filteredWorkOrderList;
     private Typeface typeface;
 
-    public AllWorkOrdersAdapter (Activity activity, List<WorkOrder> workOrderList) {
+    public AllWorkOrdersAdapterFilterTest (Activity activity, List<WorkOrder> workOrderList) {
         this.activity = activity;
         this.workOrderList = workOrderList;
+        this.filteredWorkOrderList = workOrderList;
+
+        getFilter ();
         typeface = Typeface.createFromAsset (activity.getAssets (), "Kozuka-Gothic.ttf");
     }
 
     @Override
     public int getCount () {
-        return workOrderList.size ();
+        return filteredWorkOrderList.size ();
     }
 
     @Override
     public Object getItem (int location) {
-        return workOrderList.get (location);
+        return filteredWorkOrderList.get (location);
     }
 
     @Override
@@ -84,8 +91,60 @@ public class AllWorkOrdersAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public Filter getFilter () {
+        if (workOrderFilter == null) {
+            workOrderFilter = new WorkOrderFilter ();
+        }
+        return workOrderFilter;
+    }
+
     static class ViewHolder {
         TextView tvWOId;
         TextView tvWOSiteName;
     }
+
+    /**
+     * Custom filter for friend list
+     * Filter content in friend list according to the search text
+     */
+    private class WorkOrderFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering (CharSequence constraint) {
+            FilterResults filterResults = new FilterResults ();
+            if (constraint != null && constraint.length () > 0) {
+                ArrayList<WorkOrder> workOrderTempList = new ArrayList<WorkOrder> ();
+
+                // search content in friend list
+                for (WorkOrder workOrder : workOrderList) {
+                    if (workOrder.getWo_id () == Integer.parseInt (constraint.toString ())) {
+                        workOrderTempList.add (workOrder);
+                    }
+                }
+
+                filterResults.count = workOrderTempList.size ();
+                filterResults.values = workOrderTempList;
+            } else {
+                filterResults.count = workOrderList.size ();
+                filterResults.values = workOrderList;
+            }
+
+            return filterResults;
+        }
+
+        /**
+         * Notify about filtered list to ui
+         *
+         * @param constraint text
+         * @param results    filtered result
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults (CharSequence constraint, FilterResults results) {
+            filteredWorkOrderList = (ArrayList<WorkOrder>) results.values;
+            notifyDataSetChanged ();
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -373,6 +374,16 @@ public class Utils {
 
     public static boolean shouldAskPermission () {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+    public static void selectSpinnerValue (Spinner spinner, String myString) {
+        for (int i = 0; i < Constants.manufacturerList.size (); i++) {
+            Manufacturer manufacturer = Constants.manufacturerList.get (i);
+            if (manufacturer.getManufacturer_name ().equalsIgnoreCase (myString)) {
+                spinner.setSelection (i);
+                break;
+            }
+        }
     }
 
 }

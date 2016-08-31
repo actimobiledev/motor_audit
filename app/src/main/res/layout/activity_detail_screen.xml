@@ -118,7 +118,7 @@
                             android:layout_weight="0.5"
                             android:background="@color/background_blue"
                             android:gravity="center"
-                            android:padding="7dp"
+                            android:padding="5dp"
                             android:text="SET"
                             android:textColor="@color/text_color_white"
                             android:textSize="@dimen/text_size_medium"/>
@@ -258,14 +258,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/layout_edittext"
-                            android:enabled="false"
-                            android:focusable="false"
                             android:padding="5dp"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Generator Make"
+                            android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"/>
                         <Spinner
                             android:id="@+id/spGeneratorMake"
@@ -276,7 +275,9 @@
                             android:padding="0dp"
                             android:spinnerMode="dialog"
                             android:textSize="@dimen/text_size_medium"
-                            android:visibility="gone"/>
+                            android:visibility="visible"/>
+
+
                         <EditText
                             android:id="@+id/etGeneratorMake"
                             android:layout_width="match_parent"
@@ -285,7 +286,9 @@
                             android:enabled="false"
                             android:focusable="false"
                             android:padding="5dp"
-                            android:textSize="@dimen/text_size_medium"/>
+                            android:textSize="@dimen/text_size_medium"
+                            android:visibility="gone"/>
+
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -1243,7 +1246,8 @@
                             android:padding="7dp"
                             android:text="SET"
                             android:textColor="@color/text_color_white"
-                            android:textSize="@dimen/text_size_medium"/>
+                            android:textSize="@dimen/text_size_medium"
+                            android:visibility="gone"/>
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>

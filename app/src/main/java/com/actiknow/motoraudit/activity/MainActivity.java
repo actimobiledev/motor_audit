@@ -1,17 +1,23 @@
 package com.actiknow.motoraudit.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -45,7 +51,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {// implements SearchView.OnQueryTextListener {
 
     TextView tvNoInternetConnection;
     ProgressBar progressBar;
@@ -55,13 +61,16 @@ public class MainActivity extends AppCompatActivity {
 
     // Action Bar components
     ProgressDialog progressDialog;
+    ArrayList<WorkOrder> tempArrayList = new ArrayList<WorkOrder> ();
+    EditText etSearchWorkorder;
     private AllWorkOrdersAdapter adapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private RelativeLayout mDrawerPanel;
     private List<WorkOrder> workOrderList = new ArrayList<> ();
-
     private List<WorkOrderDetail> workOrderDetailListTemp = new ArrayList<> ();
+    private SearchView searchView;
+    private MenuItem searchMenuItem;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -84,9 +93,47 @@ public class MainActivity extends AppCompatActivity {
         lvAllWorkOrder = (ListView) findViewById (R.id.lvJobsList);
         tvNoInternetConnection = (TextView) findViewById (R.id.tvNoIternetConnection);
         progressBar = (ProgressBar) findViewById (R.id.progressbar);
+        etSearchWorkorder = (EditText) findViewById (R.id.etWorkOrderSearch);
     }
 
     private void initListener () {
+        /**
+         * Enabling Search Filter
+         * */
+        etSearchWorkorder.addTextChangedListener (new TextWatcher () {
+
+            @Override
+            public void onTextChanged (CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+//                String text = etSearchWorkorder.getText ().toString ();
+//                adapter.filter (text);
+
+                int textlength = cs.length ();
+                tempArrayList.clear ();
+
+                for (WorkOrder c : workOrderList) {
+                    if (textlength <= String.valueOf (c.getWo_id ()).length ()) {
+                        if (String.valueOf (c.getWo_id ()).toLowerCase ().contains (cs.toString ().toLowerCase ())) {
+                            tempArrayList.add (c);
+                        }
+                    }
+                }
+                adapter = new AllWorkOrdersAdapter (MainActivity.this, tempArrayList);
+                lvAllWorkOrder.setAdapter (adapter);
+            }
+
+            @Override
+            public void beforeTextChanged (CharSequence arg0, int arg1, int arg2,
+                                           int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged (Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
     }
 
     private void initData () {
@@ -669,6 +716,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         getMenuInflater ().inflate (R.menu.menu_main, menu);
+/*
+        SearchManager searchManager = (SearchManager)
+                getSystemService (Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem (R.id.action_search);
+        searchView = (SearchView) searchMenuItem.getActionView ();
+
+        searchView.setSearchableInfo (searchManager.
+                getSearchableInfo (getComponentName ()));
+        searchView.setSubmitButtonEnabled (true);
+        searchView.setOnQueryTextListener (this);
+*/
         return true;
     }
 
@@ -678,6 +736,23 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sync:
                 sync ();
                 return true;
+
+            case R.id.action_search:
+                if (etSearchWorkorder.isShown ()) {
+                    etSearchWorkorder.setText ("");
+                    etSearchWorkorder.setVisibility (View.GONE);
+                    etSearchWorkorder.setCursorVisible (false);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService (Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow (etSearchWorkorder.getWindowToken (), 0);
+                } else {
+                    etSearchWorkorder.setVisibility (View.VISIBLE);
+                    etSearchWorkorder.setCursorVisible (true);
+                    etSearchWorkorder.setFocusable (true);
+                    etSearchWorkorder.requestFocus ();
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService (Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput (etSearchWorkorder, InputMethodManager.SHOW_IMPLICIT);
+                }
+                break;
         }
         Utils.hideSoftKeyboard (MainActivity.this);
         return super.onOptionsItemSelected (item);
@@ -889,4 +964,18 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf (responseJSON);
     }
 
+/*
+
+    @Override
+    public boolean onQueryTextSubmit (String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange (String newText) {
+//        AllWorkOrdersAdapter.getFilter ().filter (newText);
+        return true;
+    }
+
+*/
 }

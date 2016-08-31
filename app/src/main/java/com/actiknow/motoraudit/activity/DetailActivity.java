@@ -210,9 +210,9 @@ public class DetailActivity extends AppCompatActivity {
         Utils.showProgressDialog (pDialog, null);
 
         initView ();
+        initAdapter ();
         initData ();
         initListener ();
-        initAdapter ();
         getWorkOrderDetailFromServer (Constants.workOrderDetail.getWork_order_id (), Constants.workOrderDetail.getGenerator_serial_id ());
         Utils.hideSoftKeyboard (this);
 
@@ -503,6 +503,7 @@ public class DetailActivity extends AppCompatActivity {
                         Constants.workOrderDetail.setTime_out (etTimeOut.getText ().toString ());
                         Constants.workOrderDetail.setOnsite_contact (etOnSiteContact.getText ().toString ());
                         Constants.workOrderDetail.setEmail (etEmail.getText ().toString ());
+                        Constants.workOrderDetail.setGenerator_model (etGeneratorModel.getText ().toString ());
                         Constants.workOrderDetail.setKw_rating (etKwRating.getText ().toString ());
                         Constants.workOrderDetail.setGenerator_condition_comment (etGeneratorConditionComment.getText ().toString ());
                         Constants.workOrderDetail.setComments (etComment.getText ().toString ());
@@ -558,6 +559,7 @@ public class DetailActivity extends AppCompatActivity {
                     DateFormat df = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
                     String date = df.format (Calendar.getInstance ().getTime ());
                     etTimeIn.setText (date);
+                    etTimeOut.setText (date);
                 } else if (event.getAction () == MotionEvent.ACTION_UP) {
                     tvSet.setBackgroundResource (R.color.background_blue);
                 }
@@ -674,6 +676,9 @@ public class DetailActivity extends AppCompatActivity {
         etGeneratorModel.setText (Constants.workOrderDetail.getGenerator_model ());
         etGeneratorSerial.setText (Constants.workOrderDetail.getGenerator_serial ());
         etGeneratorMake.setText (Constants.workOrderDetail.getGenerator_make_name ());
+
+        Utils.selectSpinnerValue (spGeneratorMake, Constants.workOrderDetail.getGenerator_make_name ());
+
 
         String generator_condition_json = Utils.getGeneratorConditionJSONFromAsset (this);
         try {
@@ -1302,6 +1307,13 @@ public class DetailActivity extends AppCompatActivity {
                                                         c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
                                                 engineSerialList.add (engineSerial);
                                                 break;
+                                            case "":
+                                                Serial engineSerial2 = new
+                                                        Serial (false, c.getInt ("serviceSerials_id"),
+                                                        c.getInt ("manufacturer_id"), wo_id, 0, Constants.workOrderDetail.getContract_number (),
+                                                        c.getString ("serial"), c.getString ("model"), c.getString ("Type"), c.getString ("manufacturer_name"));
+                                                engineSerialList.add (engineSerial2);
+                                                break;
                                         }
                                     }
                                 } catch (JSONException e) {
@@ -1700,6 +1712,7 @@ public class DetailActivity extends AppCompatActivity {
             etTimeIn.setText (jsonObject.getString ("TIME_IN"));
             etOnSiteContact.setText (jsonObject.getString ("ONSITE_CONTACT"));
             etEmail.setText (jsonObject.getString ("EMAIL"));
+
             etKwRating.setText (jsonObject.getString ("KW_RATING"));
             switch (jsonObject.getString ("GEN_STATUS").toUpperCase ()) {
                 case "GOOD":
@@ -2055,6 +2068,8 @@ public class DetailActivity extends AppCompatActivity {
                 case "Engine":
                     engineSerialList.add (serial);
                     break;
+                case "":
+                    engineSerialList.add (serial);
                 case "ATS":
                     atsSerialList.add (serial);
                     break;
